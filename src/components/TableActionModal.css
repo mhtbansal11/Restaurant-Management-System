@@ -1,0 +1,22 @@
+/* Table Action Modal custom overrides for Bootstrap */
+
+.action-btn-bs {
+  transition: all 0.2s;
+  border-width: 2px !important;
+  text-decoration: none !important;
+}
+
+.action-btn-bs:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn-bs .fs-3 {
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .action-btn-bs {
+    padding: 1rem !important;
+  }
+}

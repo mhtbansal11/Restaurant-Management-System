@@ -1,0 +1,62 @@
+/* Global styles that complement Bootstrap */
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Custom utility classes for consistent UI */
+.bg-light-primary {
+  background-color: #e7f1ff;
+  color: #0d6efd;
+}
+
+.bg-light-success {
+  background-color: #e6f4ea;
+  color: #198754;
+}
+
+.bg-light-warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.bg-light-danger {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
+/* Transition for all interactive elements */
+a, button, .card, .nav-link {
+  transition: all 0.2s ease-in-out;
+}
