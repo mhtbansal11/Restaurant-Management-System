@@ -1,0 +1,206 @@
+/* Seating Layout Page Styles - Clean Modern Design */
+
+.seating-editor-page {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--text-primary);
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium) var(--bg-secondary);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--border-dark);
+}
+
+.ls-1 {
+  letter-spacing: 0.05em;
+}
+
+.animate-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-pills .nav-link {
+  color: var(--text-secondary);
+  background-color: transparent;
+  border: 1px solid transparent;
+  transition: var(--transition-fast);
+}
+
+.nav-pills .nav-link:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.nav-pills .nav-link.active {
+  background-color: var(--accent-color);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-md);
+}
+
+/* Canvas Area */
+.canvas-container {
+  flex: 1;
+  display: block;
+  overflow: auto;
+  position: relative;
+  background-color: var(--bg-tertiary);
+  scrollbar-gutter: stable;
+}
+
+.layout-canvas {
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-xl);
+  position: relative;
+  background-image: 
+    radial-gradient(var(--border-light) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+/* Floor Plan Style Tables */
+.table-item {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  font-weight: 700;
+  color: white;
+  background-color: #10b981;
+  border: 3px solid #064e3b;
+  box-shadow: var(--shadow-sm);
+  user-select: none;
+}
+
+.table-item:active {
+  cursor: grabbing;
+}
+
+.table-item:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-md);
+  z-index: 5;
+}
+
+.table-item.selected {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+.table-item.circle {
+  border-radius: 50%;
+}
+
+.table-item.rectangle,
+.table-item.square {
+  border-radius: 8px;
+}
+
+.table-label {
+  font-size: 0.9rem;
+  letter-spacing: -0.025em;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.capacity-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 0.7rem;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid white;
+  font-weight: 800;
+  box-shadow: var(--shadow-sm);
+  z-index: 2;
+}
+
+/* Sidebar Tool Styles */
+.draggable-source {
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.draggable-source:hover {
+  transform: scale(1.05) rotate(2deg);
+  background-color: #059669 !important;
+  box-shadow: var(--shadow-md);
+}
+
+/* Stats Section */
+.stats-footer {
+  background-color: var(--bg-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .seating-editor-page {
+    height: auto !important;
+    min-height: 100vh;
+    overflow: auto !important;
+  }
+
+  .seating-editor-page > .d-flex {
+    flex-direction: column;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  
+  .bg-white.border-end {
+    width: 100% !important;
+    min-width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-light);
+    height: auto !important;
+  }
+
+  .bg-white.border-end .overflow-auto {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  .bg-white.border-end .mt-auto {
+    margin-top: 20px !important;
+    border-top: 1px solid var(--border-light) !important;
+    background-color: var(--bg-tertiary) !important;
+  }
+  
+  .canvas-container {
+    padding: 20px !important;
+    height: 600px !important; /* Give fixed height on mobile so it's visible */
+    overflow: auto !important;
+  }
+}

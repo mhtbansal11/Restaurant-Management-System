@@ -1,0 +1,188 @@
+/* Orders Page custom v3 overrides */
+
+.order-card-v3 {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.order-card-v3:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+.status-strip {
+  height: 4px;
+  width: 100%;
+}
+
+.customer-avatar-sm {
+  background: #eef2f7;
+}
+
+.items-container {
+  border: 1px solid rgba(0,0,0,0.03);
+}
+
+.card-action-footer {
+  margin-top: auto;
+}
+
+/* Polished Status Accents */
+.order-card-v3.status-pending { border-left: 1px solid #ffc107 !important; }
+.order-card-v3.status-preparing { border-left: 1px solid #0dcaf0 !important; }
+.order-card-v3.status-ready { border-left: 1px solid #0d6efd !important; }
+.order-card-v3.status-served { border-left: 1px solid #198754 !important; }
+.order-card-v3.status-completed { opacity: 0.8; filter: grayscale(0.1); }
+.order-card-v3.status-cancelled { opacity: 0.6; filter: grayscale(0.5); }
+
+/* Animation for active bars */
+.progress-bar-animated {
+  animation: 1s linear infinite progress-bar-stripes;
+}
+
+/* Modal Styling */
+/* Modal Specific Styling */
+.create-order-modal .modal-content {
+  border-radius: 24px;
+  border: none;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.customer-search-results {
+  top: 100%;
+  left: 0;
+  z-index: 1050;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-bg-light:hover {
+  background-color: #f8f9fa;
+}
+
+.menu-item-card {
+  transition: transform 0.2s;
+}
+
+.menu-item-card:hover {
+  transform: translateY(-2px);
+}
+
+.quantity-selector-v2 {
+  max-width: 100px;
+  height: 28px;
+}
+
+.quantity-selector-v2 .form-control {
+  min-width: 30px !important;
+  font-size: 0.85rem;
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.z-index-modal {
+  z-index: 1060;
+}
+
+/* Custom Scrollbar for Menu Grid */
+.menu-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.menu-grid::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.menu-grid::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.menu-item-card {
+  transition: transform 0.2s;
+  border: 1px solid #edf2f7 !important;
+}
+
+.menu-item-card:hover {
+  transform: scale(1.02);
+  background: #fff;
+}
+
+.quantity-selector {
+  background: #ebf4ff;
+  border-radius: 50px;
+  padding: 2px;
+}
+
+.quantity-selector .btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.menu-grid::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 10px;
+}
+
+.summary-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.summary-list::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+.bg-primary-subtle { background-color: #e0e7ff !important; }
+.text-primary { color: #4f46e5 !important; }
+.bg-warning-subtle { background-color: #fef3c7 !important; }
+.text-warning { color: #d97706 !important; }
+
+.btn-primary {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+  border-color: #4338ca;
+}
+
+.border-dashed {
+  border-style: dashed !important;
+  border-width: 2px !important;
+  background-color: transparent !important;
+}
+
+.font-monospace {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@media (max-width: 768px) {
+  .order-card-bs {
+    margin-bottom: 1rem;
+  }
+}

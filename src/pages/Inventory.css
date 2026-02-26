@@ -1,0 +1,32 @@
+/* Inventory page custom overrides for Bootstrap */
+
+.inventory-page .card {
+  border-radius: 12px;
+}
+
+.inventory-page .table th {
+  font-weight: 600;
+  color: #6c757d;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.inventory-page .badge {
+  font-weight: 500;
+}
+
+.inventory-page .btn-link {
+  text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.inventory-page .btn-link:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .inventory-page .h3 {
+    font-size: 1.5rem;
+  }
+}

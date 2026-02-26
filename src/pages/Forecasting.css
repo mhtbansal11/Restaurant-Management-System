@@ -1,0 +1,41 @@
+/* Forecasting Overrides */
+.letter-spacing-1 {
+  letter-spacing: 1px;
+}
+
+.chart-container-bs {
+  position: relative;
+  margin: auto;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .chart-container-bs {
+    height: 300px !important;
+  }
+}
+
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+}
+
+.table thead th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b7280;
+}
+
+.table tbody td {
+  vertical-align: middle;
+}
+
+.badge {
+  font-weight: 600;
+  padding: 0.4em 0.8em;
+}

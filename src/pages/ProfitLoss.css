@@ -1,0 +1,271 @@
+.profit-loss-dashboard {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.pnl-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  border: none;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.pnl-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.pnl-metric-card {
+  border-radius: 15px;
+  border: none;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.pnl-metric-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.pnl-metric-card .card-body {
+  padding: 1.5rem;
+}
+
+.pnl-metric-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto 1rem;
+  transition: transform 0.3s ease;
+}
+
+.pnl-metric-card:hover .pnl-metric-icon {
+  transform: scale(1.1);
+}
+
+.pnl-chart-container {
+  border-radius: 15px;
+  border: none;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.pnl-table {
+  border-radius: 15px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.pnl-table thead th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  padding: 1rem 1.5rem;
+}
+
+.pnl-table tbody tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+.pnl-table tbody tr:hover {
+  background-color: rgba(102, 126, 234, 0.05);
+}
+
+.pnl-table tbody td {
+  padding: 1rem 1.5rem;
+  border-color: #e9ecef;
+  font-weight: 500;
+}
+
+.pnl-insight-alert {
+  border-radius: 15px;
+  border: none;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.pnl-insight-alert .alert-icon {
+  font-size: 2rem;
+  margin-right: 1rem;
+}
+
+.pnl-category-list {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.pnl-category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e9ecef;
+  transition: background-color 0.2s ease;
+}
+
+.pnl-category-item:last-child {
+  border-bottom: none;
+}
+
+.pnl-category-item:hover {
+  background-color: rgba(102, 126, 234, 0.05);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+}
+
+.pnl-filter-controls {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 15px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.pnl-filter-select {
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.pnl-filter-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.pnl-refresh-btn {
+  border-radius: 10px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: 2px solid #667eea;
+}
+
+.pnl-refresh-btn:hover {
+  background-color: #667eea;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.pnl-positive {
+  color: #28a745 !important;
+  font-weight: 700;
+}
+
+.pnl-negative {
+  color: #dc3545 !important;
+  font-weight: 700;
+}
+
+.pnl-metric-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.pnl-metric-label {
+  color: #6c757d;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.pnl-metric-subtext {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.pnl-chart-wrapper {
+  height: 300px;
+  position: relative;
+}
+
+.pnl-summary-table {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.pnl-summary-table thead th {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+.pnl-summary-table tbody td {
+  padding: 1rem;
+  font-weight: 500;
+  border-color: #e9ecef;
+}
+
+.pnl-summary-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.pnl-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 15px;
+}
+
+.pnl-empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6c757d;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 15px;
+}
+
+.pnl-empty-state .icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .pnl-metric-card .card-body {
+    padding: 1rem;
+  }
+  
+  .pnl-metric-value {
+    font-size: 1.5rem;
+  }
+  
+  .pnl-table thead th,
+  .pnl-table tbody td {
+    padding: 0.75rem 1rem;
+  }
+  
+  .pnl-filter-controls {
+    padding: 1rem;
+  }
+  
+  .pnl-chart-container {
+    padding: 1rem;
+  }
+  
+  .pnl-category-list {
+    padding: 1rem;
+  }
+}

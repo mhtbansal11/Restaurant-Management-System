@@ -1,0 +1,38 @@
+.staff-avatar {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: white;
+  box-shadow: 0 8px 15px rgba(13, 110, 253, 0.2);
+}
+
+.staff-card-bs {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.staff-card-bs:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.role-badge-bs {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  padding: 0.5rem 0.8rem;
+  border-radius: 50px;
+}
+
+.role-badge-bs.owner { background: #fff5f5 !important; color: #e03131 !important; border-color: #ffa8a8 !important; }
+.role-badge-bs.manager { background: #fff9db !important; color: #f08c00 !important; border-color: #ffe066 !important; }
+.role-badge-bs.cashier { background: #ebfbee !important; color: #2f9e44 !important; border-color: #b2f2bb !important; }
+.role-badge-bs.receptionist { background: #e7f5ff !important; color: #1971c2 !important; border-color: #a5d8ff !important; }
+.role-badge-bs.kitchen_staff { background: #f8f0fc !important; color: #9c36b5 !important; border-color: #e599f7 !important; }
+.role-badge-bs.waiter { background: #e3fafc !important; color: #0b7285 !important; border-color: #99e9f2 !important; }
