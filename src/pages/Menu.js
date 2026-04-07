@@ -28,10 +28,12 @@ const Menu = () => {
     category: 'Main Course',
     image: '',
     isAvailable: true,
-    ingredients: []
+    ingredients: [],
+    variants: []
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [filterCategory, setFilterCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     fetchMenuItems();
@@ -106,7 +108,8 @@ const Menu = () => {
         category: 'Main Course',
         image: '',
         isAvailable: true,
-        ingredients: []
+        ingredients: [],
+        variants: []
       });
       fetchMenuItems();
     } catch (error) {
@@ -122,7 +125,8 @@ const Menu = () => {
       category: item.category,
       image: item.image || '',
       isAvailable: item.isAvailable,
-      ingredients: item.ingredients || []
+      ingredients: item.ingredients || [],
+      variants: item.variants || []
     });
     setEditingId(item._id);
     setShowEditForm(true);
@@ -211,10 +215,50 @@ const Menu = () => {
     }
   };
 
+  const addVariant = () => {
+    const newVariant = { name: '', price: '' };
+    setFormData({
+      ...formData,
+      variants: [...formData.variants, newVariant]
+    });
+  };
+
+  const updateVariant = (index, field, value) => {
+    const newVariants = [...formData.variants];
+    newVariants[index][field] = value;
+    
+    // Auto-update base price to the minimum variant price
+    const prices = newVariants.map(v => Number(v.price)).filter(p => !isNaN(p) && p > 0);
+    const minPrice = prices.length > 0 ? Math.min(...prices) : formData.price;
+    
+    setFormData({ 
+      ...formData, 
+      variants: newVariants,
+      price: minPrice
+    });
+  };
+
+  const removeVariant = (index) => {
+    const newVariants = formData.variants.filter((_, i) => i !== index);
+    
+    // Auto-update base price to the new minimum variant price
+    const prices = newVariants.map(v => Number(v.price)).filter(p => !isNaN(p) && p > 0);
+    const minPrice = prices.length > 0 ? Math.min(...prices) : formData.price;
+
+    setFormData({ 
+      ...formData, 
+      variants: newVariants,
+      price: minPrice
+    });
+  };
+
   const categories = ['All', 'Appetizers', 'Main Course', 'Desserts', 'Beverages', 'Salads', 'Soups', 'Other'];
-  const filteredItems = filterCategory === 'All' 
-    ? menuItems 
-    : menuItems.filter(item => item.category === filterCategory);
+  const filteredItems = menuItems.filter(item => {
+    const matchesCategory = filterCategory === 'All' || item.category === filterCategory;
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                         (item.description && item.description.toLowerCase().includes(searchQuery.toLowerCase()));
+    return matchesCategory && matchesSearch;
+  });
 
   if (loading) {
     return (
@@ -229,9 +273,10 @@ const Menu = () => {
 
   return (
     <div className="menu-page">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        
-         <h2 className="mb-1 fw-bold">Menu Management</h2>
+      <div className="d-flex justify-content-between align-items-center mb-4 p-3 rounded-4 bg-primary shadow-sm border">
+        <div>
+          <h2 className="mb-1 fw-bold text-primary">Menu Management</h2>
+        </div>
         {canManageMenu && (
           <div className="d-flex gap-2">
             <Button variant="success" onClick={() => setShowAIUpload(true)}>
@@ -332,7 +377,7 @@ const Menu = () => {
             <Row className="mb-3">
               <Col md={6}>
                 <Form.Group>
-                  <Form.Label>Price *</Form.Label>
+                  <Form.Label>Price * {formData.variants.length > 0 && <small className="text-primary">(Managed by variants)</small>}</Form.Label>
                   <InputGroup>
                     <InputGroup.Text>₹</InputGroup.Text>
                     <Form.Control
@@ -341,6 +386,7 @@ const Menu = () => {
                       value={formData.price}
                       onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                       required
+                      disabled={formData.variants.length > 0}
                     />
                   </InputGroup>
                 </Form.Group>
@@ -375,8 +421,49 @@ const Menu = () => {
               />
             </Form.Group>
 
-            <div className="bg-light p-3 rounded mb-3">
-              <h5 className="mb-3">Ingredients / Recipe</h5>
+            <div className="bg-tertiary p-3 rounded mb-3">
+              <div className="d-flex justify-content-between align-items-center mb-3">
+                <h5 className="mb-0 text-primary">Variants (e.g., Small, Medium, Large)</h5>
+                <Button variant="outline-primary" size="sm" onClick={addVariant}>+ Add Variant</Button>
+              </div>
+              {formData.variants.map((variant, index) => (
+                <Row key={index} className="g-2 mb-2 align-items-center">
+                  <Col md={6}>
+                    <Form.Control
+                      type="text"
+                      placeholder="Variant Name (e.g. Small)"
+                      value={variant.name}
+                      onChange={(e) => updateVariant(index, 'name', e.target.value)}
+                      required
+                      size="sm"
+                    />
+                  </Col>
+                  <Col md={4}>
+                    <InputGroup size="sm">
+                      <InputGroup.Text>₹</InputGroup.Text>
+                      <Form.Control
+                        type="number"
+                        placeholder="Price"
+                        value={variant.price}
+                        onChange={(e) => updateVariant(index, 'price', e.target.value)}
+                        required
+                      />
+                    </InputGroup>
+                  </Col>
+                  <Col md={2}>
+                    <Button variant="outline-danger" size="sm" onClick={() => removeVariant(index)}>
+                      🗑
+                    </Button>
+                  </Col>
+                </Row>
+              ))}
+              {formData.variants.length === 0 && (
+                <small className="text-muted">No variants added. Base price will be used.</small>
+              )}
+            </div>
+
+            <div className="bg-tertiary p-3 rounded mb-3">
+              <h5 className="mb-3 text-primary">Ingredients / Recipe</h5>
               {formData.ingredients.map((ing, index) => (
                 <Row key={index} className="g-2 mb-2 align-items-center">
                   <Col md={6}>
@@ -435,7 +522,7 @@ const Menu = () => {
         </Modal.Header>
         <Modal.Body>
           <Form id="recipe-form" onSubmit={handleUpdateRecipe}>
-            <div className="bg-light p-3 rounded">
+            <div className="bg-tertiary p-3 rounded">
               {selectedItem?.ingredients.map((ing, index) => (
                 <Row key={index} className="g-2 mb-2 align-items-center">
                   <Col md={6}>
@@ -487,11 +574,38 @@ const Menu = () => {
         </Modal.Footer>
       </Modal>
 
-      <Row className="mb-4">
+      <Row className="mb-4 g-3">
+        <Col md={6} lg={4}>
+          <Form.Group>
+            <Form.Label className="small fw-bold text-muted text-uppercase">Search Menu</Form.Label>
+            <InputGroup className="shadow-sm rounded overflow-hidden">
+              <InputGroup.Text className="bg-tertiary border-end-0 ps-3 text-primary">🔍</InputGroup.Text>
+              <Form.Control
+                placeholder="Search by name or description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="border-start-0 py-2 bg-tertiary text-primary"
+              />
+              {searchQuery && (
+                <Button 
+                  variant="tertiary" 
+                  className="border-start-0 text-primary"
+                  onClick={() => setSearchQuery('')}
+                >
+                  &times;
+                </Button>
+              )}
+            </InputGroup>
+          </Form.Group>
+        </Col>
         <Col md={4} lg={3}>
           <Form.Group>
             <Form.Label className="small fw-bold text-muted text-uppercase">Filter by Category</Form.Label>
-            <Form.Select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
+            <Form.Select 
+              value={filterCategory} 
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="shadow-sm py-2 bg-tertiary text-primary"
+            >
               {categories.map(cat => (
                 <option key={cat} value={cat}>{cat}</option>
               ))}
@@ -501,8 +615,23 @@ const Menu = () => {
       </Row>
 
       {filteredItems.length === 0 ? (
-        <Alert variant="info" className="text-center py-5">
-          <p className="mb-0">No menu items found. Add items to get started!</p>
+        <Alert variant="info" className="text-center py-5 shadow-sm border-0 rounded-4">
+          <div className="fs-1 mb-3">🔍</div>
+          <h4 className="fw-bold">No items found</h4>
+          <p className="text-muted mb-0">
+            {searchQuery 
+              ? `We couldn't find anything matching "${searchQuery}"`
+              : "No menu items found in this category. Add items to get started!"}
+          </p>
+          {searchQuery && (
+            <Button 
+              variant="link" 
+              className="mt-2 text-decoration-none" 
+              onClick={() => setSearchQuery('')}
+            >
+              Clear search
+            </Button>
+          )}
         </Alert>
       ) : (
         <Row xs={1} md={2} lg={3} xl={4} className="g-4">
@@ -530,7 +659,16 @@ const Menu = () => {
                   <div className="small text-muted text-uppercase fw-bold mb-1">{item.category}</div>
                   <div className="d-flex justify-content-between align-items-start mb-2">
                     <Card.Title className="h5 mb-0 text-truncate me-2">{item.name}</Card.Title>
-                    <span className="fw-bold text-primary">₹{item.price.toFixed(2)}</span>
+                    <div className="text-end">
+                      {item.variants && item.variants.length > 0 ? (
+                        <>
+                          <span className="small text-muted d-block" style={{ fontSize: '0.7rem' }}>From</span>
+                          <span className="fw-bold text-primary">₹{Math.min(...item.variants.map(v => v.price)).toFixed(2)}</span>
+                        </>
+                      ) : (
+                        <span className="fw-bold text-primary">₹{item.price.toFixed(2)}</span>
+                      )}
+                    </div>
                   </div>
                   {item.description && (
                     <Card.Text className="small text-muted mb-3 flex-grow-1" style={{ display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
@@ -540,37 +678,40 @@ const Menu = () => {
                   <div className="d-flex gap-2 justify-content-end mt-auto pt-3 border-top">
                     {canManageMenu && (
                       <Button 
-                        variant="light" 
+                        variant="tertiary" 
                         size="sm" 
                         onClick={() => handleEdit(item)}
                         title="Edit Item"
+                        className="text-primary"
                       >
                         ✏️
                       </Button>
                     )}
                     {canManageMenu && (
                       <Button 
-                        variant="light" 
+                        variant="tertiary" 
                         size="sm" 
                         onClick={() => handleOpenRecipe(item)}
                         title="Manage Recipe"
+                        className="text-primary"
                       >
                         🍳
                       </Button>
                     )}
                     {canToggleAvailability && (
                       <Button 
-                        variant={item.isAvailable ? "light" : "danger"} 
+                        variant={item.isAvailable ? "tertiary" : "danger"} 
                         size="sm" 
                         onClick={() => handleToggleAvailability(item)}
                         title={item.isAvailable ? 'Mark Unavailable' : 'Mark Available'}
+                        className={item.isAvailable ? "text-primary" : ""}
                       >
                         {item.isAvailable ? '✅' : '❌'}
                       </Button>
                     )}
                     {canManageMenu && (
                       <Button 
-                        variant="light" 
+                        variant="tertiary" 
                         size="sm" 
                         onClick={() => handleDelete(item._id)}
                         className="text-danger"

@@ -6,7 +6,8 @@
 
 .floor-plan-card-bs {
   min-height: 600px;
-  background-color: #f8fafc;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-light);
 }
 
 .floor-plan-container {
@@ -21,7 +22,7 @@
 
 .action-btn-bs:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
 }
 
 @media (max-width: 768px) {

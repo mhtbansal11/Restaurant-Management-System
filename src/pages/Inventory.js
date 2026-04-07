@@ -219,36 +219,36 @@ const Inventory = () => {
         <Card.Body className="p-0">
           <div className="table-responsive">
             <Table hover className="mb-0 align-middle">
-              <thead className="bg-light">
+              <thead className="bg-tertiary">
                 <tr>
-                  <th className="px-4 py-3">Item Name</th>
-                  <th className="py-3">Category</th>
-                  <th className="py-3 text-center">Stock</th>
-                  <th className="py-3">Unit</th>
-                  <th className="py-3">Threshold</th>
-                  <th className="py-3">Price</th>
-                  <th className="py-3">Status</th>
-                  <th className="py-3 text-end px-4">Actions</th>
+                  <th className="px-4 py-3 text-primary">Item Name</th>
+                  <th className="py-3 text-primary">Category</th>
+                  <th className="py-3 text-center text-primary">Stock</th>
+                  <th className="py-3 text-primary">Unit</th>
+                  <th className="py-3 text-primary">Threshold</th>
+                  <th className="py-3 text-primary">Price</th>
+                  <th className="py-3 text-primary">Status</th>
+                  <th className="py-3 text-end px-4 text-primary">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredItems.map(item => (
-                  <tr key={item._id} className={item.quantity <= item.minThreshold ? 'table-warning' : ''}>
+                  <tr key={item._id} className={item.quantity <= item.minThreshold ? 'bg-warning bg-opacity-10' : ''}>
                     <td className="px-4">
-                      <div className="fw-bold">{item.name}</div>
+                      <div className="fw-bold text-primary">{item.name}</div>
                       <div className="small text-muted">{item.supplier || 'No supplier'}</div>
                     </td>
                     <td>
-                      <Badge bg="secondary" className="fw-normal">{item.category}</Badge>
+                      <Badge bg="tertiary" text="primary" className="fw-normal border border-primary border-opacity-25">{item.category}</Badge>
                     </td>
                     <td className="text-center">
-                      <span className={`fw-bold ${item.quantity <= item.minThreshold ? 'text-danger' : ''}`}>
+                      <span className={`fw-bold text-primary ${item.quantity <= item.minThreshold ? 'text-danger' : ''}`}>
                         {item.quantity}
                       </span>
                     </td>
-                    <td>{item.unit}</td>
-                    <td>{item.minThreshold}</td>
-                    <td>₹{item.costPrice.toFixed(2)}</td>
+                    <td className="text-primary">{item.unit}</td>
+                    <td className="text-primary">{item.minThreshold}</td>
+                    <td className="text-primary">₹{item.costPrice.toFixed(2)}</td>
                     <td>
                       <Badge bg={item.quantity <= item.minThreshold ? 'danger' : 'success'} pill>
                         {item.quantity <= item.minThreshold ? 'Low Stock' : 'In Stock'}

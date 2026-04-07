@@ -2,12 +2,13 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #f8f9fa;
+  background-color: var(--bg-secondary);
 }
 
 .layout-container-bs {
   display: flex;
   flex: 1;
+  background-color: var(--bg-secondary);
 }
 
 .main-wrapper-bs {
@@ -17,6 +18,7 @@
   flex-direction: column;
   min-width: 0;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: var(--bg-secondary);
 }
 
 .main-wrapper-bs.collapsed {

@@ -1,13 +1,15 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Nav, Button, Badge } from 'react-bootstrap';
+import { Nav, Button, Badge, OverlayTrigger, Tooltip, Form } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { ROLES } from '../constants/roles';
 import './Sidebar.css';
 
 const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const isActive = (path) => location.pathname === path;
 
@@ -44,14 +46,14 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
         />
       )}
 
-      <aside className={`sidebar-bs ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''} shadow-sm border-end`}>
+      <aside className={`sidebar-bs ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''} shadow-sm`}>
         <div className="sidebar-header-bs p-4 border-bottom d-flex align-items-center justify-content-between">
           <div className="sidebar-brand-bs d-flex gap-2 align-items-center justify-content-start collapsed-hidden">
             <div>
               <h2 className="h4 fw-bold text-primary mb-0 text-truncate" style={{ maxWidth: '180px' }}>
                 {user?.restaurantName || 'ATC Restaurant'}
               </h2>
-              <Badge bg="light" text="dark" className="mt-1 border text-uppercase small px-2 py-1">
+              <Badge bg={theme === 'dark' ? 'dark' : 'light'} text={theme === 'dark' ? 'light' : 'dark'} className="mt-1 border text-uppercase small px-2 py-1">
                 {user?.role?.replace('_', ' ')}
               </Badge>
             </div>
@@ -62,29 +64,44 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
         </div>
 
         <div className="sidebar-nav-bs flex-column px-3 mt-2">
-          {filteredLinks.map(link => (
-            <Nav.Link 
-              key={link.path} 
-              as={Link} 
-              to={link.path} 
-              className={`sidebar-link-bs d-flex align-items-center rounded-3 mb-1 p-2 ${isActive(link.path) ? 'active' : ''} ${isCollapsed ? 'justify-content-center' : ''}`}
-              onClick={() => isOpen && toggleSidebar()}
-              title={isCollapsed ? link.label : ''}
-            >
-              <span className={`sidebar-icon-bs fs-5 ${isCollapsed ? 'me-0' : 'me-3'}`}>{link.icon}</span>
-              <span className="sidebar-label-bs fw-medium collapsed-hidden">{link.label}</span>
-            </Nav.Link>
-          ))}
+          {filteredLinks.map(link => {
+            const linkContent = (
+              <Nav.Link 
+                key={link.path} 
+                as={Link} 
+                to={link.path} 
+                className={`sidebar-link-bs d-flex align-items-center rounded-3 mb-1 p-2 ${isActive(link.path) ? 'active' : ''} ${isCollapsed ? 'justify-content-center' : ''}`}
+                onClick={() => isOpen && toggleSidebar()}
+              >
+                <span className={`sidebar-icon-bs fs-5 ${isCollapsed ? 'me-0' : 'me-3'}`}>{link.icon}</span>
+                <span className="sidebar-label-bs fw-medium collapsed-hidden">{link.label}</span>
+              </Nav.Link>
+            );
+
+            if (isCollapsed) {
+              return (
+                <OverlayTrigger
+                  key={link.path}
+                  placement="right"
+                  overlay={<Tooltip id={`tooltip-${link.path}`}>{link.label}</Tooltip>}
+                >
+                  {linkContent}
+                </OverlayTrigger>
+              );
+            }
+
+            return linkContent;
+          })}
         </div>
 
         <div className="sidebar-footer-bs mt-auto p-4 border-top">
           <div className="collapsed-hidden">
             <div className="sidebar-user-bs d-flex align-items-center mb-3">
-              <div className="user-avatar-bs bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold" style={{ width: '40px', height: '40px', minWidth: '40px' }}>
+              <div className="user-avatar-bs bg-accent text-white rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold" style={{ width: '40px', height: '40px', minWidth: '40px', backgroundColor: 'var(--accent-color)' }}>
                 {user?.name?.charAt(0)}
               </div>
               <div className="sidebar-user-info-bs overflow-hidden">
-                <div className="sidebar-user-name-bs fw-bold text-truncate">{user?.name}</div>
+                <div className="sidebar-user-name-bs fw-bold text-truncate text-primary">{user?.name}</div>
                 <div className="sidebar-user-email-bs small text-muted text-truncate">{user?.email}</div>
               </div>
             </div>
@@ -98,17 +115,30 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
           </div>
           
           <div className="d-flex flex-column align-items-center gap-3 collapsed-visible d-none">
-            <div className="user-avatar-bs bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style={{ width: '40px', height: '40px' }} title={user?.name}>
-              {user?.name?.charAt(0)}
-            </div>
-            <Button 
-              variant="outline-danger" 
-              onClick={logout} 
-              className="w-100 d-flex align-items-center justify-content-center border-0 bg-light-danger p-2"
-              title="Logout"
+            <OverlayTrigger
+              placement="right"
+              overlay={<Tooltip id="tooltip-user">{user?.name}</Tooltip>}
             >
-              <span>⏻</span>
-            </Button>
+              <div 
+                className="user-avatar-bs text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" 
+                style={{ width: '40px', height: '40px', backgroundColor: 'var(--accent-color)' }} 
+              >
+                {user?.name?.charAt(0)}
+              </div>
+            </OverlayTrigger>
+
+            <OverlayTrigger
+              placement="right"
+              overlay={<Tooltip id="tooltip-logout">Logout</Tooltip>}
+            >
+              <Button 
+                variant="outline-danger" 
+                onClick={logout} 
+                className="w-100 d-flex align-items-center justify-content-center border-0 bg-light-danger p-2"
+              >
+                <span>⏻</span>
+              </Button>
+            </OverlayTrigger>
           </div>
         </div>
       </aside>

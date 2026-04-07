@@ -14,11 +14,13 @@
 
 .staff-card-bs {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-light);
 }
 
 .staff-card-bs:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: var(--shadow-lg) !important;
 }
 
 .role-badge-bs {
@@ -30,9 +32,9 @@
   border-radius: 50px;
 }
 
-.role-badge-bs.owner { background: #fff5f5 !important; color: #e03131 !important; border-color: #ffa8a8 !important; }
-.role-badge-bs.manager { background: #fff9db !important; color: #f08c00 !important; border-color: #ffe066 !important; }
-.role-badge-bs.cashier { background: #ebfbee !important; color: #2f9e44 !important; border-color: #b2f2bb !important; }
-.role-badge-bs.receptionist { background: #e7f5ff !important; color: #1971c2 !important; border-color: #a5d8ff !important; }
-.role-badge-bs.kitchen_staff { background: #f8f0fc !important; color: #9c36b5 !important; border-color: #e599f7 !important; }
-.role-badge-bs.waiter { background: #e3fafc !important; color: #0b7285 !important; border-color: #99e9f2 !important; }
+.role-badge-bs.owner { background: rgba(224, 49, 49, 0.1) !important; color: #e03131 !important; border-color: rgba(224, 49, 49, 0.2) !important; }
+.role-badge-bs.manager { background: rgba(240, 140, 0, 0.1) !important; color: #f08c00 !important; border-color: rgba(240, 140, 0, 0.2) !important; }
+.role-badge-bs.cashier { background: rgba(47, 158, 68, 0.1) !important; color: #2f9e44 !important; border-color: rgba(47, 158, 68, 0.2) !important; }
+.role-badge-bs.receptionist { background: rgba(25, 113, 194, 0.1) !important; color: #1971c2 !important; border-color: rgba(25, 113, 194, 0.2) !important; }
+.role-badge-bs.kitchen_staff { background: rgba(156, 54, 181, 0.1) !important; color: #9c36b5 !important; border-color: rgba(156, 54, 181, 0.2) !important; }
+.role-badge-bs.waiter { background: rgba(11, 114, 133, 0.1) !important; color: #0b7285 !important; border-color: rgba(11, 114, 133, 0.2) !important; }

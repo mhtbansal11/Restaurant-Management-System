@@ -220,7 +220,7 @@ const KDS = () => {
                           </Badge>
                         )}
                         {order.previousOrderType && <span className="text-light small">→</span>}
-                        <Badge bg={order.orderType === 'dine-in' ? 'primary' : 'info'} className="text-uppercase small">
+                        <Badge bg={order.orderType === 'dine-in' ? 'warning' : 'info'} text={order.orderType === 'dine-in' ? 'dark' : 'light'} className="text-uppercase small border border-warning border-opacity-25">
                           {order.orderType}
                         </Badge>
                       </div>

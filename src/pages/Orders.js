@@ -310,11 +310,11 @@ const Orders = () => {
   return (
     <div className="orders-page-container">
       {/* Header Section */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3 bg-white p-3 rounded-4 shadow-sm">
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3 bg-primary p-3 rounded-4 shadow-sm border">
         <div className="flex-grow-1">
-          <h1 className="h3 mb-2 fw-bold text-dark">Live Orders</h1>
+          <h1 className="h3 mb-2 fw-bold text-primary">Live Orders</h1>
           <div className="d-flex flex-wrap gap-2 align-items-center">
-            <span className="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 border">
+            <span className="badge bg-tertiary text-primary rounded-pill px-3 py-2 border">
               {activeOrdersCount} Active
             </span>
             <span className="badge bg-warning-subtle text-warning rounded-pill px-3 py-2 border">
@@ -323,13 +323,13 @@ const Orders = () => {
             <span className="badge bg-info-subtle text-info rounded-pill px-3 py-2 border">
               {preparingOrdersCount} Preparing
             </span>
-            <span className="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 border" style={{backgroundColor: '#e7f1ff', color: '#0d6efd'}}>
+            <span className="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 border">
               {readyOrdersCount} Ready
             </span>
             <span className="badge bg-success-subtle text-success rounded-pill px-3 py-2 border">
               {servedOrdersCount} Served
             </span>
-            <span className="badge bg-dark-subtle text-dark rounded-pill px-3 py-2 border">
+            <span className="badge bg-tertiary text-primary rounded-pill px-3 py-2 border">
               {completedOrdersCount} Completed
             </span>
             <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2 border">
@@ -353,7 +353,7 @@ const Orders = () => {
       </div>
 
       {/* Filters & Search Section */}
-      <div className="bg-white p-3 rounded-4 shadow-sm mb-4">
+      <div className="bg-primary p-3 rounded-4 shadow-sm mb-4 border">
         <Row className="align-items-center g-3">
           <Col md={4}>
             <div className="position-relative">
@@ -362,7 +362,7 @@ const Orders = () => {
                 placeholder="Search by ID, Customer, Phone, Menu or Table..."
                 value={orderSearch}
                 onChange={(e) => setOrderSearch(e.target.value)}
-                className="border-0 bg-light rounded-pill px-4 py-2 shadow-none w-100"
+                className="border-0 bg-tertiary text-primary rounded-pill px-4 py-2 shadow-none w-100"
                 size="sm"
               />
               {orderSearch && (
@@ -381,9 +381,9 @@ const Orders = () => {
                 <Button 
                   as={Link} 
                   to="/orders" 
-                  variant="light" 
+                  variant="tertiary" 
                   size="sm"
-                  className="rounded-pill px-3 border"
+                  className="rounded-pill px-3 border text-primary"
                 >
                   Clear Table: {tables.find(t => t.tableId === tableFilter)?.label || tableFilter}
                 </Button>
@@ -393,13 +393,13 @@ const Orders = () => {
                 <Form.Select 
                   value={filterOrderType} 
                   onChange={(e) => setFilterOrderType(e.target.value)}
-                  className="w-auto border-0 bg-light rounded-pill px-4 shadow-none"
+                  className="w-auto border-0 bg-tertiary text-primary rounded-pill px-4 shadow-none"
                   size="sm"
                 >
-                  <option value="All">All Types</option>
-                  <option value="dine-in">Dine-in</option>
-                  <option value="takeaway">Takeaway</option>
-                  <option value="packing">Packing</option>
+                  <option value="All" className="bg-primary">All Types</option>
+                  <option value="dine-in" className="bg-primary">Dine-in</option>
+                  <option value="takeaway" className="bg-primary">Takeaway</option>
+                  <option value="packing" className="bg-primary">Packing</option>
                 </Form.Select>
               </div>
               <div className="d-flex align-items-center gap-2">
@@ -407,17 +407,17 @@ const Orders = () => {
                 <Form.Select 
                   value={filterStatus} 
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="w-auto border-0 bg-light rounded-pill px-4 shadow-none"
+                  className="w-auto border-0 bg-tertiary text-primary rounded-pill px-4 shadow-none"
                   size="sm"
                 >
-                  <option value="All">All Status</option>
-                  <option value="active">Active</option>
-                  <option value="pending">Pending</option>
-                  <option value="preparing">Preparing</option>
-                  <option value="ready">Ready</option>
-                  <option value="served">Served</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
+                  <option value="All" className="bg-primary">All Status</option>
+                  <option value="active" className="bg-primary">Active</option>
+                  <option value="pending" className="bg-primary">Pending</option>
+                  <option value="preparing" className="bg-primary">Preparing</option>
+                  <option value="ready" className="bg-primary">Ready</option>
+                  <option value="served" className="bg-primary">Served</option>
+                  <option value="completed" className="bg-primary">Completed</option>
+                  <option value="cancelled" className="bg-primary">Cancelled</option>
                 </Form.Select>
               </div>
             </div>
@@ -429,7 +429,7 @@ const Orders = () => {
       <Row xs={1} md={2} lg={3} xl={4} className="g-4">
         {orders.length === 0 ? (
           <Col xs={12}>
-            <div className="text-center py-5 bg-white rounded-4 border-2 border-dashed">
+            <div className="text-center py-5 bg-primary rounded-4 border-2 border-dashed">
               <div className="display-1 text-light mb-3">📋</div>
               <h4 className="text-muted">No orders found</h4>
               <p className="text-muted small">Try adjusting your filters or create a new order</p>
@@ -466,10 +466,10 @@ const Orders = () => {
 
                     {/* Customer Info Mini-Tag */}
                     <div className="d-flex align-items-center gap-2 mb-3">
-                      <div className="customer-avatar-sm bg-light rounded-circle text-primary fw-bold d-flex align-items-center justify-content-center" style={{width: '24px', height: '24px', fontSize: '0.7rem'}}>
+                      <div className="customer-avatar-sm bg-tertiary rounded-circle text-primary fw-bold d-flex align-items-center justify-content-center" style={{width: '24px', height: '24px', fontSize: '0.7rem'}}>
                         {(order.customerName || (order.orderType === 'takeaway' ? 'T' : order.orderType === 'packing' ? 'P' : 'D'))[0].toUpperCase()}
                       </div>
-                      <span className="small text-dark fw-medium text-truncate" style={{maxWidth: '120px'}}>
+                      <span className="small text-primary fw-medium text-truncate" style={{maxWidth: '120px'}}>
                         {order.customerName || (order.orderType === 'takeaway' ? 'Takeaway' : order.orderType === 'packing' ? 'Packing' : 'Dine-in')}
                       </span>
                       {order.customerPhone && (
@@ -478,7 +478,7 @@ const Orders = () => {
                     </div>
 
                     {/* Items List */}
-                    <div className="items-container bg-light rounded-3 p-2 mb-3" style={{minHeight: '80px'}}>
+                    <div className="items-container bg-tertiary rounded-3 p-2 mb-3" style={{minHeight: '80px'}}>
                       {order.items.slice(0, 3).map((item, i) => (
                         <div key={i} className="d-flex justify-content-between align-items-center mb-1 small">
                           <span className={`text-truncate ${item.status === 'cancelled' ? 'text-decoration-line-through text-muted' : ''}`} style={{maxWidth: '80%'}}>
@@ -498,7 +498,7 @@ const Orders = () => {
                     <div className="d-flex justify-content-between align-items-center mt-auto">
                       <div className="flex-grow-1 me-3">
                         {!['completed', 'cancelled'].includes(order.status) && (
-                          <div className="progress" style={{height: '6px', borderRadius: '10px'}}>
+                          <div className="progress bg-tertiary" style={{height: '6px', borderRadius: '10px'}}>
                             <div 
                               className={`progress-bar bg-${getStatusBadgeClass(order.status)} progress-bar-striped progress-bar-animated`} 
                               role="progressbar" 
@@ -527,21 +527,21 @@ const Orders = () => {
                         {order.status === 'cancelled' && <span className="text-danger small fw-bold">✕ Order Cancelled</span>}
                       </div>
                       <div className="text-end">
-                        <div className="fw-bold text-dark">₹{order.totalAmount.toLocaleString()}</div>
+                        <div className="fw-bold text-primary">₹{order.totalAmount.toLocaleString()}</div>
                       </div>
                     </div>
                   </div>
 
                   {/* Action Footer */}
-                  <div className="card-action-footer border-top p-2 bg-white rounded-bottom-4">
+                  <div className="card-action-footer border-top p-2 bg-primary rounded-bottom-4">
                     <div className="d-flex flex-column gap-2">
                       <div className="d-flex gap-2">
                         {order.status !== 'cancelled' && (
                           <Button 
                             as={Link}
                             to={`/pos?tableId=${order.tableId?._id || order.tableId}&orderId=${order._id}&type=${order.orderType || 'dine-in'}&tableLabel=${order.tableLabel}`}
-                            variant="light"
-                            className="flex-grow-1 rounded-3 py-2 border small fw-bold"
+                            variant="tertiary"
+                            className="flex-grow-1 rounded-3 py-2 border small fw-bold text-primary"
                           >
                             VIEW
                           </Button>
@@ -630,15 +630,15 @@ const Orders = () => {
         scrollable 
         className="create-order-modal"
       >
-        <Modal.Header closeButton className=" bg-white pt-4 px-4">
+        <Modal.Header closeButton className=" bg-primary pt-4 px-4 border-bottom-0">
           <div>
-            <Modal.Title className="h4 fw-bold text-dark">Create New Order</Modal.Title>
+            <Modal.Title className="h4 fw-bold text-primary">Create New Order</Modal.Title>
             <p className="text-muted small mb-0">Select table and items to place a new order</p>
           </div>
         </Modal.Header>
-        <Modal.Body className="px-4 pb-4">
+        <Modal.Body className="px-4 pb-4 bg-primary">
           <Form onSubmit={handleCreateOrder}>
-            <div className="form-section mb-4 p-3 rounded-4 bg-light">
+            <div className="form-section mb-4 p-3 rounded-4 bg-tertiary">
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h6 className="fw-bold mb-0 text-primary">Order Type</h6>
                 <div className="btn-group btn-group-sm rounded-pill overflow-hidden shadow-sm">
@@ -668,32 +668,32 @@ const Orders = () => {
                   <>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label className="small fw-bold">Floor</Form.Label>
+                        <Form.Label className="small fw-bold text-primary">Floor</Form.Label>
                         <Form.Select
                           value={orderForm.floor}
                           onChange={(e) => setOrderForm({ ...orderForm, floor: e.target.value, tableId: '' })}
-                          className="rounded-3 border-0 shadow-sm"
+                          className="rounded-3 border-0 shadow-sm bg-primary text-primary"
                         >
                           {floors.map(floor => (
-                            <option key={floor} value={floor}>{floor}</option>
+                            <option key={floor} value={floor} className="bg-primary">{floor}</option>
                           ))}
                         </Form.Select>
                       </Form.Group>
                     </Col>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label className="small fw-bold">Table *</Form.Label>
+                        <Form.Label className="small fw-bold text-primary">Table *</Form.Label>
                         <Form.Select
                           value={orderForm.tableId}
                           onChange={(e) => setOrderForm({ ...orderForm, tableId: e.target.value })}
                           required
-                          className="rounded-3 border-0 shadow-sm"
+                          className="rounded-3 border-0 shadow-sm bg-primary text-primary"
                         >
-                          <option value="">Select Table</option>
+                          <option value="" className="bg-primary">Select Table</option>
                           {tables
                             .filter(t => (orderForm.floor === 'All' || (t.floor || 'Ground Floor') === orderForm.floor) && t.status === 'available')
                             .map(table => (
-                              <option key={table._id} value={table.tableId}>
+                              <option key={table._id} value={table.tableId} className="bg-primary">
                                 {orderForm.floor === 'All' ? `${table.floor} - ` : ''}{table.label} ({table.capacity} seats)
                               </option>
                             ))}
@@ -704,7 +704,7 @@ const Orders = () => {
                 )}
                 <Col md={6}>
                   <Form.Group className="mb-3 position-relative">
-                    <Form.Label className="small fw-bold">Customer Phone</Form.Label>
+                    <Form.Label className="small fw-bold text-primary">Customer Phone</Form.Label>
                     <Form.Control
                       type="tel"
                       value={orderForm.customerPhone}
@@ -713,14 +713,14 @@ const Orders = () => {
                         searchCustomers(e.target.value);
                       }}
                       placeholder="Search by phone..."
-                      className="rounded-3 border-0 shadow-sm"
+                      className="rounded-3 border-0 shadow-sm bg-primary text-primary"
                     />
                     {customerResults.length > 0 && (
-                      <div className="customer-search-results position-absolute w-100 shadow rounded-3 mt-1 bg-white z-index-modal overflow-hidden border">
+                      <div className="customer-search-results position-absolute w-100 shadow rounded-3 mt-1 bg-primary z-index-modal overflow-hidden border">
                         {customerResults.map(customer => (
                           <div 
                             key={customer._id} 
-                            className="p-2 border-bottom cursor-pointer hover-bg-light small"
+                            className="p-2 border-bottom cursor-pointer hover-bg-tertiary small text-primary"
                             onClick={() => handleCustomerSelect(customer)}
                           >
                             <strong>{customer.name}</strong> - {customer.phone}
@@ -732,13 +732,13 @@ const Orders = () => {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label className="small fw-bold">Customer Name</Form.Label>
+                    <Form.Label className="small fw-bold text-primary">Customer Name</Form.Label>
                     <Form.Control
                       type="text"
                       value={orderForm.customerName}
                       onChange={(e) => setOrderForm({ ...orderForm, customerName: e.target.value })}
                       placeholder="e.g. John Doe"
-                      className="rounded-3 border-0 shadow-sm"
+                      className="rounded-3 border-0 shadow-sm bg-primary text-primary"
                     />
                   </Form.Group>
                 </Col>
@@ -752,26 +752,26 @@ const Orders = () => {
                   <Form.Control 
                     size="sm"
                     placeholder="Search menu..."
-                    className="rounded-pill px-3 border-0 shadow-sm"
+                    className="rounded-pill px-3 border-0 shadow-sm bg-tertiary text-primary"
                     style={{ width: '150px' }}
                     value={menuSearch}
                     onChange={(e) => setMenuSearch(e.target.value)}
                   />
                   <Form.Select 
                     size="sm"
-                    className="rounded-pill border-0 shadow-sm"
+                    className="rounded-pill border-0 shadow-sm bg-tertiary text-primary"
                     style={{ width: '120px' }}
                     value={menuFilterCategory}
                     onChange={(e) => setMenuFilterCategory(e.target.value)}
                   >
                     {categories.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
+                      <option key={cat} value={cat} className="bg-primary">{cat}</option>
                     ))}
                   </Form.Select>
                 </div>
               </div>
               
-              <div className="menu-grid p-2 rounded-4 bg-light" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+              <div className="menu-grid p-2 rounded-4 bg-tertiary" style={{ maxHeight: '300px', overflowY: 'auto' }}>
                 <Row xs={1} md={1} lg={2} className="g-3">
                   {menuItems
                     .filter(item => 
@@ -782,10 +782,10 @@ const Orders = () => {
                     const orderItem = orderForm.items.find(i => i.menuItem === item._id);
                     return (
                       <Col key={item._id}>
-                        <Card className="h-100 border-0 shadow-sm rounded-3 menu-item-card overflow-hidden">
+                        <Card className="h-100 border-0 shadow-sm rounded-3 menu-item-card overflow-hidden bg-primary">
                           <Card.Body className="p-2 d-flex justify-content-between align-items-center">
                             <div className="flex-grow-1 me-2 text-truncate">
-                              <div className="fw-bold small text-dark text-truncate" title={item.name}>{item.name}</div>
+                              <div className="fw-bold small text-primary text-truncate" title={item.name}>{item.name}</div>
                               <div className="text-primary fw-bold" style={{fontSize: '0.8rem'}}>₹{item.price.toFixed(0)}</div>
                             </div>
                             <div className="action-area flex-shrink-0">

@@ -1,10 +1,12 @@
 .menu-card-bs {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-light);
 }
 
 .menu-card-bs:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: var(--shadow-lg) !important;
 }
 
 .backdrop-blur {

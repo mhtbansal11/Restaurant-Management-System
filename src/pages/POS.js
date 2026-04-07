@@ -19,7 +19,6 @@ import {
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import TableSelectionModal from '../components/TableSelectionModal';
-import CartPopup from '../components/CartPopup';
 import './POS.css';
 
 const POS = () => {
@@ -60,7 +59,9 @@ const POS = () => {
     const [showKOTModal, setShowKOTModal] = useState(false);
   const [showTableModal, setShowTableModal] = useState(false);
   const [keepTableOccupiedAfterPay, setKeepTableOccupiedAfterPay] = useState(false);
-  const [showCartPopup, setShowCartPopup] = useState(false);
+  const [showVariantModal, setShowVariantModal] = useState(false);
+  const [itemForVariant, setItemForVariant] = useState(null);
+  const [showSidebar, setShowSidebar] = useState(true); // Default to true or false? Let's go with true initially or based on cart. Let's use false and open on add.
 
   // Invoicing and Tax States
   const [discountPercent, setDiscountPercent] = useState(0);
@@ -124,43 +125,7 @@ const POS = () => {
     }
   }, [orderType]);
 
-  const fetchActiveOrderForTable = useCallback(async () => {
-    if (!selectedTableState) return;
-    try {
-      const orderResponse = await axios.get(`${config.ENDPOINTS.ORDERS}?tableId=${selectedTableState.id}`);
-      const activeOrders = orderResponse.data.filter(
-        (order) => !['completed', 'cancelled'].includes(order.status)
-      );
-      if (activeOrders.length > 0) {
-        const order = activeOrders[0];
-        setCurrentOrder(order);
-        setCart(order.items.map(item => ({
-          ...item,
-          _id: item.menuItem?._id || item.menuItem,
-          orderItemId: item._id,
-          cartId: item._id, // Use order item ID as cartId for existing items
-          name: item.menuItem?.name || 'Unknown Item',
-          quantity: item.quantity || 1
-        })));
-        setCustomerInfo({
-          name: order.customerName,
-          phone: order.customerPhone,
-          _id: order.customer?._id || order.customer,
-          pendingBalance: 0 // Will be fetched if needed
-        });
-        setPaidAmount((order.paidAmount || 0) > 0 ? (order.dueAmount || 0) : (order.totalAmount || 0));
-        setDiscountPercent(resolveDiscountPercent(order));
-        const orderTaxApplied = (order.taxAmount || 0) > 0;
-        setEnableTax(orderTaxApplied);
-        const orderServiceChargeApplied = (order.serviceChargeAmount || 0) > 0;
-        setEnableServiceCharge(orderServiceChargeApplied);
-      }
-    } catch (error) {
-      console.error('Error fetching active order:', error);
-    }
-  }, [selectedTableState, resolveDiscountPercent]);
-
-  const fetchOrderById = async (orderId) => {
+  const fetchOrderById = useCallback(async (orderId) => {
     try {
       const response = await axios.get(`${config.ENDPOINTS.ORDERS}/${orderId}`);
       const order = response.data;
@@ -192,7 +157,7 @@ const POS = () => {
     } catch (error) {
       console.error('Error fetching order by ID:', error);
     }
-  };
+  }, [resolveDiscountPercent]);
 
   useEffect(() => {
     fetchMenu();
@@ -200,10 +165,14 @@ const POS = () => {
   }, []);
 
   useEffect(() => {
-    if (orderType === 'dine-in' && !currentOrder) {
-      fetchActiveOrderForTable();
+    const orderIdParam = searchParams.get('orderId');
+    if (orderType === 'dine-in' && !currentOrder && orderIdParam) {
+      // If we have an orderId, load that specific order
+      fetchOrderById(orderIdParam);
     }
-  }, [orderType, fetchActiveOrderForTable, currentOrder]);
+    // Note: Removed automatic fetchActiveOrderForTable() when orderId is missing.
+    // This ensures that "New Order" always starts with a fresh cart.
+  }, [orderType, fetchOrderById, currentOrder, searchParams]);
 
   useEffect(() => {
     // Check for pre-selected table from URL parameters
@@ -275,12 +244,30 @@ const POS = () => {
     }
   };
 
-  const addToCart = (item) => {
+  const addToCart = (item, selectedVariant = null) => {
     // Prevent adding out of stock items
     if (item.isAvailable === false) {
       toast.error('This item is currently out of stock');
       return;
     }
+
+    // Check if item has variants and no variant is selected yet
+    if (item.variants && item.variants.length > 0 && !selectedVariant) {
+      setItemForVariant(item);
+      setShowVariantModal(true);
+      return;
+    }
+
+    const cartItem = {
+      ...item,
+      _id: item._id,
+      name: selectedVariant ? `${item.name} (${selectedVariant.name})` : item.name,
+      price: selectedVariant ? Number(selectedVariant.price) : Number(item.price),
+      variant: selectedVariant ? selectedVariant.name : null,
+      notes: selectedVariant ? `Size: ${selectedVariant.name}` : '',
+      quantity: 1,
+      cartId: Date.now()
+    };
     
     // In POS, we want to merge new items with:
     // 1. Items that haven't been sent to the kitchen yet (no orderItemId)
@@ -288,7 +275,8 @@ const POS = () => {
     
     const existingIndex = cart.findIndex(i => 
       i._id === item._id && 
-      (!i.status || i.status === 'queued')
+      (!i.status || i.status === 'queued') &&
+      i.variant === cartItem.variant
     );
     
     if (existingIndex > -1) {
@@ -296,7 +284,16 @@ const POS = () => {
       newCart[existingIndex].quantity += 1;
       setCart(newCart);
     } else {
-      setCart([...cart, { ...item, quantity: 1, cartId: Date.now() }]);
+      setCart([...cart, cartItem]);
+    }
+
+    // Automatically open sidebar when item is added
+    setShowSidebar(true);
+
+    // Close modal if it was open
+    if (showVariantModal) {
+      setShowVariantModal(false);
+      setItemForVariant(null);
     }
   };
 
@@ -304,10 +301,10 @@ const POS = () => {
     const item = cart.find(i => (cartId && i.cartId === cartId) || (!cartId && i._id === itemId));
     
     // Prevent removing or cancelling if item is already served
-    if (item && item.status === 'served') {
-      toast.error('Served items cannot be removed or cancelled');
-      return;
-    }
+    // if (item && item.status === 'served') {
+    //   toast.error('Served items cannot be removed or cancelled');
+    //   return;
+    // }
 
     // If item is already in the order (has an _id from the database), mark it as cancelled instead of removing it
     if (item && item._id && !item.cartId) {
@@ -332,10 +329,10 @@ const POS = () => {
     const item = cart.find(i => (cartId && i.cartId === cartId) || (!cartId && i._id === itemId));
     
     // Prevent updating quantity if item is already served
-    if (item && item.status === 'served') {
-      toast.error('Quantity cannot be updated for served items');
-      return;
-    }
+    // if (item && item.status === 'served') {
+    //   toast.error('Quantity cannot be updated for served items');
+    //   return;
+    // }
 
     setCart(cart.map(i => {
       if ((cartId && i.cartId === cartId) || (!cartId && i._id === itemId)) {
@@ -829,22 +826,27 @@ const POS = () => {
 
   return (
     <Container fluid className="pos-container m-0 p-0">
-      <Row className="g-0 h-100">
+      <Row className="g-0 h-100 position-relative">
+        {/* Mobile Sidebar Overlay */}
+        {showSidebar && (
+          <div 
+            className="pos-sidebar-bs-overlay d-lg-none" 
+            onClick={() => setShowSidebar(false)}
+          ></div>
+        )}
         {/* Main Content: Menu */}
-        <Col lg={8} xl={9} className="p-4 overflow-auto h-100">
-          <div className="d-flex justify-content-between align-items-center mb-4">
-              <div className="d-flex align-items-center">
+        <Col lg={showSidebar ? 8 : 12} xl={showSidebar ? 9 : 12} className="p-4 overflow-auto h-100 transition-all">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 pt-2">
+              <div className="d-flex align-items-center flex-wrap gap-2">
                 <div className="btn-group btn-group-sm rounded-pill overflow-hidden shadow-sm">
                   <Button 
                     variant={orderType === 'dine-in' ? 'primary' : 'outline-primary'}
-                   
                     onClick={() => setOrderType('dine-in')}
                   >
                     🍽️ Dine-in
                   </Button>
                   <Button 
                     variant={orderType === 'takeaway' ? 'primary' : 'outline-primary'}
-                   
                     onClick={() => {
                       setOrderType('takeaway');
                       setSelectedTable(null);
@@ -854,7 +856,6 @@ const POS = () => {
                   </Button>
                   <Button 
                     variant={orderType === 'packing' ? 'primary' : 'outline-primary'}
-                   
                     onClick={() => {
                       setOrderType('packing');
                       setSelectedTable(null);
@@ -863,10 +864,10 @@ const POS = () => {
                     📦 Packing
                   </Button>
                 </div>
-                {currentOrder && <Badge bg="info" className="ms-2 px-3 py-2 rounded-pill">Order #{currentOrder.orderNumber || currentOrder._id.slice(-6)}</Badge>}
+                {currentOrder && <Badge bg="info" className="px-3 py-2 rounded-pill">Order #{currentOrder.orderNumber || currentOrder._id.slice(-6)}</Badge>}
               </div>
-            <div className="d-flex gap-3 align-items-center" style={{ minWidth: '300px' }}>
-              <InputGroup className="shadow-sm rounded-pill overflow-hidden">
+            <div className="d-flex gap-2 align-items-center w-100 w-md-auto" style={{ maxWidth: '500px' }}>
+              <InputGroup className="shadow-sm rounded-pill overflow-hidden flex-grow-1">
                 <InputGroup.Text className="bg-white border-end-0 ps-3">🔍</InputGroup.Text>
                 <Form.Control
                   placeholder="Search dishes..."
@@ -875,16 +876,36 @@ const POS = () => {
                   className="border-start-0 py-2"
                 />
               </InputGroup>
+              {!showSidebar && (
+                <Button 
+                  variant="primary" 
+                  className="rounded-pill px-4 shadow-sm position-relative d-flex align-items-center gap-2"
+                  onClick={() => setShowSidebar(true)}
+                  style={{ overflow: 'visible' }}
+                >
+                  🛒 Cart
+                  {cart.length > 0 && (
+                    <Badge 
+                      bg="danger" 
+                      pill 
+                      className="position-absolute top-0 start-100 translate-middle border border-light shadow-sm"
+                      style={{ fontSize: '0.75rem', zIndex: 10, padding: '0.35em 0.6em' }}
+                    >
+                      {cart.length}
+                    </Badge>
+                  )}
+                </Button>
+              )}
             </div>
           </div>
 
           {/* Categories */}
-          <div className="category-tabs-scroll d-flex gap-2 mb-4 pb-2 overflow-auto">
+          <div className="category-tabs-scroll d-flex gap-2 mb-4 pb-2 overflow-auto scrollbar-hidden">
             {categories.map(cat => (
               <Button
                 key={cat}
                 variant={activeCategory === cat ? 'primary' : 'white'}
-                className={`px-4 py-2 rounded-pill shadow-sm text-nowrap border-0 ${activeCategory === cat ? '' : 'text-muted'}`}
+                className={`px-4 py-2 rounded-pill shadow-sm text-nowrap border-0 flex-shrink-0 ${activeCategory === cat ? '' : 'text-muted'}`}
                 onClick={() => setActiveCategory(cat)}
               >
                 {cat}
@@ -911,7 +932,18 @@ const POS = () => {
                   <Card.Body className="p-3">
                     <div className="d-flex justify-content-between align-items-start gap-2">
                       <Card.Title className={`h6 mb-0 ${item.isAvailable === false ? 'text-muted' : 'text-dark'} fw-semibold`}>{item.name}</Card.Title>
-                      <span className={`fw-bold ${item.isAvailable === false ? 'text-muted' : 'text-primary'}`}>₹{item.price}</span>
+                      <div className="text-end">
+                        {item.variants && item.variants.length > 0 ? (
+                          <>
+                            <span className="text-muted d-block" style={{ fontSize: '0.6rem', lineHeight: 1 }}>from</span>
+                            <span className={`fw-bold ${item.isAvailable === false ? 'text-muted' : 'text-primary'}`}>
+                              ₹{Math.min(...item.variants.map(v => v.price))}
+                            </span>
+                          </>
+                        ) : (
+                          <span className={`fw-bold ${item.isAvailable === false ? 'text-muted' : 'text-primary'}`}>₹{item.price}</span>
+                        )}
+                      </div>
                     </div>
                   </Card.Body>
                 </Card>
@@ -938,282 +970,260 @@ const POS = () => {
         </Col>
 
         {/* Sidebar: Cart & Customer */}
-        <Col lg={4} xl={3} className="pos-sidebar-bs bg-white h-100 d-flex flex-column shadow-lg">
-          <div className="p-4 border-bottom bg-light">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <h5 className="mb-0 fw-bold">Customer Details</h5>
-              <Badge bg={orderType === 'dine-in' ? 'primary' : orderType === 'takeaway' ? 'success' : 'secondary'} className="px-3 py-2 rounded-pill">
-                {orderType === 'dine-in' ? '🍽️ Dine-In' : orderType === 'takeaway' ? '🥡 Takeaway' : '📦 Packing'}
-              </Badge>
+        {showSidebar && (
+          <Col lg={4} xl={3} className="pos-sidebar-bs bg-white h-100 d-flex flex-column shadow-lg">
+            {/* Sidebar Header */}
+            <div className="p-3 border-bottom d-flex justify-content-between align-items-center bg-white sticky-top z-3">
+              <h5 className="mb-0 fw-bold d-flex align-items-center gap-2">
+                <span className="bg-primary text-white p-1 rounded-3" style={{ fontSize: '1rem' }}>🛒</span>
+                Order Details
+              </h5>
+              <Button 
+                variant="light" 
+                className="rounded-circle p-1 border-0" 
+                onClick={() => setShowSidebar(false)}
+                style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}
+              >
+                <span className="fs-5 text-muted">✕</span>
+              </Button>
             </div>
-            
-            {orderType === 'dine-in' && (
-              <Form.Group className="mb-3">
-                <Form.Label className="small fw-bold text-muted text-uppercase">Table Selection</Form.Label>
-                <div className="d-flex gap-2 align-items-center">
+
+            <div className="flex-grow-1 overflow-auto p-3 cart-items-container">
+              {/* Order Type & Table Quick Info */}
+              <div className="d-flex gap-2 mb-4">
+                <Badge bg={orderType === 'dine-in' ? 'primary' : 'success'} className="flex-grow-1 py-2 rounded-3 shadow-sm border-0">
+                  {orderType === 'dine-in' ? '🍽️ Dine-In' : '🥡 Takeaway'}
+                </Badge>
+                {orderType === 'dine-in' && (
                   <Button 
-                    variant="primary" 
+                    variant="outline-info" 
                     size="sm"
+                    className="flex-grow-1 rounded-3 py-2 fw-bold shadow-sm"
                     onClick={() => setShowTableModal(true)}
-                    className="flex-grow-1"
                   >
-                    🪑 {selectedTableState ? 'Change Table' : 'Select Table'}
+                    🪑 {selectedTableState?.label || 'Table?'}
                   </Button>
-                  {selectedTableState && (
-                    <Badge bg="info" className="px-2 py-1">
-                      {selectedTableState.label}
-                    </Badge>
+                )}
+              </div>
+
+              {/* Customer Info Section */}
+              <div className="customer-info-card mb-4">
+                <div className="sidebar-section-title d-flex justify-content-between">
+                  <span>Customer Info</span>
+                  {customerInfo.pendingBalance > 0 && (
+                    <Badge bg="warning" text="dark" className="rounded-pill">Due: ₹{customerInfo.pendingBalance.toFixed(0)}</Badge>
                   )}
                 </div>
-              </Form.Group>
-            )}
-            <Form.Group className="mb-3 position-relative">
-              <Form.Label className="small fw-bold text-muted text-uppercase">Phone Number</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Search or enter phone..."
-                value={customerInfo.phone}
-                onChange={(e) => handleCustomerInputChange('phone', e.target.value)}
-                className="rounded-3 border-0 shadow-sm"
-              />
-              {customerResults.length > 0 && (
-                <ListGroup className="position-absolute w-100 z-3 shadow-lg rounded-3 mt-1 overflow-hidden">
-                  {customerResults.map(c => (
-                    <ListGroup.Item 
-                      key={c._id} 
-                      action 
-                      onClick={() => selectCustomer(c)}
-                      className="border-0 py-2"
-                    >
-                      <div className="fw-bold">{c.name}</div>
-                      <div className="small text-muted">{c.phone}</div>
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              )}
-            </Form.Group>
-            <Form.Group>
-              <Form.Label className="small fw-bold text-muted text-uppercase">Customer Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Guest Customer"
-                value={customerInfo.name}
-                onChange={(e) => handleCustomerInputChange('name', e.target.value)}
-                className="rounded-3 border-0 shadow-sm"
-              />
-            </Form.Group>
-            
-            {customerInfo.pendingBalance > 0 && (
-              <Alert variant="warning" className="p-2 mt-3 mb-0 d-flex justify-content-between align-items-center border-0 shadow-sm">
-                <div className="small">
-                  <strong>Due Balance:</strong> ₹{customerInfo.pendingBalance.toFixed(2)}
+                <Form.Group className="mb-2 position-relative">
+                  <Form.Control
+                    type="text"
+                    placeholder="Phone Number"
+                    value={customerInfo.phone}
+                    onChange={(e) => handleCustomerInputChange('phone', e.target.value)}
+                    className="rounded-3 border shadow-sm bg-tertiary text-primary"
+                    style={{ fontSize: '0.9rem' }}
+                  />
+                  {customerResults.length > 0 && (
+                    <ListGroup className="position-absolute w-100 z-3 shadow-lg rounded-3 mt-1 overflow-hidden border">
+                      {customerResults.map(c => (
+                        <ListGroup.Item 
+                          key={c._id} 
+                          action 
+                          onClick={() => selectCustomer(c)}
+                          className="border-0 py-2 bg-primary text-primary"
+                        >
+                          <div className="fw-bold">{c.name}</div>
+                          <div className="small text-muted">{c.phone}</div>
+                        </ListGroup.Item>
+                      ))}
+                    </ListGroup>
+                  )}
+                </Form.Group>
+                <Form.Group>
+                  <Form.Control
+                    type="text"
+                    placeholder="Customer Name"
+                    value={customerInfo.name}
+                    onChange={(e) => handleCustomerInputChange('name', e.target.value)}
+                    className="rounded-3 border shadow-sm bg-tertiary text-primary"
+                    style={{ fontSize: '0.9rem' }}
+                  />
+                </Form.Group>
+              </div>
+
+              {/* Cart Items List */}
+              <div className="sidebar-section-title">Current Items ({cart.length})</div>
+              {cart.length === 0 ? (
+                <div className="text-center py-5 text-muted opacity-50">
+                  <div className="display-1 mb-3">🧺</div>
+                  <p className="fw-medium">Cart is waiting for treats...</p>
                 </div>
-              </Alert>
-            )}
-          </div>
-
-          <div className="flex-grow-1 overflow-auto p-4 cart-items-list">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-              <h5 className="mb-0 fw-bold">Current Cart</h5>
-              <div className="d-flex align-items-center gap-2">
-                <Badge bg="primary" pill>{cart.length} items</Badge>
-                <Button 
-                  size="sm" 
-                  variant="outline-primary"
-                  onClick={() => setShowCartPopup(true)}
-                  disabled={cart.length === 0}
-                >
-                  🛒 Edit Cart
-                </Button>
-              </div>
-            </div>
-            
-            {cart.length === 0 ? (
-              <div className="text-center py-5 text-muted">
-                <div className="display-4 mb-3">🛒</div>
-                <p>Your cart is empty</p>
-              </div>
-            ) : (
-              <ListGroup variant="flush" className="compact-cart">
-                {cart.map(item => (
-                  <ListGroup.Item key={item.cartId || item._id} className={`px-2 py-2 mb-2 border rounded-3 ${item.status === 'cancelled' ? 'bg-light opacity-75' : ''}`}>
-                    <div className="d-flex justify-content-between align-items-start">
-                      <div className="flex-grow-1">
-                        <div className={`fw-bold small ${item.status === 'cancelled' ? 'text-decoration-line-through text-muted' : 'text-dark'}`} style={{wordBreak: 'break-word', lineHeight: '1.2'}}>{item.name}</div>
-                        {item.status && (
-                          <Badge bg={item.status === 'ready' ? 'success' : item.status === 'cancelled' ? 'danger' : 'info'} size="sm" className="extra-small opacity-75">
-                            {item.status}
-                          </Badge>
-                        )}
-                      </div>
-                      <Button 
-                        variant="link" 
-                        className={`p-0 text-decoration-none ${item.status === 'cancelled' ? 'text-primary' : 'text-danger'}`}
-                        onClick={() => removeFromCart(item.cartId, item._id)}
-                        disabled={item.status === 'served'}
-                        style={{visibility: item.status === 'served' ? 'hidden' : 'visible'}}
-                      >
-                        {item.status === 'cancelled' ? '↺' : '✕'}
-                      </Button>
-                    </div>
-                    <div className="d-flex align-items-center justify-content-between mt-2">
-                      <div className="d-flex align-items-center bg-light rounded-pill px-1">
+              ) : (
+                <div className="compact-cart">
+                  {cart.map(item => (
+                    <div key={item.cartId || item._id} className={`cart-item-bs ${item.status === 'cancelled' ? 'cancelled' : ''}`}>
+                      <div className="d-flex justify-content-between align-items-start gap-2 mb-2">
+                        <div className="flex-grow-1">
+                          <div className={`fw-bold small ${item.status === 'cancelled' ? 'text-decoration-line-through text-muted' : 'text-primary'}`} style={{ lineHeight: '1.2' }}>
+                            {item.name}
+                          </div>
+                          {item.status && (
+                            <Badge bg={item.status === 'ready' ? 'success' : item.status === 'cancelled' ? 'danger' : 'info'} className="mt-1" style={{ fontSize: '0.6rem', padding: '0.25em 0.5em' }}>
+                              {item.status.toUpperCase()}
+                            </Badge>
+                          )}
+                        </div>
                         <Button 
-                          variant="link" 
-                          size="sm" 
-                          className="p-0 px-1 text-decoration-none text-dark"
-                          onClick={() => updateQuantity(item.cartId, item._id, -1)}
-                          disabled={item.status === 'cancelled' || item.status === 'served'}
+                          variant="light" 
+                          className={`p-1 rounded-circle border-0 ${item.status === 'cancelled' ? 'text-primary' : 'text-danger'}`}
+                          onClick={() => removeFromCart(item.cartId, item._id)}
+                          // disabled={item.status === 'served'}
+                          style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         >
-                          −
-                        </Button>
-                        <span className={`px-2 small fw-bold ${item.status === 'cancelled' ? 'text-decoration-line-through text-muted' : ''}`}>{item.quantity}</span>
-                        <Button 
-                          variant="link" 
-                          size="sm" 
-                          className="p-0 px-1 text-decoration-none text-dark"
-                          onClick={() => updateQuantity(item.cartId, item._id, 1)}
-                          disabled={item.status === 'cancelled' || item.status === 'served'}
-                        >
-                          +
+                          {item.status === 'cancelled' ? '↺' : '✕'}
                         </Button>
                       </div>
-                      <div className={`fw-bold small text-nowrap ${item.status === 'cancelled' ? 'text-decoration-line-through text-muted' : ''}`}>₹{(item.price * item.quantity).toFixed(2)}</div>
+                      <div className="d-flex align-items-center justify-content-between">
+                        <div className="quantity-control-bs">
+                          <button 
+                            className="qty-btn-bs"
+                            onClick={() => updateQuantity(item.cartId, item._id, -1)}
+                            disabled={item.status === 'cancelled'}
+                          >
+                            −
+                          </button>
+                          <span className="fw-bold small" style={{ minWidth: '20px', textAlign: 'center' }}>{item.quantity}</span>
+                          <button 
+                            className="qty-btn-bs"
+                            onClick={() => updateQuantity(item.cartId, item._id, 1)}
+                            disabled={item.status === 'cancelled'}
+                          >
+                            +
+                          </button>
+                        </div>
+                        <div className={`fw-bold text-primary ${item.status === 'cancelled' ? 'text-decoration-line-through text-muted' : ''}`}>
+                          ₹{(item.price * item.quantity).toFixed(2)}
+                        </div>
+                      </div>
                     </div>
-                  </ListGroup.Item>
-                ))}
-              </ListGroup>
-            )}
-          </div>
-          
-          {/* Frequently Bought Together */}
-          {/* {cart.length > 0 && getFrequentlyBoughtTogether().length > 0 && (
-            <div className="p-3 bg-light border-top">
-              <h6 className="text-muted mb-3 fw-bold">🔥 Frequently Bought Together</h6>
-              <div className="d-flex gap-2 flex-wrap">
-                { getFrequentlyBoughtTogether().map((item, index) => (
-                  <div key={index} className="bg-white p-2 rounded border shadow-sm" style={{minWidth: '120px', cursor: 'pointer'}} onClick={() => addToCart(item)}>
-                    <div className="text-center">
-                      <div className="fw-bold small text-truncate">{item.name}</div>
-                      <div className="text-primary small">₹{item.price}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
-          )} */}
 
-          <div className="p-4 bg-light border-top mt-auto">
-            <div className="mb-3">
-              <Row className="g-2 mb-2">
-                <Col xs={6}>
-                  <Form.Group>
-                    <Form.Label className="extra-small fw-bold text-muted text-uppercase mb-1">Discount (%)</Form.Label>
+            {/* Sidebar Footer */}
+            <div className="sidebar-footer-bs">
+              {/* Discount & Tax/SC Controls Row */}
+              <div className="footer-controls-row shadow-sm mb-2">
+                <div className="d-flex align-items-center gap-2">
+                  <div className="d-flex align-items-center bg-tertiary rounded-2 px-2 border" style={{ width: '80px' }}>
+                    <span className="text-muted small" style={{ fontSize: '0.7rem' }}>%</span>
                     <Form.Control 
                       type="number" 
                       size="sm" 
                       value={discountPercent} 
                       onChange={(e) => setDiscountPercent(Math.max(0, Math.min(100, Number(e.target.value))))}
                       placeholder="0"
-                      className="rounded-3"
+                      className="border-0 shadow-none bg-transparent py-0 fw-bold text-primary text-end px-1"
+                      style={{ fontSize: '0.8rem', height: '24px' }}
                     />
-                  </Form.Group>
-                </Col>
-                <Col xs={6} className="d-flex align-items-end gap-2">
-                  <Form.Check 
-                    type="switch"
-                    id="tax-switch"
-                    label={<span className="extra-small fw-bold text-muted text-uppercase">Tax</span>}
-                    checked={enableTax}
-                    onChange={(e) => setEnableTax(e.target.checked)}
-                    className="mb-1"
-                  />
-                  <Form.Check 
-                    type="switch"
-                    id="sc-switch"
-                    label={<span className="extra-small fw-bold text-muted text-uppercase">SC</span>}
-                    checked={enableServiceCharge}
-                    onChange={(e) => setEnableServiceCharge(e.target.checked)}
-                    className="mb-1"
-                  />
-                </Col>
-              </Row>
-            </div>
+                  </div>
+                  <div className="vr mx-1 opacity-10"></div>
+                  <div className="d-flex gap-3 align-items-center flex-grow-1 justify-content-end">
+                    <Form.Check 
+                      type="switch"
+                      id="tax-switch-sb"
+                      label={<span className="extra-small fw-bold text-muted" style={{ fontSize: '0.65rem' }}>TAX</span>}
+                      checked={enableTax}
+                      onChange={(e) => setEnableTax(e.target.checked)}
+                      className="m-0 compact-switch"
+                    />
+                    <Form.Check 
+                      type="switch"
+                      id="sc-switch-sb"
+                      label={<span className="extra-small fw-bold text-muted" style={{ fontSize: '0.65rem' }}>SC</span>}
+                      checked={enableServiceCharge}
+                      onChange={(e) => setEnableServiceCharge(e.target.checked)}
+                      className="m-0 compact-switch"
+                    />
+                  </div>
+                </div>
+              </div>
 
-            <div className="d-flex justify-content-between mb-1 text-muted small">
-              <span>Subtotal</span>
-              <span>₹{calculateTotal().toFixed(2)}</span>
-            </div>
-            {discountPercent > 0 && (
-              <div className="d-flex justify-content-between mb-1 text-danger small">
-                <span>Discount ({discountPercent}%)</span>
-                <span>-₹{calculateDiscount().toFixed(2)}</span>
+              <div className="price-breakdown px-1">
+                <div className="d-flex justify-content-between text-muted small mb-1">
+                  <span>Subtotal</span>
+                  <span className="fw-medium">₹{calculateTotal().toFixed(2)}</span>
+                </div>
+                {discountPercent > 0 && (
+                  <div className="d-flex justify-content-between text-danger small mb-1">
+                    <span>Discount ({discountPercent}%)</span>
+                    <span>-₹{calculateDiscount().toFixed(2)}</span>
+                  </div>
+                )}
+                {enableTax && (
+                  <div className="d-flex justify-content-between text-muted small mb-1">
+                    <span>GST ({user?.taxRate || outletInfo.settings.taxRate}%)</span>
+                    <span>₹{calculateTax().toFixed(2)}</span>
+                  </div>
+                )}
+                {enableServiceCharge && (
+                  <div className="d-flex justify-content-between text-muted small mb-1">
+                    <span>Service Charge ({user?.serviceChargeRate || outletInfo.settings.serviceCharge || 0}%)</span>
+                    <span>₹{calculateServiceCharge().toFixed(2)}</span>
+                  </div>
+                )}
+                {existingPaidAmount > 0 && (
+                  <div className="d-flex justify-content-between text-muted small mb-1">
+                    <span>Paid So Far</span>
+                    <span>-₹{existingPaidAmount.toFixed(2)}</span>
+                  </div>
+                )}
               </div>
-            )}
-            {enableTax && (
-              <div className="d-flex justify-content-between mb-1 text-muted small">
-                <span>Tax ({user?.taxRate || outletInfo.settings.taxRate}%)</span>
-                <span>₹{calculateTax().toFixed(2)}</span>
+
+              <div className="total-row-bs d-flex justify-content-between align-items-center mb-3">
+                <span className="fw-bold text-primary fs-5">{hasExistingPayment ? 'Due' : 'Total'}</span>
+                <span className="total-amount-bs">₹{effectiveTotal.toFixed(2)}</span>
               </div>
-            )}
-            {enableServiceCharge && (
-              <div className="d-flex justify-content-between mb-1 text-muted small">
-                <span>Service Charge ({user?.serviceChargeRate || outletInfo.settings.serviceCharge || 0}%)</span>
-                <span>₹{calculateServiceCharge().toFixed(2)}</span>
-              </div>
-            )}
-            {existingPaidAmount > 0 && (
-              <div className="d-flex justify-content-between mb-1 text-muted small">
-                <span>Paid so far</span>
-                <span>-₹{existingPaidAmount.toFixed(2)}</span>
-              </div>
-            )}
-          
-            <div className="d-flex justify-content-between mb-4 pt-2 border-top">
-              <h4 className="fw-bold mb-0">{hasExistingPayment ? 'Due' : 'Total'}</h4>
-              <h4 className="fw-bold mb-0 text-primary">₹{effectiveTotal.toFixed(2)}</h4>
-            </div>
-            <div className="d-grid gap-2">
+
               <Row className="g-2">
                 <Col xs={6}>
                   <Button 
                     variant="outline-primary" 
-                    className="w-100 py-2 fw-bold"
+                    className="action-btn-bs w-100 py-2 d-flex flex-column align-items-center"
                     disabled={cart.length === 0}
                     onClick={() => {
-                      console.log("orderType",orderType, selectedTable)
                       if (orderType === 'dine-in' && (!selectedTable?.id || selectedTable?.id === 'null')) {
-                        toast.error('You need to select a table in order to give dine-in order');
+                        toast.error('Please select a table');
                         return;
                       }
-                      setShowCartPopup(true);
+                      setShowBillModal(true);
                     }}
                   >
-                    📄 Bill
+                    <span className="fs-5 mb-0">📄</span>
+                    <span style={{ fontSize: '0.7rem' }}>INVOICE</span>
                   </Button>
                 </Col>
                 <Col xs={6}>
-                  {['superadmin', 'owner', 'manager', 'cashier', 'receptionist', 'waiter'].includes(user?.role) && (
-                    <Button 
-                      variant="primary" 
-                      className="w-100 py-2 fw-bold shadow-sm"
-                      disabled={cart.length === 0}
-                      onClick={handleCheckout}
-                    >
-                      🔥 {currentOrder ? 'Update' : 'Place'}
-                    </Button>
-                  )}
+                  <Button 
+                    variant="primary" 
+                    className="action-btn-bs w-100 py-2 d-flex flex-column align-items-center"
+                    disabled={cart.length === 0}
+                    onClick={handleCheckout}
+                  >
+                    <span className="fs-5 mb-0">🔥</span>
+                    <span style={{ fontSize: '0.7rem' }}>{currentOrder ? 'UPDATE' : 'PLACE'}</span>
+                  </Button>
                 </Col>
               </Row>
             </div>
-          </div>
-        </Col>
+          </Col>
+        )}
       </Row>
 
       {/* Bill Modal */}
       <Modal show={showBillModal} onHide={() => {
         setShowBillModal(false);
-        setShowCartPopup(true);
       }} size="md" centered>
         <Modal.Header className="">
           <Button 
@@ -1222,10 +1232,9 @@ const POS = () => {
             className="me-2"
             onClick={() => {
               setShowBillModal(false);
-              setShowCartPopup(true);
             }}
           >
-            ← Back to Cart
+            ← Back
           </Button>
           <Modal.Title className="h5">Invoice</Modal.Title>
         </Modal.Header>
@@ -1319,10 +1328,10 @@ const POS = () => {
 
       {/* Settlement Modal */}
       <Modal show={showSettleModal} onHide={() => setShowSettleModal(false)} centered size="lg">
-        <Modal.Body className="p-0 bg-dark rounded overflow-hidden">
+        <Modal.Body className="p-0 bg-primary rounded overflow-hidden">
           <div className="d-flex flex-column flex-md-row">
             {/* Left Side: The "Physical" Invoice */}
-            <div className="p-4 d-flex align-items-center justify-content-center bg-secondary" style={{ minWidth: "400px" }}>
+            <div className="p-4 d-flex align-items-center justify-content-center bg-tertiary" style={{ minWidth: "400px" }}>
               <div className="invoice-paper bg-white shadow-lg p-4" style={{ 
                 width: "320px",
                 fontFamily: "'Courier New', Courier, monospace",
@@ -1453,9 +1462,9 @@ const POS = () => {
             </div>
 
             {/* Right Side: Payment Actions */}
-            <div className="p-4 flex-grow-1 bg-white d-flex flex-column">
+            <div className="p-4 flex-grow-1 bg-primary d-flex flex-column">
               <div className="mb-4 text-center text-md-start border-bottom">
-                <h4 className="fw-bold text-dark mb-1">Settle Payment</h4>
+                <h4 className="fw-bold text-primary mb-1">Settle Payment</h4>
                 <p className="text-muted small">Choose payment method and confirm amount</p>
               </div>
               
@@ -1470,7 +1479,7 @@ const POS = () => {
                   ].map(mode => (
                     <div className="col-6" key={mode.id}>
                       <button 
-                        className={`btn w-100 py-3 d-flex flex-column align-items-center justify-content-center border-2 ${paymentMode === mode.id ? 'btn-primary border-primary' : 'btn-outline-light text-dark border-light'}`}
+                        className={`btn w-100 py-3 d-flex flex-column align-items-center justify-content-center border-2 ${paymentMode === mode.id ? 'btn-primary border-primary' : 'btn-outline-tertiary text-primary border-tertiary'}`}
                         onClick={() => {
                           setPaymentMode(mode.id);
                           if (mode.id === 'due') {
@@ -1489,11 +1498,11 @@ const POS = () => {
                 </div>
 
                 <label className="small fw-bold text-uppercase text-muted mb-2 d-block">Amount Collected</label>
-                <div className="input-group input-group-lg mb-4 shadow-sm">
-                  <span className="input-group-text bg-white border-end-0 text-primary fw-bold">₹</span>
+                <div className="input-group input-group-lg mb-4 shadow-sm border rounded">
+                  <span className="input-group-text bg-tertiary border-0 text-primary fw-bold">₹</span>
                   <input 
                     type="number" 
-                    className="form-control border-start-0 ps-0 fw-bold text-primary"
+                    className="form-control border-0 bg-tertiary ps-0 fw-bold text-primary"
                     value={paidAmount} 
                     onChange={(e) => {
                       const val = Number(e.target.value);
@@ -1502,7 +1511,7 @@ const POS = () => {
                     }}
                     autoFocus
                   />
-                  <button className="btn btn-light border" onClick={() => setPaidAmount(effectiveTotal)}>Full</button>
+                  <button className="btn btn-tertiary border-0 text-primary" onClick={() => setPaidAmount(effectiveTotal)}>Full</button>
                 </div>
 
                 {paymentMode === 'due' ? (
@@ -1575,20 +1584,20 @@ const POS = () => {
       {/* KOT Modal */}
       <Modal show={showKOTModal} onHide={() => setShowKOTModal(false)} centered size="sm">
         <Modal.Body className="p-0">
-          <div className="kot-preview p-4 bg-white text-dark shadow-sm mx-auto" style={{ 
+          <div className="kot-preview p-4 bg-primary text-primary shadow-sm mx-auto" style={{ 
             fontFamily: "'Courier New', Courier, monospace",
             width: "100%",
             maxWidth: "350px",
-            border: "1px solid #eee"
+            border: "1px solid var(--border-light)"
           }}>
-            <div className="text-center border-bottom border-dark border-2 pb-2 mb-3">
+            <div className="text-center border-bottom border-primary border-2 pb-2 mb-3">
               <h4 className="fw-bold mb-0">KOT (NEW)</h4>
-              <div className="small">{new Date().toLocaleDateString('en-GB')} {new Date().toLocaleTimeString()}</div>
+              <div className="small text-muted">{new Date().toLocaleDateString('en-GB')} {new Date().toLocaleTimeString()}</div>
             </div>
 
             <div className="mb-3">
               <div className="d-flex justify-content-between align-items-center mb-1">
-                <span className="small">TYPE:</span>
+                <span className="small text-muted">TYPE:</span>
                 <span className="fw-bold fs-4 text-uppercase">
                   {orderType === 'dine-in' 
                     ? `DINE-IN (${currentOrder?.tableLabel || selectedTableState?.label || 'N/A'})`
@@ -1600,13 +1609,13 @@ const POS = () => {
                 </span>
               </div>
               <div className="d-flex justify-content-between small">
-                <span>ORDER:</span>
+                <span className="text-muted">ORDER:</span>
                 <span className="fw-bold">#{currentOrder?._id.slice(-6).toUpperCase()}</span>
               </div>
             </div>
 
-            <div className="border-top border-bottom border-dark py-2 mb-3">
-              <div className="d-flex fw-bold small border-bottom border-dark pb-1 mb-2">
+            <div className="border-top border-bottom border-primary py-2 mb-3">
+              <div className="d-flex fw-bold small border-bottom border-primary pb-1 mb-2">
                 <span style={{ width: "40px" }}>QTY</span>
                 <span className="flex-grow-1">ITEM</span>
               </div>
@@ -1640,43 +1649,12 @@ const POS = () => {
             </div>
 
             <div className="d-flex gap-2 no-print">
-              <Button variant="outline-dark" className="flex-grow-1" onClick={() => setShowKOTModal(false)}>CLOSE</Button>
-              <Button variant="dark" className="flex-grow-1 fw-bold" onClick={handlePrint}>PRINT KOT</Button>
+              <Button variant="outline-primary" className="flex-grow-1" onClick={() => setShowKOTModal(false)}>CLOSE</Button>
+              <Button variant="primary" className="flex-grow-1 fw-bold" onClick={handlePrint}>PRINT KOT</Button>
             </div>
           </div>
         </Modal.Body>
       </Modal>
-
-      {/* Cart Popup Modal */}
-      <CartPopup
-        show={showCartPopup}
-        onHide={() => setShowCartPopup(false)}
-        cart={cart}
-        onUpdateQuantity={updateQuantity}
-        onRemoveItem={removeFromCart}
-        onUpdateNotes={(itemId, notes) => {
-          setCart(cart.map(item => 
-            (item.cartId === itemId || item._id === itemId) 
-              ? { ...item, notes }
-              : item
-          ));
-        }}
-        onCheckout={handleCheckout}
-        onShowBillModal={() => setShowBillModal(true)}
-        calculateTotal={calculateTotal}
-        calculateDiscount={calculateDiscount}
-        calculateTax={calculateTax}
-        calculateServiceCharge={calculateServiceCharge}
-        calculateGrandTotal={calculateGrandTotal}
-        discountPercent={discountPercent}
-        setDiscountPercent={setDiscountPercent}
-        enableTax={enableTax}
-        setEnableTax={setEnableTax}
-        enableServiceCharge={enableServiceCharge}
-        setEnableServiceCharge={setEnableServiceCharge}
-        outletInfo={outletInfo}
-        customerInfo={customerInfo}
-      />
 
       {/* Table Selection Modal */}
       <TableSelectionModal
@@ -1685,6 +1663,31 @@ const POS = () => {
         onSelectTable={setSelectedTableState}
         selectedTable={selectedTableState}
       />
+
+      {/* Variant Selection Modal */}
+      <Modal show={showVariantModal} onHide={() => { setShowVariantModal(false); setItemForVariant(null); }} centered size="sm">
+        <Modal.Header closeButton className="border-0 pb-0">
+          <Modal.Title className="h5 fw-bold">Select Size</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="pt-2">
+          {itemForVariant && (
+            <div className="d-grid gap-2">
+              <div className="mb-2 text-muted small">{itemForVariant.name}</div>
+              {itemForVariant.variants.map((variant, idx) => (
+                <Button 
+                  key={idx} 
+                  variant="outline-primary" 
+                  className="py-3 d-flex justify-content-between align-items-center border"
+                  onClick={() => addToCart(itemForVariant, variant)}
+                >
+                  <span className="fw-bold">{variant.name}</span>
+                  <span>₹{variant.price}</span>
+                </Button>
+              ))}
+            </div>
+          )}
+        </Modal.Body>
+      </Modal>
     </Container>
   );
 };

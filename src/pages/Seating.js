@@ -71,6 +71,11 @@ const Seating = () => {
         toast.success(`Table ${selectedTable.label} reserved!`);
         fetchData();
       } else if (action === 'clear') {
+        if (selectedTable.status === 'occupied' && selectedTable.currentOrder) {
+          toast.error(`Table ${selectedTable.label} has an active order. Complete or cancel it first.`);
+          setSelectedTable(null);
+          return;
+        }
         await axios.put(`${config.ENDPOINTS.TABLES}/${selectedTable.id}`, { status: 'available' });
         toast.success(`Table ${selectedTable.label} cleared`);
         fetchData();

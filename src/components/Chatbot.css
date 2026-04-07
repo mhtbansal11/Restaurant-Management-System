@@ -2,7 +2,7 @@
   position: fixed;
   bottom: 30px;
   right: 30px;
-  z-index: 1060;
+  z-index: 1038;
 }
 
 .chatbot-window-bs {
@@ -13,7 +13,7 @@
   right: 30px;
   display: flex;
   flex-direction: column;
-  z-index: 1061;
+  z-index: 1039;
   animation: chatbotSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: bottom right;
 }

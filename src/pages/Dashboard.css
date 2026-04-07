@@ -1,6 +1,6 @@
 /* Dashboard Main Styles */
 .dashboard {
-  max-width: 1400px;
+  /* max-width: 1400px; */
   margin: 0 auto;
   min-height: 100vh;
   overflow-x: hidden;
@@ -11,32 +11,31 @@
   justify-content: space-between;
   align-items: center;
   padding:0 0 1rem 0;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-light);
   background: transparent;
 }
 
 .dashboard-header h1 {
-  color: #1e293b;
+  color: var(--text-primary);
   font-weight: 800;
 }
 
 .dashboard-header p {
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 /* Metric Cards */
 .metric-card {
-  /* border: none; Removed to use global card border */
   border-radius: var(--radius-xl);
-  /* box-shadow: 0 2px 8px rgba(0,0,0,0.08); Use global shadow */
   transition: all 0.3s ease;
   height: 100%;
   position: relative;
-  background: white;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-light);
 }
 
 .metric-card h6 {
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 600;
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
@@ -47,14 +46,14 @@
   font-weight: 800;
   line-height: 1.2;
   margin-bottom: 0.5rem;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .metric-subtext {
   font-size: 0.875rem;
   opacity: 0.9;
   font-weight: 500;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .metric-card:hover {
@@ -128,7 +127,8 @@
 .table-card-compact {
   border-radius: 12px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border-light);
+  background: var(--bg-primary);
   position: relative;
   overflow: hidden;
   min-height: 140px;
@@ -136,8 +136,8 @@
 
 .table-card-compact:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-  border-color: #cbd5e1;
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-medium);
 }
 
 .table-card-compact .card-body {
@@ -735,7 +735,7 @@
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  z-index: 9999;
+  z-index: 1037;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
