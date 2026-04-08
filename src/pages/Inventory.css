@@ -1,0 +1,82 @@
+.inventory-page-premium {
+  padding-bottom: 2rem;
+}
+
+.ai-reorder-section {
+  position: relative;
+}
+
+.ai-sparkle {
+  font-size: 1.5rem;
+  animation: sparkle-animation 2s infinite;
+}
+
+@keyframes sparkle-animation {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; text-shadow: 0 0 10px rgba(99, 102, 241, 0.5); }
+  100% { transform: scale(1); opacity: 0.8; }
+}
+
+.ai-insight-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: var(--transition-normal);
+}
+
+.ai-insight-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.elevation-high { border-left: 5px solid var(--danger-color) !important; background: rgba(239, 68, 68, 0.05); }
+.elevation-medium { border-left: 5px solid var(--warning-color) !important; background: rgba(245, 158, 11, 0.05); }
+.elevation-low { border-left: 5px solid var(--info-color) !important; background: rgba(6, 182, 212, 0.05); }
+
+.ai-insight-content {
+  flex-grow: 1;
+  margin-right: 1rem;
+}
+
+.search-box-premium {
+  max-width: 300px;
+}
+
+[data-theme='dark'] .bg-glass-inner {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme='light'] .bg-glass-inner {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.table-responsive {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.table thead th {
+  background: var(--accent-glow) !important;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border-bottom: 2px solid var(--border-subtle) !important;
+}
+
+.table-warning {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+
+[data-theme='dark'] .table-warning {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+  color: #fbbf24 !important;
+}

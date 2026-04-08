@@ -18,7 +18,7 @@ import KDS from './pages/KDS';
 import Forecasting from './pages/Forecasting';
 import Payments from './pages/Payments';
 import Customers from './pages/Customers';
-import CartBilling from './pages/CartBilling';
+
 import Expenses from './pages/Expenses';
 import ProfitLoss from './pages/ProfitLoss';
 import Layout from './components/Layout';
@@ -27,10 +27,13 @@ import './App.css';
 import OutletSettings from './pages/OutletSettings';
 import { ROLES } from './constants/roles';
 
+import { ThemeProvider } from './context/ThemeContext';
+
 function App() {
   return (
     <AuthProvider>
-      <Toaster 
+      <ThemeProvider>
+        <Toaster 
         position="top-right"
         toastOptions={{
           duration: 4000,
@@ -84,11 +87,7 @@ function App() {
                       </PrivateRoute>
                     } />
                     
-                    <Route path="/cart-billing" element={
-                      <PrivateRoute allowedRoles={ROLES.POS}>
-                        <CartBilling />
-                      </PrivateRoute>
-                    } />
+
                     
                     <Route path="/inventory" element={
                       <PrivateRoute allowedRoles={ROLES.KITCHEN}>
@@ -159,6 +158,7 @@ function App() {
           />
         </Routes>
       </Router>
+      </ThemeProvider>
     </AuthProvider>
   );
 }

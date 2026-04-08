@@ -1,0 +1,33 @@
+/* Seating Page custom overrides for Bootstrap */
+
+.seating-page-bs {
+  min-height: 100%;
+}
+
+.floor-plan-card-bs {
+  min-height: clamp(28rem, 65vh, 42rem);
+  background-color: #f8fafc;
+}
+
+.floor-plan-container {
+  height: min(70vh, 700px);
+  min-height: 28rem;
+  width: 100%;
+}
+
+.action-btn-bs {
+  transition: all 0.2s;
+  border-width: 2px;
+}
+
+.action-btn-bs:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .floor-plan-container {
+    height: min(60vh, 500px);
+    min-height: 22rem;
+  }
+}

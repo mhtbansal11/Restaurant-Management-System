@@ -1,20 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Nav, Button, Badge } from 'react-bootstrap';
+import { Nav } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 import { ROLES } from '../constants/roles';
 import './Sidebar.css';
 
 const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+  const [hoveredLink, setHoveredLink] = useState(null);
 
   const isActive = (path) => location.pathname === path;
 
   const navLinks = [
     { path: '/', label: 'Dashboard', icon: '📊', roles: ROLES.ALL },
     { path: '/pos', label: 'POS', icon: '🛒', roles: ROLES.POS },
-    { path: '/cart-billing', label: 'Cart & Billing', icon: '💰', roles: ROLES.POS },
+
     { path: '/orders', label: 'Orders', icon: '📋', roles: ROLES.ALL },
     { path: '/seating', label: 'Floor Plan', icon: '🪑', roles: ROLES.FRONT_DESK },
     { path: '/kds', label: 'Kitchen (KDS)', icon: '🍳', roles: ROLES.KITCHEN },
@@ -34,6 +35,21 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
     !link.roles || link.roles.includes(user?.role)
   );
 
+  const showHoverLabel = (event, label) => {
+    if (!isCollapsed) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    setHoveredLink({
+      label,
+      top: rect.top + rect.height / 2,
+      left: rect.right + 12
+    });
+  };
+
+  const hideHoverLabel = () => {
+    setHoveredLink(null);
+  };
+
   return (
     <>
       {/* Overlay for mobile */}
@@ -44,74 +60,57 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
         />
       )}
 
-      <aside className={`sidebar-bs ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''} shadow-sm border-end`}>
-        <div className="sidebar-header-bs p-4 border-bottom d-flex align-items-center justify-content-between">
-          <div className="sidebar-brand-bs d-flex gap-2 align-items-center justify-content-start collapsed-hidden">
-            <div>
-              <h2 className="h4 fw-bold text-primary mb-0 text-truncate" style={{ maxWidth: '180px' }}>
-                {user?.restaurantName || 'ATC Restaurant'}
-              </h2>
-              <Badge bg="light" text="dark" className="mt-1 border text-uppercase small px-2 py-1">
-                {user?.role?.replace('_', ' ')}
-              </Badge>
-            </div>
-          </div>
-          <div className="w-100 text-center collapsed-visible d-none">
-            <span className="fw-bold text-primary h5 mb-0">ATC</span>
+      <aside className={`sidebar-premium ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''}`}>
+        <div className="sidebar-header-premium p-4">
+          <div className="sidebar-brand-premium d-flex gap-3 align-items-center">
+            <div className="brand-icon-premium shadow-sm">🍽️</div>
+            {!isCollapsed && (
+              <div className="brand-text-container">
+                <h2 className="brand-name-premium h5 fw-bold text-gradient mb-0 text-truncate">
+                  {user?.restaurantName || 'ATC Restaurant'}
+                </h2>
+                <div className="brand-role-premium extra-small text-uppercase opacity-75">
+                  {user?.role?.replace('_', ' ')}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="sidebar-nav-bs flex-column px-3 mt-2">
+        <div className="sidebar-nav-premium px-3 custom-scrollbar">
           {filteredLinks.map(link => (
             <Nav.Link 
               key={link.path} 
               as={Link} 
               to={link.path} 
-              className={`sidebar-link-bs d-flex align-items-center rounded-3 mb-1 p-2 ${isActive(link.path) ? 'active' : ''} ${isCollapsed ? 'justify-content-center' : ''}`}
+              className={`sidebar-link-premium d-flex align-items-center rounded-lg mb-2 p-2 ${isActive(link.path) ? 'active' : ''}`}
               onClick={() => isOpen && toggleSidebar()}
+              onMouseEnter={(event) => showHoverLabel(event, link.label)}
+              onMouseLeave={hideHoverLabel}
+              onFocus={(event) => showHoverLabel(event, link.label)}
+              onBlur={hideHoverLabel}
               title={isCollapsed ? link.label : ''}
             >
-              <span className={`sidebar-icon-bs fs-5 ${isCollapsed ? 'me-0' : 'me-3'}`}>{link.icon}</span>
-              <span className="sidebar-label-bs fw-medium collapsed-hidden">{link.label}</span>
+              <span className={`link-icon-premium fs-5 ${isCollapsed ? '' : 'me-3'}`}>{link.icon}</span>
+              {!isCollapsed && <span className="link-label-premium fw-semibold">{link.label}</span>}
+              {isActive(link.path) && !isCollapsed && <div className="active-indicator-premium ms-auto"></div>}
             </Nav.Link>
           ))}
         </div>
 
-        <div className="sidebar-footer-bs mt-auto p-4 border-top">
-          <div className="collapsed-hidden">
-            <div className="sidebar-user-bs d-flex align-items-center mb-3">
-              <div className="user-avatar-bs bg-primary text-white rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold" style={{ width: '40px', height: '40px', minWidth: '40px' }}>
-                {user?.name?.charAt(0)}
-              </div>
-              <div className="sidebar-user-info-bs overflow-hidden">
-                <div className="sidebar-user-name-bs fw-bold text-truncate">{user?.name}</div>
-                <div className="sidebar-user-email-bs small text-muted text-truncate">{user?.email}</div>
-              </div>
-            </div>
-            <Button 
-              variant="outline-danger" 
-              onClick={logout} 
-              className="w-100 d-flex align-items-center justify-content-center gap-2 border-0 bg-light-danger"
-            >
-              <span>⏻</span> Logout
-            </Button>
-          </div>
-          
-          <div className="d-flex flex-column align-items-center gap-3 collapsed-visible d-none">
-            <div className="user-avatar-bs bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style={{ width: '40px', height: '40px' }} title={user?.name}>
-              {user?.name?.charAt(0)}
-            </div>
-            <Button 
-              variant="outline-danger" 
-              onClick={logout} 
-              className="w-100 d-flex align-items-center justify-content-center border-0 bg-light-danger p-2"
-              title="Logout"
-            >
-              <span>⏻</span>
-            </Button>
-          </div>
-        </div>
+
       </aside>
+      {isCollapsed && hoveredLink && (
+        <div
+          className="sidebar-hover-tooltip"
+          style={{
+            top: `${hoveredLink.top}px`,
+            left: `${hoveredLink.left}px`
+          }}
+        >
+          {hoveredLink.label}
+        </div>
+      )}
     </>
   );
 };

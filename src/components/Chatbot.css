@@ -6,8 +6,8 @@
 }
 
 .chatbot-window-bs {
-  width: 380px;
-  height: 550px;
+  width: min(380px, calc(100vw - 40px));
+  height: min(550px, calc(100vh - 140px));
   position: fixed;
   bottom: 100px;
   right: 30px;
@@ -92,14 +92,14 @@
 
 @media (max-width: 575.98px) {
   .chatbot-window-bs {
-    width: calc(100vw - 40px);
+    width: calc(100vw - 24px);
     right: 20px;
     bottom: 90px;
-    height: calc(100vh - 120px);
+    height: min(560px, calc(100vh - 120px));
   }
   
   .chatbot-wrapper-bs {
-    bottom: 20px;
-    right: 20px;
+    bottom: 16px;
+    right: 16px;
   }
 }

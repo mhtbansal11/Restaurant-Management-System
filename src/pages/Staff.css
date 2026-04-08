@@ -1,0 +1,60 @@
+.staff-page-premium {
+  padding-bottom: 2rem;
+}
+
+.staff-card-premium {
+  transition: var(--transition-normal);
+  border-radius: var(--radius-lg);
+}
+
+.staff-card-premium:hover {
+  transform: translateY(-8px);
+  border-color: var(--primary) !important;
+}
+
+.staff-avatar-premium {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--accent-glow);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+  border: 1px solid var(--border-subtle);
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.status-dot-premium {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid var(--white);
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.badge-pill-premium {
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(var(--primary-rgb, 99, 102, 241), 0.05);
+  color: var(--primary);
+  border: 1px solid rgba(var(--primary-rgb, 99, 102, 241), 0.2);
+}
+
+.role-owner { border-color: #f59e0b; color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
+.role-manager { border-color: #6366f1; color: #6366f1; background: rgba(99, 102, 241, 0.05); }
+.role-cashier { border-color: #10b981; color: #10b981; background: rgba(16, 185, 129, 0.05); }
+
+.search-box-premium {
+  max-width: 300px;
+}
