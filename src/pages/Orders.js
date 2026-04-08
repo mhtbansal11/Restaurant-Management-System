@@ -318,9 +318,10 @@ const Orders = () => {
   return (
     <div className="orders-page-premium">
       {/* Header Section */}
-      <div className="orders-hero d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3 p-3 rounded-4">
+      <div className="orders-hero page-header-glass d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3 p-3 rounded-4">
         <div className="flex-grow-1">
-          <h1 className="h4 mb-2 fw-bold text-gradient">Live Orders</h1>
+          <h1 className="h4 mb-1 fw-bold text-gradient page-title">Live Orders</h1>
+          <p className="mb-2 page-subtitle">Track active service, preparation, and fulfillment in real time.</p>
           <div className="d-flex flex-wrap gap-2 align-items-center">
             <span className="badge-pill-premium badge-active">
               {activeOrdersCount} Active
@@ -333,6 +334,15 @@ const Orders = () => {
             </span>
             <span className="badge-pill-premium badge-ready">
               {readyOrdersCount} Ready
+            </span>
+            <span className="badge-pill-premium badge-served">
+              {servedOrdersCount} Served
+            </span>
+            <span className="badge-pill-premium badge-completed">
+              {completedOrdersCount} Completed
+            </span>
+            <span className="badge-pill-premium badge-cancelled">
+              {cancelledOrdersCount} Cancelled
             </span>
           </div>
         </div>
@@ -351,7 +361,7 @@ const Orders = () => {
       </div>
 
       {/* Filters & Search Section */}
-      <div className="glass-card p-3 rounded-4 mb-3">
+      <div className="glass-card p-3 rounded-4 mb-3 orders-filter-panel">
         <Row className="align-items-center g-3">
           <Col md={4}>
             <div className="position-relative">
@@ -360,7 +370,7 @@ const Orders = () => {
                 placeholder="Search by ID, Customer, Phone, Menu or Table..."
                 value={orderSearch}
                 onChange={(e) => setOrderSearch(e.target.value)}
-                className="border-0 bg-light rounded-pill px-4 py-2 shadow-none w-100"
+                className="border-0 bg-light rounded-pill px-4 py-2 shadow-none w-100 orders-search-input"
                 size="sm"
               />
               {orderSearch && (
@@ -374,24 +384,24 @@ const Orders = () => {
             </div>
           </Col>
           <Col md={8}>
-            <div className="d-flex flex-wrap gap-2 justify-content-md-end">
+            <div className="d-flex flex-wrap gap-2 justify-content-md-end orders-filter-actions">
               {tableFilter && (
                 <Button 
                   as={Link} 
                   to="/orders" 
                   variant="light" 
                   size="sm"
-                  className="rounded-pill px-3 border"
+                  className="rounded-pill px-3 border orders-filter-control"
                 >
                   Clear Table: {tables.find(t => t.tableId === tableFilter)?.label || tableFilter}
                 </Button>
               )}
-              <div className="d-flex align-items-center gap-2">
+              <div className="d-flex align-items-center gap-2 orders-filter-group">
                 <span className="small text-muted fw-bold me-1">Type:</span>
                 <Form.Select 
                   value={filterOrderType} 
                   onChange={(e) => setFilterOrderType(e.target.value)}
-                  className="w-auto border-0 bg-light rounded-pill px-4 shadow-none"
+                  className="w-auto border-0 bg-light rounded-pill px-4 shadow-none orders-filter-control"
                   size="sm"
                 >
                   <option value="All">All Types</option>
@@ -400,12 +410,12 @@ const Orders = () => {
                   <option value="packing">Packing</option>
                 </Form.Select>
               </div>
-              <div className="d-flex align-items-center gap-2">
+              <div className="d-flex align-items-center gap-2 orders-filter-group">
                 <span className="small text-muted fw-bold me-1">Status:</span>
                 <Form.Select 
                   value={filterStatus} 
                   onChange={(e) => setFilterStatus(e.target.value)}
-                  className="w-auto border-0 bg-light rounded-pill px-4 shadow-none"
+                  className="w-auto border-0 bg-light rounded-pill px-4 shadow-none orders-filter-control"
                   size="sm"
                 >
                   <option value="All">All Status</option>
@@ -533,7 +543,7 @@ const Orders = () => {
                   {/* Action Footer */}
                   <div className="card-action-footer border-top p-2 bg-white rounded-bottom-4">
                     <div className="d-flex flex-column gap-2">
-                      <div className="d-flex gap-2">
+                      <div className="d-flex gap-2 order-action-row">
                         {order.status !== 'cancelled' && (
                           <Button 
                             as={Link}

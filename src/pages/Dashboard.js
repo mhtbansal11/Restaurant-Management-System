@@ -205,6 +205,10 @@ console.log("stats",stats)
       toast.error('Table can be deleted only when available');
       return;
     }
+    if (!table?.isTemporary) {
+      toast.error('Only temporary tables can be removed');
+      return;
+    }
     setTableToDelete({ floorId, table });
     setShowDeleteConfirm(true);
   };
@@ -214,6 +218,12 @@ console.log("stats",stats)
     try {
       setDeleting(true);
       const { floorId, table } = tableToDelete;
+      if (!table?.isTemporary) {
+        toast.error('Only temporary tables can be removed');
+        setShowDeleteConfirm(false);
+        setTableToDelete(null);
+        return;
+      }
       const updatedLayout = {
         ...layout,
         floors: layout.floors.map(f => 
@@ -264,7 +274,8 @@ console.log("stats",stats)
         width: 100,
         height: 60,
         capacity: 4,
-        status: 'available'
+        status: 'available',
+        isTemporary: true
       };
 
       // Update the layout locally first for immediate UI feedback
@@ -332,6 +343,8 @@ console.log("stats",stats)
         } else {
           toast.error("No active order for this table.");
         }
+      } else if (action === 'remove_temp') {
+        handleAskDeleteTable(selectedTable.floorId, selectedTable);
       }
     } catch (error) {
       console.error('Action failed:', error);
@@ -359,12 +372,12 @@ console.log("stats",stats)
 
   return (
     <div className="dashboard-premium">
-      <div className="dashboard-header-premium d-flex justify-content-between align-items-center">
+      <div className="dashboard-header-premium page-header-glass d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-3">
         <div>
-          <h1 className="h3 fw-bold text-main mb-1 text-gradient">Command Center</h1>
-          <p className="extra-small text-muted mb-0">Welcome back, {user?.name}. Here's your real-time snapshot.</p>
+          <h1 className="h4 fw-bold mb-1 text-gradient page-title">Command Center</h1>
+          <p className="small mb-0 page-subtitle">Welcome back, {user?.name}. Here's your real-time snapshot.</p>
         </div>
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 flex-wrap align-items-center page-header-actions">
            <Link to="/pos" className="btn btn-primary d-flex align-items-center gap-2 rounded-pill px-4 shadow-sm border-0">
             <span className="fs-5">🛒</span> <span className="fw-bold">New Order</span>
           </Link>
@@ -376,57 +389,74 @@ console.log("stats",stats)
 
 
       {/* Key Metrics Row */}
-      <div className="stats-grid-premium py-4">
-        <div className="stat-card-premium glass-card">
-          <div className="stat-header-premium">
-            <div className="stat-icon-premium">💰</div>
-            <span className="stat-label-premium">Revenue</span>
-          </div>
-          <div className="stat-value-premium text-gradient">₹{stats.todayRevenue.toLocaleString()}</div>
-          <div className="stat-footer-premium mt-2">
-            <span className="stat-change-premium stat-change-up">↑ 12%</span>
-          </div>
-        </div>
-        
-        <div className="stat-card-premium glass-card">
-          <div className="stat-header-premium">
-            <div className="stat-icon-premium text-primary">📋</div>
-            <span className="stat-label-premium">Orders</span>
-          </div>
-          <div className="stat-value-premium">{stats.activeOrders}</div>
-          <div className="stat-footer-premium mt-1 d-flex gap-2">
-            <div className="extra-small text-primary fw-bold">{stats.newOrders} New</div>
-            <div className="extra-small text-warning fw-bold">{stats.activeOrders - stats.newOrders} Live</div>
-          </div>
-        </div>
-
-        <div className="stat-card-premium glass-card">
-          <div className="stat-header-premium">
-            <div className="stat-icon-premium text-info">🪑</div>
-            <span className="stat-label-premium">Occupancy</span>
-          </div>
-          <div className="stat-value-premium">
-            {stats.totalTables > 0 ? Math.round((tableStatuses.filter(t => t.status === 'occupied').length / stats.totalTables) * 100) : 0}%
-          </div>
-          <div className="stat-footer-premium mt-2">
-            <div className="progress rounded-pill overflow-hidden bg-light" style={{ height: '4px' }}>
-              <div 
-                className="progress-bar bg-primary" 
-                style={{ width: `${stats.totalTables > 0 ? (tableStatuses.filter(t => t.status === 'occupied').length / stats.totalTables) * 100 : 0}%` }}
-              ></div>
+      <Row className="g-3 pb-4">
+        <Col xs={12} sm={6} lg={3} className="d-flex">
+          <div className="stat-card-premium glass-card w-100">
+            <div className="stat-icon-premium">{"\uD83D\uDCB0"}</div>
+            <div className="stat-metric-content">
+              <span className="stat-label-premium">Revenue</span>
+              <div className="stat-metric-row">
+                <div className="stat-value-premium text-gradient">{"\u20B9"}{stats.todayRevenue.toLocaleString()}</div>
+                <span className="stat-change-premium stat-change-up">{"\u2191"} 12%</span>
+              </div>
             </div>
           </div>
-        </div>
+        </Col>
 
-        <div className="stat-card-premium glass-card">
-          <div className="stat-header-premium">
-            <div className="stat-icon-premium text-danger">⚠️</div>
-            <span className="stat-label-premium">Critical Stock</span>
+        <Col xs={12} sm={6} lg={3} className="d-flex">
+          <div className="stat-card-premium glass-card w-100">
+            <div className="stat-icon-premium text-primary">{"\uD83D\uDCCB"}</div>
+            <div className="stat-metric-content">
+              <span className="stat-label-premium">Orders</span>
+              <div className="stat-metric-row">
+                <div className="stat-value-premium">{stats.activeOrders}</div>
+                <div className="stat-metric-right">
+                  <span className="stat-inline-chip stat-inline-chip-primary">{stats.newOrders} New</span>
+                  <span className="stat-inline-chip stat-inline-chip-warning">{stats.activeOrders - stats.newOrders} Live</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="stat-value-premium text-danger">{stats.lowStockItems}</div>
-          <Link to="/inventory" className="extra-small text-danger fw-bold text-decoration-none mt-1">Review Items →</Link>
-        </div>
-      </div>
+        </Col>
+
+        <Col xs={12} sm={6} lg={3} className="d-flex">
+          <div className="stat-card-premium glass-card w-100">
+            <div className="stat-icon-premium text-info">{"\uD83E\uDE91"}</div>
+            <div className="stat-metric-content">
+              <span className="stat-label-premium">Occupancy</span>
+              <div className="stat-metric-row">
+                <div className="stat-value-premium">
+                  {stats.totalTables > 0 ? Math.round((tableStatuses.filter(t => t.status === 'occupied').length / stats.totalTables) * 100) : 0}%
+                </div>
+                <span className="stat-inline-meta">
+                  {tableStatuses.filter(t => t.status === 'occupied').length}/{stats.totalTables || 0}
+                </span>
+              </div>
+            <div className="stat-mini-progress">
+              <div className="progress rounded-pill overflow-hidden stat-progress">
+                <div
+                  className="progress-bar stat-progress-bar"
+                  style={{ width: `${stats.totalTables > 0 ? (tableStatuses.filter(t => t.status === 'occupied').length / stats.totalTables) * 100 : 0}%` }}
+                ></div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </Col>
+
+        <Col xs={12} sm={6} lg={3} className="d-flex">
+          <div className="stat-card-premium glass-card w-100">
+            <div className="stat-icon-premium text-danger">{"\u26A0\uFE0F"}</div>
+            <div className="stat-metric-content">
+              <span className="stat-label-premium">Critical Stock</span>
+              <div className="stat-metric-row">
+                <div className="stat-value-premium text-danger">{stats.lowStockItems}</div>
+                <Link to="/inventory" className="stat-inline-link">Review {"\u2192"}</Link>
+              </div>
+            </div>
+          </div>
+        </Col>
+      </Row>
 
       {/* Main Content Grid */}
       <Row>
@@ -524,7 +554,27 @@ console.log("stats",stats)
                                             <Badge className="table-capacity-badge">
                                               {table.capacity} Seats
                                             </Badge>
-                                            <div className={`status-dot ${status === 'occupied' ? 'bg-success pulse-small' : status === 'reserved' ? 'bg-warning' : status === 'maintenance' ? 'bg-secondary' : status === 'unavailable' ? 'bg-dark' : 'bg-secondary opacity-25'}`} style={{width: '10px', height: '10px', borderRadius: '50%'}}></div>
+                                            <div className="d-flex align-items-center gap-2">
+                                              <Button
+                                                size="sm"
+                                                variant="light"
+                                                className="p-0 d-flex align-items-center justify-content-center border"
+                                                style={{ width: '24px', height: '24px', borderRadius: '50%' }}
+                                                onClick={(event) => {
+                                                  event.stopPropagation();
+                                                  setSettingsTable({
+                                                    ...table,
+                                                    floorId: floor.id,
+                                                    status,
+                                                    currentOrder: tableStatus?.currentOrder?._id || tableStatus?.currentOrder || null
+                                                  });
+                                                }}
+                                                title="Table settings"
+                                              >
+                                                ⚙
+                                              </Button>
+                                              <div className={`status-dot ${status === 'occupied' ? 'bg-success pulse-small' : status === 'reserved' ? 'bg-warning' : status === 'maintenance' ? 'bg-secondary' : status === 'unavailable' ? 'bg-dark' : 'bg-secondary opacity-25'}`} style={{width: '10px', height: '10px', borderRadius: '50%'}}></div>
+                                            </div>
                                           </div>
                                           <div className="table-card-heading mb-1">
                                             <h5 className="fw-bold mb-0 table-card-title">{table.label}</h5>
@@ -728,7 +778,7 @@ console.log("stats",stats)
                 <div className="bg-indigo-600 p-2 rounded-3 text-white shadow-sm" style={{background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)'}}>
                   🤖
                 </div>
-                <h5 className="mb-0 fw-bold">AI Operational briefing</h5>
+                <h5 className="mb-0 fw-bold">AI Operational Briefing</h5>
               </Card.Header>
               <Card.Body className="p-4">
                 {operationalInsights ? (
@@ -739,7 +789,7 @@ console.log("stats",stats)
                           <Badge className="badge-premium-indigo">Strategic Insight</Badge>
                           <span className="text-muted extra-small">GENERATED JUST NOW</span>
                         </div>
-                        <div className="ai-report-text lh-lg fs-5 text-dark">
+                        <div className="ai-report-text lh-lg fs-5">
                           {operationalInsights?.briefing || operationalInsights?.summary || "No automated briefing available for today yet."}
                         </div>
                       </div>
@@ -1016,17 +1066,25 @@ console.log("stats",stats)
                 
                 <hr className="my-2" />
                 
-                <div className="d-grid">
-                  <Button 
-                    variant="outline-danger"
-                    onClick={() => {
-                      handleAskDeleteTable(settingsTable.floorId, settingsTable);
-                      setSettingsTable(null);
-                    }}
-                  >
-                    🗑️ Delete Table
-                  </Button>
-                </div>
+                {settingsTable?.isTemporary ? (
+                  <div className="d-grid">
+                    <Button 
+                      variant="outline-danger"
+                      onClick={() => {
+                        handleAskDeleteTable(settingsTable.floorId, settingsTable);
+                        setSettingsTable(null);
+                      }}
+                      disabled={settingsTable?.status !== 'available'}
+                      title={settingsTable?.status !== 'available' ? 'Temporary tables can be removed only when available' : ''}
+                    >
+                      🗑️ Remove Temporary Table
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="alert alert-info mb-0">
+                    <small>Only temporary tables added from the dashboard can be removed.</small>
+                  </div>
+                )}
               </>
             )}
           </div>

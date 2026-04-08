@@ -181,7 +181,7 @@ const Customers = () => {
   return (
     <div className="customers-page-premium">
       {/* Header Section */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 glass-navbar p-3 shadow-sm">
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 page-header-glass p-3 shadow-sm">
         <div>
           <h1 className="h4 mb-0 fw-bold text-gradient">Customer Registry</h1>
           <p className="text-muted small mb-0">Manage guest relationships and credit accounts</p>

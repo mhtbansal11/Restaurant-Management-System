@@ -265,11 +265,13 @@ const Menu = () => {
 
   return (
     <div className="menu-page">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        
-         <h2 className="mb-1 fw-bold">Menu Management</h2>
+      <div className="page-header-glass d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-3">
+        <div>
+          <h1 className="h4 mb-1 fw-bold text-gradient page-title">Menu Management</h1>
+          <p className="mb-0 page-subtitle">Manage dishes, categories, pricing, and availability.</p>
+        </div>
         {canManageMenu && (
-          <div className="d-flex gap-2">
+          <div className="d-flex gap-2 flex-wrap align-items-center page-header-actions">
             <Button variant="success" onClick={() => setShowAIUpload(true)}>
               📸 Upload Menu Photo (AI)
             </Button>

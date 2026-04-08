@@ -254,6 +254,21 @@ const TableActionModal = ({ table, onClose, onAction }) => {
         )}
 
         <Row className="g-3">
+          {table?.isTemporary && table.status === 'available' && ['superadmin', 'owner', 'manager'].includes(user?.role) && (
+            <Col xs={6}>
+              <Button
+                variant="outline-danger"
+                className="w-100 h-100 p-3 d-flex flex-column align-items-center gap-2 action-btn-bs border"
+                onClick={() => onAction('remove_temp')}
+              >
+                <span className="fs-3" aria-hidden="true">🗑️</span>
+                <div className="text-center">
+                  <div className="fw-bold small mb-1">Remove Temporary Table</div>
+                  <small className="text-muted d-block action-btn-copy">Only when free</small>
+                </div>
+              </Button>
+            </Col>
+          )}
           {['superadmin', 'owner', 'manager', 'cashier', 'receptionist', 'waiter'].includes(user?.role) && (
             <Col xs={6}>
               <Button

@@ -4,9 +4,7 @@
   height: calc(100vh - var(--header-height));
   min-height: calc(100vh - var(--header-height));
   overflow: hidden;
-  background:
-    radial-gradient(circle at top left, rgba(99, 102, 241, 0.12), transparent 28%),
-    linear-gradient(180deg, var(--bg-app) 0%, color-mix(in srgb, var(--bg-app) 78%, var(--bg-surface) 22%) 100%);
+  background: var(--bg-app);
 }
 
 .seating-editor-shell {

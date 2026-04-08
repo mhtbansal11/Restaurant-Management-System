@@ -218,7 +218,7 @@ const Expenses = () => {
   return (
     <div className="expenses-page-premium">
       {/* Header Section */}
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 glass-navbar p-3 shadow-sm">
+      <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 page-header-glass p-3 shadow-sm">
         <h1 className="h4 mb-0 fw-bold text-gradient">Expense Management</h1>
         <Button 
           variant="primary" 
@@ -250,23 +250,23 @@ const Expenses = () => {
       {/* AI Budget Alerts Section */}
       {alerts.length > 0 && (
         <Row className="mb-4">
-          <Col>
-            <div className="d-flex flex-column gap-3">
-              {alerts.map((alert, idx) => (
-                <div key={idx} className={`ai-alert-premium elevation-${alert.level || 'warning'}`}>
+          {alerts.map((alert, idx) => (
+            <Col xs={6} md={6} key={idx} className="mb-3">
+              
+                <div key={idx} className={`ai-alert-premium elevation-${(alert.level || 'warning').toString().toLowerCase()}`}>
                   <div className="ai-alert-icon">🤖</div>
                   <div className="ai-alert-content">
-                    <div className="ai-alert-title">AI BUDGET INSIGHT</div>
+                    <div className="ai-alert-title">AI Budget Insight</div>
                     <div className="ai-alert-message">{alert.message}</div>
-                    {alert.action && <div className="ai-alert-action small mt-1 opacity-75"><strong>ACTION:</strong> {alert.action}</div>}
+                    {alert.action && <div className="ai-alert-action"><strong>ACTION:</strong> {alert.action}</div>}
                   </div>
-                  <Badge className={`badge-severity-${alert.level || 'warning'}`}>
-                    {(alert.level || 'warning').toUpperCase()}
+                  <Badge className={`badge-severity-${(alert.level || 'warning').toString().toLowerCase()}`}>
+                    {(alert.level || 'warning').toString().toUpperCase()}
                   </Badge>
                 </div>
-              ))}
-            </div>
-          </Col>
+              
+            </Col>
+          ))}
         </Row>
       )}
 

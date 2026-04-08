@@ -246,12 +246,12 @@ const SeatingLayout = () => {
       <div className="editor-toolbar">
         <div>
           <p className="editor-eyebrow mb-1">Floor Planner</p>
-          <h1 className="h4 fw-bold mb-1">Seating Layout Editor</h1>
-          <p className="editor-subtitle mb-0">
+          <h1 className="h4 fw-bold mb-1 text-gradient page-title">Seating Layout Editor</h1>
+          <p className="editor-subtitle page-subtitle mb-0">
             Design floor plans, place tables, and review seating capacity in one workspace.
           </p>
         </div>
-        <div className="editor-toolbar-actions">
+        <div className="editor-toolbar-actions page-header-actions">
           <Badge className="editor-badge">
             <span className="editor-badge-label">Active Floor</span>
             <span className="editor-badge-value">{activeFloor.name}</span>

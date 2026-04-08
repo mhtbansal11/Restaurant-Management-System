@@ -116,12 +116,12 @@ const Seating = () => {
 
   return (
     <div className="seating-page-bs">
-      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+      <div className="page-header-glass d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 p-3">
         <div>
-         <h2 className="mb-1 fw-bold">Floor Management</h2>
-          <p className="text-muted mb-0">Book tables, manage orders, and track service status</p>
+         <h1 className="h4 mb-1 fw-bold text-gradient page-title">Floor Management</h1>
+          <p className="mb-0 page-subtitle">Book tables, manage orders, and track service status</p>
         </div>
-        <div className="d-flex align-items-center gap-3 flex-wrap">
+        <div className="d-flex align-items-center gap-3 flex-wrap page-header-actions">
           <div className="d-flex gap-2">
             <Badge bg="success-subtle" className="text-success border border-success-subtle px-2 py-1">Available</Badge>
             <Badge bg="danger-subtle" className="text-danger border border-danger-subtle px-2 py-1">Occupied</Badge>

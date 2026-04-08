@@ -135,12 +135,12 @@ const Forecasting = () => {
 
   return (
     <div className="forecasting-page">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="page-header-glass d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-3">
         <div>
-          <h2 className="mb-1 fw-bold">AI Sales Forecasting</h2>
-          <p className="text-muted mb-0">Predictive insights powered by historical data</p>
+          <h1 className="h4 mb-1 fw-bold text-gradient page-title">AI Sales Forecasting</h1>
+          <p className="mb-0 page-subtitle">Predictive insights powered by historical data</p>
         </div>
-        <div className="d-flex align-items-center gap-3 bg-white p-2 rounded-3 shadow-sm border">
+        <div className="d-flex align-items-center gap-3 bg-white p-2 rounded-3 shadow-sm border page-header-actions">
           <Form.Label className="mb-0 text-nowrap small fw-bold text-muted px-2">Forecast Period:</Form.Label>
           <Form.Select 
             value={days} 

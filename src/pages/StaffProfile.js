@@ -250,12 +250,12 @@ const StaffProfile = () => {
 
   return (
     <div className="staff-profile-container">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="page-header-glass d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-3">
         <div>
-          <h2 className="h4 mb-1 fw-bold">
+          <h1 className="h4 mb-1 fw-bold text-gradient page-title">
             {userId ? 'Staff Profile' : 'Profile'}
-          </h2>
-          <p className="text-muted mb-0">
+          </h1>
+          <p className="mb-0 page-subtitle">
             {userId ? 'Staff member details' : 'Manage your personal information and Aadhar card'}
           </p>
         </div>

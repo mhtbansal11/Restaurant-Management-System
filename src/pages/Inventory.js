@@ -150,7 +150,7 @@ const Inventory = () => {
 
   return (
     <div className="inventory-page-premium">
-      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 glass-navbar p-3 shadow-sm">
+      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 page-header-glass p-3 shadow-sm">
         <div>
           <h1 className="h4 mb-0 fw-bold text-gradient">Inventory Control</h1>
           <p className="text-muted small mb-0">Real-time stock monitoring & AI forecasting</p>

@@ -1,15 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Modal, 
-  Button, 
-  Form, 
-  Spinner, 
+import {
+  Modal,
+  Button,
+  Form,
+  Spinner,
   Badge
 } from 'react-bootstrap';
 import axios from 'axios';
 import config from '../config';
 
-const TableSelectionModal = ({ show, onHide, onSelectTables, selectedTables = [] }) => {
+const TableSelectionModal = ({
+  show,
+  onHide,
+  onSelectTables,
+  selectedTables = [],
+  singleSelect = false,
+  instantConfirm = false,
+  title = 'Select Tables',
+  selectionHint = 'Select one or more tables',
+  confirmLabel = 'Confirm Selection'
+}) => {
   const [floors, setFloors] = useState([]);
   const [tables, setTables] = useState([]);
   const [selectedFloor, setSelectedFloor] = useState('');
@@ -23,7 +33,6 @@ const TableSelectionModal = ({ show, onHide, onSelectTables, selectedTables = []
     }
   }, [show, selectedTables]);
 
-  // Fetch seating layout and tables
   const fetchData = React.useCallback(async () => {
     setLoading(true);
     try {
@@ -31,10 +40,10 @@ const TableSelectionModal = ({ show, onHide, onSelectTables, selectedTables = []
       const layoutData = layoutResponse.data;
       const tablesResponse = await axios.get(config.ENDPOINTS.TABLES);
       const tablesData = tablesResponse.data;
-      
+
       setFloors(layoutData.floors || []);
       setTables(tablesData);
-      
+
       if (!selectedFloor && layoutData.floors?.length > 0) {
         setSelectedFloor(layoutData.floors[0].id);
       }
@@ -53,13 +62,13 @@ const TableSelectionModal = ({ show, onHide, onSelectTables, selectedTables = []
 
   useEffect(() => {
     if (selectedFloor && floors.length > 0) {
-      const currentFloor = floors.find(floor => floor.id === selectedFloor);
+      const currentFloor = floors.find((floor) => floor.id === selectedFloor);
       if (currentFloor) {
-        const floorTableIds = currentFloor.tables.map(table => table.id);
-        const floorTables = tables.filter(table => floorTableIds.includes(table.tableId));
-        
-        const mergedTables = currentFloor.tables.map(layoutTable => {
-          const tableStatus = floorTables.find(t => t.tableId === layoutTable.id);
+        const floorTableIds = currentFloor.tables.map((table) => table.id);
+        const floorTables = tables.filter((table) => floorTableIds.includes(table.tableId));
+
+        const mergedTables = currentFloor.tables.map((layoutTable) => {
+          const tableStatus = floorTables.find((table) => table.tableId === layoutTable.id);
           return {
             id: layoutTable.id,
             label: layoutTable.label || layoutTable.id,
@@ -68,25 +77,37 @@ const TableSelectionModal = ({ show, onHide, onSelectTables, selectedTables = []
             customerCount: tableStatus?.customerCount || 0
           };
         });
-        
+
         setSelectedFloorTables(mergedTables);
       }
     }
   }, [selectedFloor, floors, tables]);
 
   const toggleTableSelection = (table) => {
-    setLocalSelection(prev => {
-      const isSelected = prev.find(t => t.id === table.id);
-      if (isSelected) {
-        return prev.filter(t => t.id !== table.id);
-      } else {
-        return [...prev, {
-          id: table.id,
-          label: table.label,
-          capacity: table.capacity,
-          status: table.status
-        }];
+    const selectedTablePayload = {
+      id: table.id,
+      label: table.label,
+      capacity: table.capacity,
+      status: table.status
+    };
+
+    if (singleSelect) {
+      const nextSelection = [selectedTablePayload];
+      setLocalSelection(nextSelection);
+
+      if (instantConfirm) {
+        onSelectTables(nextSelection);
+        onHide();
       }
+      return;
+    }
+
+    setLocalSelection((prev) => {
+      const isSelected = prev.find((current) => current.id === table.id);
+      if (isSelected) {
+        return prev.filter((current) => current.id !== table.id);
+      }
+      return [...prev, selectedTablePayload];
     });
   };
 
@@ -108,7 +129,9 @@ const TableSelectionModal = ({ show, onHide, onSelectTables, selectedTables = []
   return (
     <Modal show={show} onHide={onHide} centered size="lg">
       <Modal.Header closeButton>
-        <Modal.Title className="h5 fw-bold">🪑 Select Tables {localSelection.length > 1 && <Badge bg="info" className="ms-2">Merging {localSelection.length}</Badge>}</Modal.Title>
+        <Modal.Title className="h5 fw-bold">
+          {'Select '} {title} {localSelection.length > 1 && <Badge bg="info" className="ms-2">Merging {localSelection.length}</Badge>}
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body className="px-4 pb-4">
         {loading ? (
@@ -120,10 +143,10 @@ const TableSelectionModal = ({ show, onHide, onSelectTables, selectedTables = []
           <>
             <Form.Group className="mb-4">
               <div className="d-flex flex-wrap gap-2">
-                {floors.map(floor => (
+                {floors.map((floor) => (
                   <Button
                     key={floor.id}
-                    variant={selectedFloor === floor.id ? "primary" : "outline-primary"}
+                    variant={selectedFloor === floor.id ? 'primary' : 'outline-primary'}
                     size="sm"
                     className="rounded-pill px-3"
                     onClick={() => setSelectedFloor(floor.id)}
@@ -134,19 +157,19 @@ const TableSelectionModal = ({ show, onHide, onSelectTables, selectedTables = []
               </div>
             </Form.Group>
 
-            <Form.Label className="fw-bold text-muted small text-uppercase">Select one or more tables</Form.Label>
+            <Form.Label className="fw-bold text-muted small text-uppercase">{selectionHint}</Form.Label>
             {selectedFloorTables.length === 0 ? (
               <div className="text-center py-4 text-muted">
                 <p>No tables found on this floor</p>
               </div>
             ) : (
               <div className="row g-3">
-                {selectedFloorTables.map(table => {
-                  const isSelected = localSelection.find(t => t.id === table.id);
+                {selectedFloorTables.map((table) => {
+                  const isSelected = localSelection.find((current) => current.id === table.id);
                   return (
                     <div key={table.id} className="col-6 col-md-4">
                       <Button
-                        variant={isSelected ? "primary" : "outline-primary"}
+                        variant={isSelected ? 'primary' : 'outline-primary'}
                         className={`w-100 p-3 d-flex flex-column align-items-center gap-2 rounded-3 ${isSelected ? 'border-3 border-dark' : ''}`}
                         onClick={() => toggleTableSelection(table)}
                         disabled={table.status === 'occupied' || table.status === 'reserved'}
@@ -167,9 +190,11 @@ const TableSelectionModal = ({ show, onHide, onSelectTables, selectedTables = []
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>Cancel</Button>
-        <Button variant="primary" onClick={handleConfirm} disabled={localSelection.length === 0}>
-          Confirm Selection ({localSelection.length})
-        </Button>
+        {!instantConfirm && (
+          <Button variant="primary" onClick={handleConfirm} disabled={localSelection.length === 0}>
+            {confirmLabel} ({localSelection.length})
+          </Button>
+        )}
       </Modal.Footer>
     </Modal>
   );

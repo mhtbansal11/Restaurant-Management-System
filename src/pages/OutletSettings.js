@@ -86,7 +86,7 @@ const OutletSettings = () => {
 
   return (
     <div className="settings-page-premium">
-      <div className="mb-4 glass-navbar p-3 shadow-sm d-flex flex-column">
+      <div className="mb-4 page-header-glass p-3 shadow-sm d-flex flex-column">
         <h1 className="h4 fw-bold text-gradient mb-1">Outlet Config</h1>
         <p className="text-muted small mb-0">Manage restaurant identity, taxation, and operational rules</p>
       </div>

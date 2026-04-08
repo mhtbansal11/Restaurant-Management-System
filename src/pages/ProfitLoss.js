@@ -260,14 +260,14 @@ const ProfitLoss = () => {
   return (
     <Container className="">
       {/* Header */}
-      <Row className="mb-">
+      <Row className="mb-4">
         <Col>
-          <div className="d-flex justify-content-between align-items-center">
+          <div className="page-header-glass d-flex justify-content-between align-items-center flex-wrap gap-3 p-3">
             <div>
-              <h2 className="mb-1 fw-bold">💰 Profit & Loss Dashboard</h2>
-              <p className="text-muted mb-0">Track your restaurant's financial performance</p>
+              <h1 className="h4 mb-1 fw-bold text-gradient page-title">Profit & Loss Dashboard</h1>
+              <p className="mb-0 page-subtitle">Track your restaurant's financial performance</p>
             </div>
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-2 flex-wrap align-items-center page-header-actions">
               <Form.Select 
                 value={period}
                 onChange={(e) => setPeriod(e.target.value)}

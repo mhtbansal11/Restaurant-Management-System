@@ -29,7 +29,7 @@ const Layout = ({ children }) => {
     localStorage.setItem('sidebarCollapsed', newState);
   };
 
-  const isEdgeToEdgePage = ['/kds', '/seating-editor'].includes(location.pathname);
+  const isEdgeToEdgePage = [ '/seating-editor'].includes(location.pathname);
   const isFlushContentPage = ['/pos'].includes(location.pathname);
 
   // Combine both expense and Aadhar notifications

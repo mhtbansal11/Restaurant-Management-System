@@ -49,6 +49,7 @@ const POS = () => {
   const [showSettleModal, setShowSettleModal] = useState(false);
   const [showKOTModal, setShowKOTModal] = useState(false);
   const [showTableModal, setShowTableModal] = useState(false);
+  const [showQuickTableModal, setShowQuickTableModal] = useState(false);
   const [keepTableOccupiedAfterPay, setKeepTableOccupiedAfterPay] = useState(false);
   const [showCartPopup, setShowCartPopup] = useState(false);
   const [viewportWidth, setViewportWidth] = useState(() => (
@@ -167,10 +168,11 @@ const POS = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const fetchActiveOrderForTable = useCallback(async () => {
-    if (selectedTables.length === 0) return;
+  const fetchActiveOrderForTable = useCallback(async (tablesOverride) => {
+    const targetTables = Array.isArray(tablesOverride) ? tablesOverride : selectedTables;
+    if (targetTables.length === 0) return;
     try {
-      const tableIds = selectedTables.map(t => t.id).join(',');
+      const tableIds = targetTables.map(t => t.id).join(',');
       const orderResponse = await axios.get(`${config.ENDPOINTS.ORDERS}?tableIds=${tableIds}`);
       const activeOrders = orderResponse.data.filter(
         (order) => !['completed', 'cancelled'].includes(order.status)
@@ -191,6 +193,11 @@ const POS = () => {
         setEnableTax(orderTaxApplied);
         const orderServiceChargeApplied = (order.serviceChargeAmount || 0) > 0;
         setEnableServiceCharge(orderServiceChargeApplied);
+      } else {
+        setCurrentOrder(null);
+        setCart([]);
+        setDiscountPercent(0);
+        setPaidAmount(0);
       }
     } catch (error) {
       console.error('Error fetching active order:', error);
@@ -950,6 +957,7 @@ const POS = () => {
   const isOverlayDrawer = !isDesktopDrawer;
   const isCartDocked = isDesktopDrawer && isCartOpen;
   const activeOrderNumber = currentOrder?.orderNumber || currentOrder?._id?.slice(-6) || 'New';
+  const canSettleOrder = ['superadmin', 'owner', 'manager', 'cashier', 'receptionist'].includes(user?.role);
   const getCartStatusVariant = (status) => {
     switch (status) {
       case 'ready':
@@ -995,6 +1003,71 @@ const POS = () => {
       accent: 'cart'
     }
   ];
+
+  const handleQuickTable = () => {
+    if (orderType !== 'dine-in') {
+      setOrderType('dine-in');
+    }
+    setShowQuickTableModal(true);
+  };
+
+  const handleSelectTables = useCallback((tables) => {
+    if (orderType !== 'dine-in') {
+      setOrderType('dine-in');
+    }
+    setSelectedTables(tables);
+    if (tables.length > 0) {
+      fetchActiveOrderForTable(tables);
+    }
+  }, [orderType, fetchActiveOrderForTable]);
+
+  const handleQuickGuest = () => {
+    setIsCartOpen(true);
+    setIsCustomerExpanded(true);
+  };
+
+  const handleQuickBill = () => {
+    if (cart.length === 0) {
+      toast.error('Add items to create a bill');
+      return;
+    }
+
+    if (!currentOrder) {
+      setShowCartPopup(true);
+      return;
+    }
+
+    setShowBillModal(true);
+  };
+
+  const handleQuickKOT = () => {
+    if (cart.length === 0) {
+      toast.error('Add items before sending KOT');
+      return;
+    }
+
+    if (!currentOrder) {
+      handleCheckout();
+      return;
+    }
+
+    if (getPrintableKOTItems().length === 0) {
+      toast('No new items to print KOT', { icon: 'ℹ️' });
+      return;
+    }
+
+    setShowKOTModal(true);
+  };
+
+  const handleQuickSettle = () => {
+    if (!currentOrder) {
+      toast.error('Place the order first');
+      return;
+    }
+
+    setPaidAmount(effectiveTotal);
+    setShowSettleModal(true);
+  };
 
   useEffect(() => {
     if (wasDesktopDrawerRef.current !== isDesktopDrawer) {
@@ -1052,15 +1125,6 @@ const POS = () => {
                 </Badge>
               </div>
             <div className="d-flex gap-3 align-items-center pos-toolbar-actions">
-              <InputGroup className="shadow-sm rounded-pill overflow-hidden">
-                <InputGroup.Text className="pos-search-icon border-end-0 ps-3">🔍</InputGroup.Text>
-                <Form.Control
-                  placeholder="Search dishes..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pos-search-input border-start-0 py-2"
-                />
-              </InputGroup>
               <Button 
                 variant={isCartOpen ? 'outline-primary' : 'primary'} 
                 className="nav-action-btn shadow-sm rounded-pill position-relative pos-cart-toggle-btn"
@@ -1082,14 +1146,16 @@ const POS = () => {
             </div>
             </div>
 
-            <div className="pos-hero-grid">
-              {posHeroStats.map((stat) => (
-                <div key={stat.label} className={`pos-hero-card pos-hero-card-${stat.accent}`}>
-                  <div className="pos-hero-label">{stat.label}</div>
-                  <div className="pos-hero-value" title={stat.value}>{stat.value}</div>
-                </div>
-              ))}
-            </div>
+            {isFooterExpanded && (
+              <div className="pos-hero-grid">
+                {posHeroStats.map((stat) => (
+                  <div key={stat.label} className={`pos-hero-card pos-hero-card-${stat.accent}`}>
+                    <div className="pos-hero-label">{stat.label}</div>
+                    <div className="pos-hero-value" title={stat.value}>{stat.value}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Categories */}
@@ -1106,17 +1172,86 @@ const POS = () => {
             ))}
           </div>
 
+          <InputGroup className="shadow-sm rounded-pill overflow-hidden mb-4 pos-menu-search">
+            <InputGroup.Text className="pos-search-icon border-end-0 ps-3" aria-hidden="true">
+              🔍
+            </InputGroup.Text>
+            <Form.Control
+              placeholder="Search dishes..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pos-search-input border-start-0 py-2"
+            />
+          </InputGroup>
+
+          <div className="mb-4 pos-quick-response">
+            <div className="pos-quick-response-label">Quick Response</div>
+            <div className="pos-quick-actions">
+              <Button
+                variant="light"
+                className="pos-quick-action-btn"
+                onClick={handleQuickTable}
+              >
+                Quick Table
+              </Button>
+              <Button
+                variant="light"
+                className="pos-quick-action-btn"
+                onClick={() => {
+                  if (orderType !== 'dine-in') {
+                    setOrderType('dine-in');
+                  }
+                  setShowTableModal(true);
+                }}
+              >
+                Merge Tables
+              </Button>
+              <Button
+                variant="light"
+                className="pos-quick-action-btn"
+                onClick={handleQuickGuest}
+              >
+                Guest
+              </Button>
+              <Button
+                variant="light"
+                className="pos-quick-action-btn"
+                onClick={handleQuickBill}
+                disabled={cart.length === 0}
+              >
+                Bill
+              </Button>
+              <Button
+                variant="light"
+                className="pos-quick-action-btn"
+                onClick={handleQuickKOT}
+                disabled={cart.length === 0}
+              >
+                KOT
+              </Button>
+              {canSettleOrder && (
+                <Button
+                  variant="light"
+                  className="pos-quick-action-btn pos-quick-action-btn-primary"
+                  onClick={handleQuickSettle}
+                  disabled={!currentOrder}
+                >
+                  Settle
+                </Button>
+              )}
+            </div>
+          </div>
+
           {/* Product Grid */}
           <Row className="g-3">
             {filteredItems.map(item => (
               <Col
                 key={item._id}
-                xs={6}
-                sm={4}
-                md={3}
-                lg={isCartDocked ? 4 : 3}
-                xl={isCartDocked ? 3 : 2}
-                xxl={2}
+                xs={12}
+                sm={6}
+                md={6}
+                lg={isCartDocked ? 6 : 4}
+                xl={isCartDocked ? 4 : 3}
               >
                 <Card 
                   className={`menu-card-bs pos-menu-card glass-card h-100 overflow-hidden ${item.isAvailable === false ? 'out-of-stock-card' : 'clickable'}`}
@@ -1130,21 +1265,24 @@ const POS = () => {
                     </div>
                   )}
                   
-                  <Card.Body className="p-3">
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                      <Badge className="pos-menu-category">{item.category}</Badge>
-                      {item.hasVariants && <span className="pos-menu-hint">Variants</span>}
-                    </div>
-                    <div className="d-flex justify-content-between align-items-start gap-2">
-                      <Card.Title className={`h6 mb-0 ${item.isAvailable === false ? 'text-muted' : 'text-dark'} fw-semibold pos-menu-title`}>{item.name}</Card.Title>
-                      <div className="text-end">
-                        <span className={`fw-bold d-block ${item.isAvailable === false ? 'text-muted' : 'text-primary'}`}>₹{item.price}</span>
-                        {item.hasVariants && <small className="text-muted extra-small">Starts from</small>}
+                  <Card.Body className="w-100 p-3">
+                    <div className="w-100 d-flex justify-content-between align-items-start gap-3">
+                      <div className="pos-menu-copy">
+                       
+                        <Card.Title className={`h6 mb-0 ${item.isAvailable === false ? 'text-muted' : 'text-dark'} fw-semibold pos-menu-title`}>{item.name}</Card.Title>
+                       {activeCategory === 'All' && (
+                          <Badge className="pos-menu-category mb-2 ">
+                            {item.category.replace(/_/g, ' ' )}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="text-end pos-menu-price-wrap">
+                        {item.hasVariants && (
+                          <small className="pos-menu-price-label">Starts from</small>
+                        )}
+                        <span className={`fw-bold d-block ${item.isAvailable === false ? 'text-muted' : 'text-primary'} pos-menu-price`}>Rs. {item.price}</span>
                       </div>
                     </div>
-                    <p className="pos-menu-description mb-0 mt-2">
-                      {item.description || `Prepared in ${item.category.replace(/_/g, ' ')} style`}
-                    </p>
                   </Card.Body>
                 </Card>
               </Col>
@@ -1640,8 +1778,8 @@ const POS = () => {
             </p>
           </div>
           
-          <Table borderless size="sm" className="mb-4">
-            <thead className="border-bottom">
+          <Table borderless size="sm" className="mb-4 pos-invoice-table">
+            <thead className="pos-invoice-table-head">
               <tr>
                 <th>Item</th>
                 <th className="text-center">Qty</th>
@@ -2084,8 +2222,22 @@ const POS = () => {
       <TableSelectionModal
         show={showTableModal}
         onHide={() => setShowTableModal(false)}
-        onSelectTables={setSelectedTables}
+        onSelectTables={handleSelectTables}
         selectedTables={selectedTables}
+        title="Tables for Order"
+        selectionHint="Select one or more tables"
+        confirmLabel="Apply Tables"
+      />
+
+      <TableSelectionModal
+        show={showQuickTableModal}
+        onHide={() => setShowQuickTableModal(false)}
+        onSelectTables={handleSelectTables}
+        selectedTables={selectedTables.slice(0, 1)}
+        singleSelect
+        instantConfirm
+        title="Quick Table"
+        selectionHint="Tap one table to start or continue order"
       />
     </div>
   );

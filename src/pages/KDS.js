@@ -137,64 +137,64 @@ const KDS = () => {
 
   if (loading && orders.length === 0) {
     return (
-      <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+      <Container className="kds-loading-state d-flex justify-content-center align-items-center">
         <Spinner animation="border" variant="primary" />
-        <span className="ms-3 text-light">Loading Kitchen Display...</span>
+        <span className="ms-3">Loading Kitchen Display...</span>
       </Container>
     );
   }
 
   return (
     <div className="kds-container-premium">
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="page-header-glass d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4 p-3">
         <div>
-          <h2 className="text-light mb-0">Kitchen Display System</h2>
-          <p className="text-white mb-0 small">Real-time order management</p>
+          <h1 className="h4 mb-1 fw-bold text-gradient page-title">Kitchen Display System</h1>
+          <p className="mb-0 page-subtitle">Real-time order management</p>
         </div>
-        <div className="d-flex align-items-center gap-3">
-          <div className="btn-group me-2 shadow-sm">
+        <div className="d-flex align-items-center gap-3 flex-wrap page-header-actions">
+          <div className="btn-group me-2 shadow-sm kds-view-toggle">
             <Button 
-              variant={viewMode === 'orders' ? 'primary' : 'outline-light'} 
+              variant={viewMode === 'orders' ? 'primary' : 'outline-secondary'} 
               size="sm"
               onClick={() => setViewMode('orders')}
             >
               Order View
             </Button>
             <Button 
-              variant={viewMode === 'tables' ? 'primary' : 'outline-light'} 
+              variant={viewMode === 'tables' ? 'primary' : 'outline-secondary'} 
               size="sm"
               onClick={() => setViewMode('tables')}
             >
               Table View
             </Button>
           </div>
-          <Badge bg="dark" className="border border-secondary p-2">
+          <Badge className="kds-active-badge border p-2">
             Active Orders: {orders.length}
           </Badge>
           <Button 
-            variant="outline-light" 
+            variant="outline-secondary" 
             size="sm" 
             onClick={fetchOrders}
-            className="rounded-pill px-3"
+            className="rounded-pill px-3 kds-refresh-btn"
           >
             Refresh
           </Button>
         </div>
       </div>
 
-      {error && <Alert variant="danger" className="mx-3">{error}</Alert>}
+      {error && <Alert variant="danger" className="mb-4">{error}</Alert>}
 
-    
+      <div className="kds-content-shell">
         {orders.length === 0 ? (
-           <Row className="g-4 px-3">
+           <Row className="g-4">
           <Col xs={12}>
             <div className="text-center py-5 mt-5">
               <div className="empty-state-container p-5 rounded-4 shadow-sm mx-auto">
                 <CheckCircleIcon className="text-success mb-3" style={{ width: '64px', height: '64px' }} />
-                <h3 className="text-white fw-bold mb-2">All Caught Up!</h3>
-                <p className="text-white mb-4 fs-5">There are no active orders in the kitchen right now.</p>
+                <h3 className="kds-empty-title fw-bold mb-2">All Caught Up!</h3>
+                <p className="kds-empty-copy mb-4 fs-5">There are no active orders in the kitchen right now.</p>
                 <Button 
-                  variant="light" 
+                  variant="primary" 
                   onClick={fetchOrders}
                   className="rounded-pill px-4"
                 >
@@ -205,7 +205,7 @@ const KDS = () => {
           </Col>
           </Row>
         ) : viewMode === 'orders' ? (
-           <Row  className="g-4 px-3">
+           <Row  className="g-4">
          { orders.map((order) => (
             <Col xs={12} md={6} lg={4} xl={4} key={order._id}>
               <Card className={`kds-card-bs h-100 ${order.status}`}>
@@ -219,16 +219,16 @@ const KDS = () => {
                             {order.previousOrderType}
                           </Badge>
                         )}
-                        {order.previousOrderType && <span className="text-light small">→</span>}
+                        {order.previousOrderType && <span className="kds-header-arrow small">→</span>}
                         <Badge bg={order.orderType === 'dine-in' ? 'primary' : 'info'} className="text-uppercase small">
                           {order.orderType}
                         </Badge>
                       </div>
                     </div>
                     {order.tableLabel ? (
-                      <div className="table-info-bs text-light small">Table: {order.tableLabel}</div>
+                      <div className="table-info-bs small">Table: {order.tableLabel}</div>
                     ) : order.tableId && (
-                      <div className="table-info-bs text-light small">Table: {order.tableId}</div>
+                      <div className="table-info-bs small">Table: {order.tableId}</div>
                     )}
                   </div>
                   <div className="text-end">
@@ -238,7 +238,7 @@ const KDS = () => {
                     >
                       {getWaitTime(order.createdAt)}m
                     </div>
-                    <div className="text-muted small">
+                    <div className="kds-time-stamp small">
                       {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </div>
                   </div>
@@ -251,7 +251,7 @@ const KDS = () => {
                         <div className="d-flex flex-column">
                           <div className="d-flex align-items-center gap-2">
                             <span className={`item-qty-bs fw-bold ${item.status === 'cancelled' ? 'text-muted text-decoration-line-through' : 'text-primary'}`}>{item?.quantity}x</span>
-                            <span className={`item-name-bs ${['served', 'cancelled'].includes(item.status) ? 'text-decoration-line-through text-light' : 'text-light'}`}>
+                            <span className={`item-name-bs ${['served', 'cancelled'].includes(item.status) ? 'text-decoration-line-through' : ''}`}>
                               {item?.menuItem?.name}
                             </span>
                             {item.status === 'queued' && (
@@ -352,13 +352,13 @@ const KDS = () => {
           ))}
           </Row>
         ) : (
-          <Row className="g-4 px-3">
+          <Row className="g-4">
             {getTablesWithPendingItems().map((table) => (
               <Col xs={12} md={6} lg={4} xl={4} key={table.name}>
                 <Card className="kds-card-bs border-0 shadow-sm h-100 preparing">
                   <Card.Header className="kds-card-header-bs d-flex justify-content-between align-items-start border-0 bg-transparent pt-3">
                     <div>
-                      <h4 className="text-white mb-0">{table.name}</h4>
+                      <h4 className="kds-table-title mb-0">{table.name}</h4>
                       <Badge bg="secondary" className="mt-1">
                         {table.orderIds.size} Order(s)
                       </Badge>
@@ -379,12 +379,12 @@ const KDS = () => {
                           <div className="d-flex flex-column">
                             <div className="d-flex align-items-center gap-2">
                               <span className="item-qty-bs fw-bold text-primary">{item.quantity}x</span>
-                              <span className="item-name-bs text-light">{item.menuItem?.name}</span>
+                              <span className="item-name-bs">{item.menuItem?.name}</span>
                               {item.status === 'queued' && (
                                 <Badge bg="danger" className="item-new-badge item-status-badge">New</Badge>
                               )}
                             </div>
-                            <span className="text-muted extra-small" style={{fontSize: '0.65rem'}}>Order: #{item.orderId?.slice(-4) || 'N/A'}</span>
+                            <span className="kds-order-ref extra-small" style={{fontSize: '0.65rem'}}>Order: #{item.orderId?.slice(-4) || 'N/A'}</span>
                           </div>
                           <div className="d-flex gap-2">
                             {item.status === 'queued' && (
@@ -427,6 +427,7 @@ const KDS = () => {
             ))}
           </Row>
         )}
+      </div>
      
       <Modal show={showCompleteModal} onHide={() => setShowCompleteModal(false)} centered>
         <Modal.Header closeButton>

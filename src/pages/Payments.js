@@ -230,15 +230,15 @@ const Payments = () => {
 
   return (
     <Container fluid className="m-0 p-0">
-      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+      <div className="page-header-glass d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 p-3">
         <div>
-          <h2 className="mb-1 fw-bold">Payment Tracking</h2>
-          <p className="text-muted mb-0">Monitor and manage all payment transactions</p>
+          <h1 className="h4 mb-1 fw-bold text-gradient page-title">Payment Tracking</h1>
+          <p className="mb-0 page-subtitle">Monitor and manage all payment transactions</p>
         </div>
         <Button 
           variant="primary" 
           onClick={() => setShowCustomerModal(true)}
-          className="d-flex align-items-center gap-2 shadow-sm px-4 py-2"
+          className="d-flex align-items-center gap-2 shadow-sm px-4 py-2 page-header-actions"
         >
           <span className="h5 mb-0">+</span> Add Customer
         </Button>
