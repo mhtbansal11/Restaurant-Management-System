@@ -6,6 +6,7 @@ import { useTheme } from '../context/ThemeContext';
 import useExpenseNotifications from '../hooks/useExpenseNotifications';
 import { useNotifications } from '../context/NotificationContext';
 import Sidebar from './Sidebar';
+import { useTheme } from '../context/ThemeContext';
 import './Layout.css';
 
 const Layout = ({ children }) => {
@@ -20,6 +21,7 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const { notifications: expenseNotifications, dismissNotification } = useExpenseNotifications();
   const { notifications: aadharNotifications, unreadCount, markAsRead } = useNotifications();
+  const { theme, toggleTheme } = useTheme();
 
   const toggleMobileSidebar = () => setIsMobileSidebarOpen(!isMobileSidebarOpen);
   
@@ -29,9 +31,8 @@ const Layout = ({ children }) => {
     localStorage.setItem('sidebarCollapsed', newState);
   };
 
-  const isEdgeToEdgePage = location.pathname === '/pos' || 
-                           location.pathname === '/kds' || 
-                           location.pathname === '/seating-editor';
+  const isEdgeToEdgePage = ['/kds', '/seating-editor'].includes(location.pathname);
+  const isFlushContentPage = ['/pos'].includes(location.pathname);
 
   // Combine both expense and Aadhar notifications
   const allNotifications = [
@@ -74,8 +75,38 @@ const Layout = ({ children }) => {
     navigate('/login');
   };
 
+  const getPageTitle = () => {
+    const path = location.pathname;
+    const navLinks = [
+      { path: '/', label: 'Overview Dashboard' },
+      { path: '/pos', label: 'Point of Sale' },
+      { path: '/orders', label: 'Order Management' },
+      { path: '/seating', label: 'Floor Plan' },
+      { path: '/kds', label: 'Kitchen Management' },
+      { path: '/menu', label: 'Menu Catalog' },
+      { path: '/inventory', label: 'Inventory Control' },
+      { path: '/payments', label: 'Financial Tracking' },
+      { path: '/customers', label: 'Guest Registry' },
+      { path: '/expenses', label: 'Expense Ledger' },
+      { path: '/profit-loss', label: 'Performance Analytics' },
+      { path: '/forecasting', label: 'Demand Forecasting' },
+      { path: '/staff', label: 'Staff Directory' },
+      { path: '/seating-editor', label: 'Layout Designer' },
+      { path: '/settings', label: 'Global Settings' },
+    ];
+    
+    const link = navLinks.find(l => l.path === path);
+    if (link) return link.label;
+    
+    // Fallback for subpaths or IDs
+    if (path.includes('/pos')) return 'POS Station';
+    if (path.includes('/orders/')) return 'Order Details';
+    
+    return 'Restaurant POS';
+  };
+
   return (
-    <div className="layout-bs">
+    <div className="layout-premium">
       {!isEdgeToEdgePage && (
       <Navbar expand={false} className="mobile-header-bs d-lg-none border-bottom shadow-sm py-2 px-3 sticky-top bg-primary">
         <Button 
@@ -149,7 +180,7 @@ const Layout = ({ children }) => {
             </Dropdown.Menu>
           </Dropdown>
           <Dropdown align="end">
-            <Dropdown.Toggle variant="link" className="p-0 border-0 no-caret">
+            <Dropdown.Toggle variant="link" className="nav-action-btn no-caret">
               <div className="nav-avatar-circle shadow-sm">
                 {user?.name?.charAt(0) || 'U'}
               </div>
@@ -179,49 +210,43 @@ const Layout = ({ children }) => {
       </Navbar>
       )}
 
-      <div className="layout-container-bs">
+      <div className="layout-container-premium">
         <Sidebar 
           isOpen={isMobileSidebarOpen} 
           toggleSidebar={toggleMobileSidebar} 
           isCollapsed={isCollapsed}
           toggleCollapse={toggleCollapse}
         />
+
+        <Button
+          variant="light"
+          className="sidebar-toggle-btn"
+          onClick={toggleCollapse}
+          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          style={{
+            left: isCollapsed ? 'var(--sidebar-collapsed-width)' : 'var(--sidebar-width)'
+          }}
+        >
+          {isCollapsed ? '➡️' : '⬅️'}
+        </Button>
         
-        <div className={`main-wrapper-bs ${isCollapsed ? 'collapsed' : ''}`}>
-          {!isEdgeToEdgePage && (
-            <Button
-              variant="light"
-              className="sidebar-toggle-btn d-none d-lg-block position-fixed border border-primary bg-white rounded-circle p-1 shadow-sm"
-              onClick={toggleCollapse}
-              title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-              style={{
-                top: '20px',
-                left: isCollapsed ? '80px' : '280px',
-                zIndex: 1036,
-                transform: 'translateX(-50%)',
-                transition: 'left 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-              }}
-            >
-              {isCollapsed ? '➡️' : '⬅️'}
-            </Button>
-          )}
-          {!isEdgeToEdgePage && (
-            <Navbar className="border-bottom shadow-sm px-4 py-2 sticky-top d-none d-lg-flex justify-content-between bg-primary">
-              <Navbar.Brand className="fw-bold text-primary mb-0">
-                {/* {user?.restaurantName || 'ATC Restaurant'} */}
+        <div className={`main-wrapper-premium ${isCollapsed ? 'collapsed' : ''}`}>
+            <Navbar className="glass-navbar px-4 py-2 sticky-top d-none d-lg-flex justify-content-between">
+              <Navbar.Brand className="fw-bold text-gradient mb-0 d-flex align-items-center gap-2">
+                {getPageTitle()}
               </Navbar.Brand>
               <div className="d-flex align-items-center gap-3">
                 <Button 
                   variant="link" 
                   onClick={toggleTheme}
-                  className="nav-icon-box p-0 text-primary border rounded no-caret bg-tertiary d-flex align-items-center justify-content-center"
-                  style={{ width: '38px', height: '38px' }}
-                  title={theme === 'light' ? "Switch to Dark Mode" : "Switch to Light Mode"}
+                  className="nav-action-btn"
+                  title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
                 >
-                  <span className="fs-5">{theme === 'light' ? '🌙' : '☀️'}</span>
+                  {theme === 'light' ? '🌙' : '☀️'}
                 </Button>
+                
                 <Dropdown align="end" autoClose="outside">
-                  <Dropdown.Toggle variant="link" className="nav-icon-box position-relative p-0 text-primary border rounded no-caret bg-tertiary">
+                  <Dropdown.Toggle variant="link" className="nav-action-btn no-caret position-relative">
                     <span className="fs-5 d-flex align-items-center justify-content-center w-100 h-100">🔔</span>
                     {(expenseNotifications.length + unreadCount) > 0 && (
                       <span className="notification-dot"></span>
@@ -245,7 +270,7 @@ const Layout = ({ children }) => {
                       <div className="notification-list">
                         {orderedNotifications.map((notification) => (
                           <Alert
-                            key={notification._id}
+                            key={notification._id || notification.id}
                             variant={notification.source === 'aadhar' ? 
                               (notification.type === 'success' ? 'success' : 'danger') : 
                               getReminderVariant(notification.type)}
@@ -279,8 +304,9 @@ const Layout = ({ children }) => {
                     )}
                   </Dropdown.Menu>
                 </Dropdown>
+
                 <Dropdown align="end">
-                  <Dropdown.Toggle variant="link" className="p-0 border-0 no-caret">
+                  <Dropdown.Toggle variant="link" className="nav-action-btn no-caret border-0 shadow-none">
                     <div className="nav-avatar-circle shadow-sm">
                       {user?.name?.charAt(0) || 'U'}
                     </div>
@@ -292,15 +318,15 @@ const Layout = ({ children }) => {
                       </div>
                       <div className="fw-bold h6 mb-0">{user?.name || 'User'}</div>
                       <div className="text-muted small">{user?.restaurantName || 'ATC Restaurant'}</div>
-                      <div className="mt-2">
+                      <div className="mt-2 text-center d-flex justify-content-center">
                         <span className="profile-role-badge">{formatRole(user?.role)}</span>
                       </div>
                     </div>
                     <div className="p-2 d-flex flex-column gap-1">
-                      <Dropdown.Item as={Link} to="/staff-profile" className="rounded py-2 d-flex align-items-center gap-2">
-                        <span>👤</span> Profile
+                      <Dropdown.Item as={Link} to="/staff-profile" className="rounded-3 py-2 d-flex align-items-center gap-2">
+                        <span>👤</span> My Profile
                       </Dropdown.Item>
-                      <Dropdown.Item onClick={() => setShowLogoutConfirm(true)} className="rounded py-2 text-danger d-flex align-items-center gap-2">
+                      <Dropdown.Item onClick={() => setShowLogoutConfirm(true)} className="rounded-3 py-2 text-danger d-flex align-items-center gap-2">
                         <span>⏻</span> Logout
                       </Dropdown.Item>
                     </div>
@@ -308,8 +334,7 @@ const Layout = ({ children }) => {
                 </Dropdown>
               </div>
             </Navbar>
-          )}
-          <main className={`main-content-bs${isEdgeToEdgePage ? ' main-content--edge-bs' : ''}`}>
+          <main className={`main-content-premium${isEdgeToEdgePage ? ' main-content--edge-premium' : ''}${isFlushContentPage ? ' main-content--flush-premium' : ''}`}>
             {children}
           </main>
         </div>

@@ -89,6 +89,11 @@ const CartPopup = ({
                     <td>
                       <div>
                         <strong>{item.name}</strong>
+                        {item.variant && (
+                          <div className="text-primary smaller fw-medium">
+                            ({item.variant.name})
+                          </div>
+                        )}
                         {editingNotes === (item.cartId || item._id) ? (
                           <InputGroup size="sm" className="mt-1">
                             <Form.Control

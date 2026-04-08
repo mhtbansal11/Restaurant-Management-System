@@ -9,29 +9,32 @@ import {
 import axios from 'axios';
 import config from '../config';
 
-const TableSelectionModal = ({ show, onHide, onSelectTable, selectedTable }) => {
+const TableSelectionModal = ({ show, onHide, onSelectTables, selectedTables = [] }) => {
   const [floors, setFloors] = useState([]);
   const [tables, setTables] = useState([]);
   const [selectedFloor, setSelectedFloor] = useState('');
   const [selectedFloorTables, setSelectedFloorTables] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [localSelection, setLocalSelection] = useState([]);
+
+  useEffect(() => {
+    if (show) {
+      setLocalSelection(selectedTables);
+    }
+  }, [show, selectedTables]);
 
   // Fetch seating layout and tables
   const fetchData = React.useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch seating layout for floors
       const layoutResponse = await axios.get(config.ENDPOINTS.SEATING_LAYOUT || `${config.API_URL}/seating/layout`);
       const layoutData = layoutResponse.data;
-      
-      // Fetch tables for status
       const tablesResponse = await axios.get(config.ENDPOINTS.TABLES);
       const tablesData = tablesResponse.data;
       
       setFloors(layoutData.floors || []);
       setTables(tablesData);
       
-      // Set default floor if none selected
       if (!selectedFloor && layoutData.floors?.length > 0) {
         setSelectedFloor(layoutData.floors[0].id);
       }
@@ -48,7 +51,6 @@ const TableSelectionModal = ({ show, onHide, onSelectTable, selectedTable }) => 
     }
   }, [show, fetchData]);
 
-  // Filter tables for selected floor
   useEffect(() => {
     if (selectedFloor && floors.length > 0) {
       const currentFloor = floors.find(floor => floor.id === selectedFloor);
@@ -56,7 +58,6 @@ const TableSelectionModal = ({ show, onHide, onSelectTable, selectedTable }) => 
         const floorTableIds = currentFloor.tables.map(table => table.id);
         const floorTables = tables.filter(table => floorTableIds.includes(table.tableId));
         
-        // Merge layout data with status data
         const mergedTables = currentFloor.tables.map(layoutTable => {
           const tableStatus = floorTables.find(t => t.tableId === layoutTable.id);
           return {
@@ -73,13 +74,24 @@ const TableSelectionModal = ({ show, onHide, onSelectTable, selectedTable }) => 
     }
   }, [selectedFloor, floors, tables]);
 
-  const handleTableSelect = (table) => {
-    onSelectTable({
-      id: table.id,
-      label: table.label,
-      capacity: table.capacity,
-      status: table.status
+  const toggleTableSelection = (table) => {
+    setLocalSelection(prev => {
+      const isSelected = prev.find(t => t.id === table.id);
+      if (isSelected) {
+        return prev.filter(t => t.id !== table.id);
+      } else {
+        return [...prev, {
+          id: table.id,
+          label: table.label,
+          capacity: table.capacity,
+          status: table.status
+        }];
+      }
     });
+  };
+
+  const handleConfirm = () => {
+    onSelectTables(localSelection);
     onHide();
   };
 
@@ -88,17 +100,15 @@ const TableSelectionModal = ({ show, onHide, onSelectTable, selectedTable }) => 
       available: 'success',
       occupied: 'danger',
       reserved: 'warning',
-      cleaning: 'secondary',
-      maintenance: 'secondary',
-      unavailable: 'secondary'
+      cleaning: 'secondary'
     };
     return variants[status] || 'secondary';
   };
 
   return (
     <Modal show={show} onHide={onHide} centered size="lg">
-      <Modal.Header closeButton className="">
-        <Modal.Title className="h5 fw-bold">🪑 Select Table</Modal.Title>
+      <Modal.Header closeButton>
+        <Modal.Title className="h5 fw-bold">🪑 Select Tables {localSelection.length > 1 && <Badge bg="info" className="ms-2">Merging {localSelection.length}</Badge>}</Modal.Title>
       </Modal.Header>
       <Modal.Body className="px-4 pb-4">
         {loading ? (
@@ -108,9 +118,7 @@ const TableSelectionModal = ({ show, onHide, onSelectTable, selectedTable }) => 
           </div>
         ) : (
           <>
-            {/* Floor Selection Pills */}
             <Form.Group className="mb-4">
-              {/* <Form.Label className="fw-bold text-muted small text-uppercase mb-2 d-block">Select Floor</Form.Label> */}
               <div className="d-flex flex-wrap gap-2">
                 {floors.map(floor => (
                   <Button
@@ -126,42 +134,43 @@ const TableSelectionModal = ({ show, onHide, onSelectTable, selectedTable }) => 
               </div>
             </Form.Group>
 
-            {/* Tables Grid */}
-            <Form.Label className="fw-bold text-muted small text-uppercase">Select Table</Form.Label>
+            <Form.Label className="fw-bold text-muted small text-uppercase">Select one or more tables</Form.Label>
             {selectedFloorTables.length === 0 ? (
               <div className="text-center py-4 text-muted">
-                <div className="mb-2">🪑</div>
                 <p>No tables found on this floor</p>
               </div>
             ) : (
               <div className="row g-3">
-                {selectedFloorTables.map(table => (
-                  <div key={table.id} className="col-6 col-md-4">
-                    <Button
-                      variant={selectedTable?.id === table.id ? "primary" : "outline-primary"}
-                      className="w-100 p-3 d-flex flex-column align-items-center gap-2 rounded-3"
-                      onClick={() => handleTableSelect(table)}
-                      disabled={table.status === 'occupied' || table.status === 'reserved'}
-                    >
-                      <div className="fw-bold">{table.label}</div>
-                      <div className="small text-muted">Capacity: {table.capacity}</div>
-                      <Badge bg={getStatusBadge(table.status)} className="mt-1">
-                        {table.status}
-                      </Badge>
-                      {table.customerCount > 0 && (
-                        <div className="small text-muted">
-                          {table.customerCount} customers
-                        </div>
-                      )}
-                    </Button>
-                  </div>
-                ))}
+                {selectedFloorTables.map(table => {
+                  const isSelected = localSelection.find(t => t.id === table.id);
+                  return (
+                    <div key={table.id} className="col-6 col-md-4">
+                      <Button
+                        variant={isSelected ? "primary" : "outline-primary"}
+                        className={`w-100 p-3 d-flex flex-column align-items-center gap-2 rounded-3 ${isSelected ? 'border-3 border-dark' : ''}`}
+                        onClick={() => toggleTableSelection(table)}
+                        disabled={table.status === 'occupied' || table.status === 'reserved'}
+                      >
+                        <div className="fw-bold">{table.label}</div>
+                        <div className="small opacity-75">Cap: {table.capacity}</div>
+                        <Badge bg={getStatusBadge(table.status)}>
+                          {table.status}
+                        </Badge>
+                      </Button>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </>
         )}
       </Modal.Body>
-     
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide}>Cancel</Button>
+        <Button variant="primary" onClick={handleConfirm} disabled={localSelection.length === 0}>
+          Confirm Selection ({localSelection.length})
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 };
