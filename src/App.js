@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
+import { ThemeProvider } from './context/ThemeContext';
 import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -26,8 +27,6 @@ import { Toaster } from 'react-hot-toast';
 import './App.css';
 import OutletSettings from './pages/OutletSettings';
 import { ROLES } from './constants/roles';
-
-import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   return (

@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Navbar, Button, Badge, Dropdown, Modal, Alert } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import useExpenseNotifications from '../hooks/useExpenseNotifications';
 import { useNotifications } from '../context/NotificationContext';
 import Sidebar from './Sidebar';
-import { useTheme } from '../context/ThemeContext';
 import './Layout.css';
 
 const Layout = ({ children }) => {
@@ -15,11 +15,11 @@ const Layout = ({ children }) => {
   });
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const { notifications: expenseNotifications, dismissNotification } = useExpenseNotifications();
   const { notifications: aadharNotifications, unreadCount, markAsRead } = useNotifications();
-  const { theme, toggleTheme } = useTheme();
 
   const toggleMobileSidebar = () => setIsMobileSidebarOpen(!isMobileSidebarOpen);
   
@@ -106,11 +106,11 @@ const Layout = ({ children }) => {
   return (
     <div className="layout-premium">
       {!isEdgeToEdgePage && (
-      <Navbar bg="white" expand={false} className="mobile-header-bs d-lg-none border-bottom shadow-sm py-2 px-3 sticky-top">
+      <Navbar expand={false} className="mobile-header-bs d-lg-none border-bottom shadow-sm py-2 px-3 sticky-top bg-primary">
         <Button 
           variant="link" 
           onClick={toggleMobileSidebar}
-          className="p-0 border-0 text-dark fs-3 me-3"
+          className="p-0 border-0 text-primary fs-3 me-3"
         >
           ☰
         </Button>
@@ -119,7 +119,7 @@ const Layout = ({ children }) => {
         </Navbar.Brand>
         <div className="ms-auto d-flex align-items-center gap-2">
           <Dropdown align="end" autoClose="outside">
-            <Dropdown.Toggle variant="link" className="nav-icon-box position-relative p-0 text-dark border rounded no-caret">
+            <Dropdown.Toggle variant="link" className="nav-icon-box position-relative p-0 text-primary border rounded no-caret bg-tertiary">
               <span className="fs-5 d-flex align-items-center justify-content-center w-100 h-100">🔔</span>
               {(expenseNotifications.length + unreadCount) > 0 && (
                 <span className="notification-dot"></span>
@@ -184,14 +184,14 @@ const Layout = ({ children }) => {
               </div>
             </Dropdown.Toggle>
             <Dropdown.Menu className="profile-dropdown-menu p-0 shadow-sm border-0 mt-2 overflow-hidden">
-              <div className="p-4 text-center bg-light border-bottom">
-                <div className="profile-avatar-large mx-auto mb-2 shadow-sm">
+              <div className="p-4 text-center bg-tertiary border-bottom">
+                <div className="profile-avatar-large mx-auto mb-2 shadow-sm" style={{ backgroundColor: 'var(--accent-color)' }}>
                   {user?.name?.charAt(0) || 'U'}
                 </div>
-                <div className="fw-bold h6 mb-0">{user?.name || 'User'}</div>
+                <div className="fw-bold h6 mb-0 text-primary">{user?.name || 'User'}</div>
                 <div className="text-muted small">{user?.restaurantName || 'ATC Restaurant'}</div>
                 <div className="mt-2">
-                  <span className="profile-role-badge">{formatRole(user?.role)}</span>
+                  <span className="profile-role-badge" style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--accent-color)' }}>{formatRole(user?.role)}</span>
                 </div>
               </div>
               <div className="p-2 d-flex flex-column gap-1">
@@ -337,19 +337,34 @@ const Layout = ({ children }) => {
           </main>
         </div>
       </div>
-      <Modal show={showLogoutConfirm} onHide={() => setShowLogoutConfirm(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm Logout</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Are you sure you want to log out?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowLogoutConfirm(false)}>
-            Cancel
-          </Button>
-          <Button variant="danger" onClick={handleLogoutConfirm}>
-            Logout
-          </Button>
-        </Modal.Footer>
+      <Modal 
+        show={showLogoutConfirm} 
+        onHide={() => setShowLogoutConfirm(false)}
+        centered
+        className="logout-modal-bs"
+        contentClassName="border-0 shadow-lg bg-primary text-primary"
+      >
+        <Modal.Body className="p-4 text-center">
+          <div className="fs-1 mb-3 text-danger">⚠️</div>
+          <h4 className="fw-bold mb-2 text-primary">Confirm Logout</h4>
+          <p className="text-muted mb-4">Are you sure you want to log out of your account?</p>
+          <div className="d-flex gap-2 justify-content-center">
+            <Button 
+              variant="light" 
+              onClick={() => setShowLogoutConfirm(false)}
+              className="px-4 py-2 bg-tertiary text-primary border-0"
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="danger" 
+              onClick={handleLogoutConfirm}
+              className="px-4 py-2"
+            >
+              Logout
+            </Button>
+          </div>
+        </Modal.Body>
       </Modal>
     </div>
   );

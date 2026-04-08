@@ -386,8 +386,8 @@ const TableActionModal = ({ table, onClose, onAction }) => {
                 variant="outline-danger"
                 className="w-100 h-100 p-3 d-flex flex-column align-items-center gap-2 action-btn-bs border"
                 onClick={() => onAction('clear')}
-                disabled={!!table.currentOrder && (((table.currentOrder.totalAmount || table.currentOrder.subtotal || 0) - (table.currentOrder.paidAmount || 0)) > 0)}
-                title={!!table.currentOrder && (((table.currentOrder.totalAmount || table.currentOrder.subtotal || 0) - (table.currentOrder.paidAmount || 0)) > 0) ? 'Settle due before clearing' : ''}
+                disabled={table.status === 'occupied' && !!table.currentOrder}
+                title={table.status === 'occupied' && !!table.currentOrder ? 'Complete or cancel the order before clearing' : ''}
               >
                 <span className="fs-3" aria-hidden="true">🧹</span>
                 <div className="text-center">
