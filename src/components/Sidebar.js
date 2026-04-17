@@ -14,7 +14,7 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
   const isActive = (path) => location.pathname === path;
 
   const navLinks = [
-    { path: '/', label: 'Dashboard', icon: '📊', roles: ROLES.ALL },
+    { path: '/dashboard', label: 'Dashboard', icon: '📊', roles: ROLES.ALL },
     { path: '/pos', label: 'POS', icon: '🛒', roles: ROLES.POS },
 
     { path: '/orders', label: 'Orders', icon: '📋', roles: ROLES.ALL },

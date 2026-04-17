@@ -1,5 +1,11 @@
-const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:5000/api';
-const FILE_URL = process.env.REACT_APP_FILE_URL || 'http://localhost:5000';
+const browserOrigin =
+  typeof window !== 'undefined' && window.location ? window.location.origin : null;
+
+const defaultApiUrl = browserOrigin ? `${browserOrigin}/api` : 'http://127.0.0.1:5000/api';
+const defaultFileUrl = browserOrigin || 'http://localhost:5000';
+
+const API_URL = process.env.REACT_APP_API_URL || defaultApiUrl;
+const FILE_URL = process.env.REACT_APP_FILE_URL || defaultFileUrl;
 
 
 const config = {

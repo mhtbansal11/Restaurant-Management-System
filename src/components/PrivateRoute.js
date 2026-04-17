@@ -21,8 +21,8 @@ const PrivateRoute = ({ children, allowedRoles }) => {
     // We should ensure Dashboard is accessible to everyone or handle it.
     // However, if they are already ON the dashboard (path is /), we shouldn't redirect to /
     
-    if (location.pathname !== '/') {
-        return <Navigate to="/" replace />;
+    if (location.pathname !== '/dashboard') {
+        return <Navigate to="/dashboard" replace />;
     }
     // If they are on dashboard and not allowed, maybe show a message or let them stay (assuming dashboard is generic)
   }

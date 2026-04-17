@@ -100,7 +100,7 @@ const Layout = ({ children }) => {
     if (path.includes('/pos')) return 'POS Station';
     if (path.includes('/orders/')) return 'Order Details';
     
-    return 'Restaurant POS';
+    return 'Masala Matrix';
   };
 
   return (

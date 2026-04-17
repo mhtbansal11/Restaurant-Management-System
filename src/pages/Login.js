@@ -23,7 +23,7 @@ const Login = () => {
     try {
       await login(email, password);
       toast.success('Successfully logged in!');
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       const msg = err.response?.data?.message || 'Login failed';
       toast.error(msg);
@@ -74,8 +74,8 @@ const Login = () => {
         <div className="auth-card-bs border-0 shadow-lg overflow-hidden">
           <div className="auth-header-bs text-white">
             <div className="auth-logo-bs mb-3 fs-1">🍽️</div>
-            <h1 className="h3 fw-bold mb-1">Restaurant POS</h1>
-            <p className="mb-0 opacity-75">Management System</p>
+            <h1 className="h3 fw-bold mb-1">Masala Matrix</h1>
+            <p className="mb-0 opacity-75">Restaurant Management Platform</p>
           </div>
           
           <div className="card-body">

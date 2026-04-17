@@ -1,0 +1,143 @@
+/* Landing page styles — scoped under .landing-root to avoid Bootstrap conflicts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+.landing-root {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #0b0f19;
+  color: #f9fafb;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+.landing-root *,
+.landing-root *::before,
+.landing-root *::after {
+  box-sizing: border-box;
+}
+
+.landing-root h1,
+.landing-root h2,
+.landing-root h3,
+.landing-root h4,
+.landing-root h5,
+.landing-root h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  color: #f9fafb;
+  margin: 0;
+}
+
+.landing-root p {
+  margin: 0;
+}
+
+.landing-root ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.landing-root a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.lp-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Buttons */
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+}
+
+.lp-btn-primary {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: white !important;
+}
+
+.lp-btn-primary:hover {
+  background: linear-gradient(135deg, #818cf8, #c084fc);
+  color: white !important;
+  text-decoration: none;
+}
+
+.lp-btn-secondary {
+  background: transparent;
+  border: 1px solid #374151;
+  color: #f9fafb !important;
+}
+
+.lp-btn-secondary:hover {
+  background: #1f2937;
+  border-color: #4b5563;
+  color: #f9fafb !important;
+  text-decoration: none;
+}
+
+.lp-nav-link {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: color 0.2s, transform 0.2s;
+  text-decoration: none;
+}
+
+.lp-nav-link:hover {
+  color: #f9fafb;
+}
+
+/* Responsive Nav */
+.lp-desktop-nav {
+  display: flex !important;
+}
+
+.lp-mobile-menu-btn {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .lp-desktop-nav {
+    display: none !important;
+  }
+  .lp-mobile-menu-btn {
+    display: flex !important;
+  }
+}
+
+/* Scrollbar within landing */
+.landing-root ::-webkit-scrollbar {
+  width: 6px;
+}
+.landing-root ::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+.landing-root ::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 3px;
+}
+.landing-root ::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+/* Selection */
+.landing-root ::selection {
+  background: #6366f144;
+  color: white;
+}
