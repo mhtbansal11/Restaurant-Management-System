@@ -885,7 +885,7 @@ const POS = () => {
           setCart([]);
           setCustomerInfo({ name: '', phone: '', _id: null, pendingBalance: 0 });
           toast.success('Order closed with due amount');
-          navigate('/');
+          navigate('/dashboard');
           return;
         }
         const response = await axios.put(`${config.ENDPOINTS.ORDERS}/${currentOrder._id}/pay`, {
@@ -945,7 +945,7 @@ const POS = () => {
       setCustomerInfo({ name: '', phone: '', _id: null, pendingBalance: 0 });
       setKeepTableOccupiedAfterPay(false);
       toast.success('Order settled successfully!');
-      navigate('/');
+      navigate('/dashboard');
     } catch (error) {
       console.error('Settlement failed:', error);
       toast.error('Settlement failed');
@@ -1049,7 +1049,8 @@ const POS = () => {
       return;
     }
 
-    setShowBillModal(true);
+    setPaidAmount(effectiveTotal);
+    setShowSettleModal(true);
   };
 
   const handleQuickKOT = () => {
@@ -1695,9 +1696,15 @@ const POS = () => {
                     variant="outline-primary"
                     className="w-100 py-2 fw-bold pos-footer-btn"
                     disabled={cart.length === 0}
-                    onClick={handleQuickSettle}
+                    onClick={() => {
+                      if (orderType === 'dine-in' && selectedTables.length === 0) {
+                        toast.error('You need to select at least one table for dine-in');
+                        return;
+                      }
+                      setShowCartPopup(true);
+                    }}
                   >
-                    💰 Settle
+                    📄 Bill
                   </Button>
                 </Col>
                 <Col xs={6}>
@@ -1708,7 +1715,7 @@ const POS = () => {
                       disabled={cart.length === 0}
                       onClick={() => handleCheckout()}
                     >
-                      🔥 KOT
+                      🔥 {currentOrder ? 'Update' : 'Place'}
                     </Button>
                   )}
                 </Col>
@@ -1849,10 +1856,9 @@ const POS = () => {
             {['superadmin', 'owner', 'manager', 'cashier', 'receptionist'].includes(user?.role) && (
               <Button
                 variant="primary"
-                className="flex-grow-1 fw-bold"
+                className="flex-grow-1"
                 onClick={() => {
                   if (currentOrder) {
-                    setShowBillModal(false);
                     setPaidAmount(effectiveTotal);
                     setShowSettleModal(true);
                   } else {
@@ -1860,7 +1866,7 @@ const POS = () => {
                   }
                 }}
               >
-                Proceed to Checkout →
+                Settle Bill
               </Button>
             )}
           </div>
@@ -2138,7 +2144,15 @@ const POS = () => {
           ));
         }}
         onCheckout={handleCheckout}
-        onShowBillModal={() => setShowBillModal(true)}
+        onShowBillModal={() => {
+          setShowCartPopup(false);
+          if (currentOrder) {
+            setPaidAmount(effectiveTotal);
+            setShowSettleModal(true);
+          } else {
+            handleCheckout({ openSettle: true });
+          }
+        }}
         calculateTotal={calculateTotal}
         calculateDiscount={calculateDiscount}
         calculateTax={calculateTax}
