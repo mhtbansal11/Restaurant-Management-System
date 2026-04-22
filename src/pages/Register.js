@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Container, Button, Form, Spinner, InputGroup } from 'react-bootstrap';
+import { Container, Button, Form, Spinner, InputGroup, Modal } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
@@ -14,6 +14,7 @@ const Register = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -27,8 +28,7 @@ const Register = () => {
 
     try {
       await register(formData.name, formData.email, formData.password, formData.restaurantName);
-      toast.success('Account created successfully!');
-      setTimeout(() => navigate('/'), 2000);
+      setShowSuccessModal(true);
     } catch (err) {
       const msg = err.response?.data?.message || 'Registration failed';
       toast.error(msg);
@@ -55,7 +55,47 @@ const Register = () => {
           <div className="shape shape-12"></div>
         </div>
       </div>
-      
+
+      {/* Full-screen loader overlay */}
+      {loading && (
+        <div
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            background: 'rgba(255,255,255,0.75)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', gap: '16px'
+          }}
+        >
+          <Spinner animation="border" variant="primary" style={{ width: '3rem', height: '3rem' }} />
+          <p className="fw-semibold text-primary mb-0">Creating your account...</p>
+        </div>
+      )}
+
+      {/* Success modal */}
+      <Modal
+        show={showSuccessModal}
+        centered
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Body className="text-center p-5">
+          <div style={{ fontSize: '3.5rem', lineHeight: 1 }} className="mb-3">🎉</div>
+          <h4 className="fw-bold mb-2">Profile Created Successfully!</h4>
+          <p className="text-muted mb-4">
+            Welcome to Masala Matrix, <strong>{formData.name}</strong>!<br />
+            Your restaurant <strong>{formData.restaurantName}</strong> is ready to go.
+          </p>
+          <Button
+            variant="primary"
+            className="px-5 py-2 fw-bold rounded-3 border-0 shadow-sm"
+            onClick={() => navigate('/dashboard')}
+          >
+            Continue to Dashboard →
+          </Button>
+        </Modal.Body>
+      </Modal>
+
       <Container className="d-flex align-items-center justify-content-center min-vh-100 py-5">
         <div className="auth-card-bs border-0 shadow-lg overflow-hidden">
           <div className="auth-header-bs text-white">
@@ -63,13 +103,13 @@ const Register = () => {
             <h1 className="h3 fw-bold mb-1">Masala Matrix</h1>
             <p className="mb-0 opacity-75">Restaurant Management Platform</p>
           </div>
-          
+
           <div className="card-body">
             <div className="text-center">
               <h2 className="h4 fw-bold text-dark mb-2">Create Account</h2>
               <p className="text-muted">Join us to manage your restaurant efficiently</p>
             </div>
-            
+
             <Form onSubmit={handleSubmit}>
               <Form.Group className="mb-3">
                 <Form.Label className="small fw-bold text-muted text-uppercase">Full Name</Form.Label>
@@ -88,7 +128,7 @@ const Register = () => {
                   />
                 </InputGroup>
               </Form.Group>
-              
+
               <Form.Group className="mb-3">
                 <Form.Label className="small fw-bold text-muted text-uppercase">Restaurant Name</Form.Label>
                 <InputGroup className="bg-light rounded-3 overflow-hidden border-0">
@@ -106,7 +146,7 @@ const Register = () => {
                   />
                 </InputGroup>
               </Form.Group>
-              
+
               <Form.Group className="mb-3">
                 <Form.Label className="small fw-bold text-muted text-uppercase">Email Address</Form.Label>
                 <InputGroup className="bg-light rounded-3 overflow-hidden border-0">
@@ -124,7 +164,7 @@ const Register = () => {
                   />
                 </InputGroup>
               </Form.Group>
-              
+
               <Form.Group className="mb-4">
                 <Form.Label className="small fw-bold text-muted text-uppercase">Password</Form.Label>
                 <InputGroup className="bg-light rounded-3 overflow-hidden border-0">
@@ -141,8 +181,8 @@ const Register = () => {
                     minLength={6}
                     className="bg-transparent border-0 py-2 shadow-none"
                   />
-                  <Button 
-                    variant="link" 
+                  <Button
+                    variant="link"
                     className="bg-transparent border-0 text-muted text-decoration-none px-3"
                     onClick={() => setShowPassword(!showPassword)}
                   >
@@ -150,22 +190,17 @@ const Register = () => {
                   </Button>
                 </InputGroup>
               </Form.Group>
-              
-              <Button 
-                variant="primary" 
-                type="submit" 
-                className="w-100 py-3 fw-bold rounded-3 shadow-sm border-0 mb-4" 
+
+              <Button
+                variant="primary"
+                type="submit"
+                className="w-100 py-3 fw-bold rounded-3 shadow-sm border-0 mb-4"
                 disabled={loading}
               >
-                {loading ? (
-                  <>
-                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
-                    Registering...
-                  </>
-                ) : '🚀 Create Account'}
+                {loading ? 'Creating account...' : '🚀 Create Account'}
               </Button>
             </Form>
-            
+
             <div className="text-center">
               <p className="text-muted small mb-0">
                 Already have an account? <Link to="/login" className="text-primary text-decoration-none fw-bold">Sign In</Link>
@@ -179,4 +214,3 @@ const Register = () => {
 };
 
 export default Register;
-

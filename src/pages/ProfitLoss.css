@@ -1,31 +1,31 @@
 .profit-loss-dashboard {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-app);
 }
 
 .pnl-card {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  border: none;
+  border: 1px solid var(--border-subtle);
   border-radius: 15px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  background: var(--bg-surface);
 }
 
 .pnl-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
 }
 
 .pnl-metric-card {
   border-radius: 15px;
-  border: none;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
 }
 
 .pnl-metric-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .pnl-metric-card .card-body {
@@ -50,22 +50,22 @@
 
 .pnl-chart-container {
   border-radius: 15px;
-  border: none;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   padding: 1.5rem;
 }
 
 .pnl-table {
   border-radius: 15px;
   overflow: hidden;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: var(--bg-surface);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
 }
 
 .pnl-table thead th {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--accent-glow);
+  color: #fff;
   border: none;
   font-weight: 600;
   text-transform: uppercase;
@@ -79,20 +79,21 @@
 }
 
 .pnl-table tbody tr:hover {
-  background-color: rgba(102, 126, 234, 0.05);
+  background-color: var(--bg-secondary);
 }
 
 .pnl-table tbody td {
   padding: 1rem 1.5rem;
-  border-color: #e9ecef;
+  border-color: var(--border-light);
   font-weight: 500;
+  color: var(--text-main);
 }
 
 .pnl-insight-alert {
   border-radius: 15px;
-  border: none;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   padding: 1.5rem;
 }
 
@@ -102,10 +103,11 @@
 }
 
 .pnl-category-list {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 15px;
   padding: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
 }
 
 .pnl-category-item {
@@ -113,7 +115,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 0;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid var(--border-light);
   transition: background-color 0.2s ease;
 }
 
@@ -122,30 +124,31 @@
 }
 
 .pnl-category-item:hover {
-  background-color: rgba(102, 126, 234, 0.05);
+  background-color: var(--bg-secondary);
   border-radius: 8px;
   padding: 0.75rem 1rem;
 }
 
 .pnl-filter-controls {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 15px;
   padding: 1rem 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   margin-bottom: 2rem;
 }
 
 .pnl-filter-select {
   border-radius: 10px;
-  border: 2px solid #e9ecef;
+  border: 2px solid var(--border-light);
   padding: 0.5rem 1rem;
   font-weight: 500;
   transition: all 0.2s ease;
 }
 
 .pnl-filter-select:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 .pnl-refresh-btn {
@@ -153,22 +156,22 @@
   padding: 0.5rem 1.5rem;
   font-weight: 600;
   transition: all 0.2s ease;
-  border: 2px solid #667eea;
+  border: 2px solid var(--primary);
 }
 
 .pnl-refresh-btn:hover {
-  background-color: #667eea;
-  color: white;
+  background-color: var(--primary);
+  color: #fff;
   transform: translateY(-1px);
 }
 
 .pnl-positive {
-  color: #28a745 !important;
+  color: var(--success-color) !important;
   font-weight: 700;
 }
 
 .pnl-negative {
-  color: #dc3545 !important;
+  color: var(--danger-color) !important;
   font-weight: 700;
 }
 
@@ -176,10 +179,11 @@
   font-size: 1.8rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  color: var(--text-main);
 }
 
 .pnl-metric-label {
-  color: #6c757d;
+  color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
   font-size: 0.85rem;
@@ -187,7 +191,7 @@
 }
 
 .pnl-metric-subtext {
-  color: #6c757d;
+  color: var(--text-muted);
   font-size: 0.9rem;
 }
 
@@ -197,15 +201,16 @@
 }
 
 .pnl-summary-table {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 15px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
 }
 
 .pnl-summary-table thead th {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: var(--accent-glow);
+  color: #fff;
   font-weight: 600;
   padding: 1rem;
 }
@@ -213,7 +218,8 @@
 .pnl-summary-table tbody td {
   padding: 1rem;
   font-weight: 500;
-  border-color: #e9ecef;
+  border-color: var(--border-light);
+  color: var(--text-main);
 }
 
 .pnl-summary-table tbody tr:last-child td {
@@ -225,15 +231,17 @@
   align-items: center;
   justify-content: center;
   min-height: 400px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 15px;
 }
 
 .pnl-empty-state {
   text-align: center;
   padding: 3rem 1rem;
-  color: #6c757d;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
   border-radius: 15px;
 }
 
@@ -247,24 +255,24 @@
   .pnl-metric-card .card-body {
     padding: 1rem;
   }
-  
+
   .pnl-metric-value {
     font-size: 1.5rem;
   }
-  
+
   .pnl-table thead th,
   .pnl-table tbody td {
     padding: 0.75rem 1rem;
   }
-  
+
   .pnl-filter-controls {
     padding: 1rem;
   }
-  
+
   .pnl-chart-container {
     padding: 1rem;
   }
-  
+
   .pnl-category-list {
     padding: 1rem;
   }

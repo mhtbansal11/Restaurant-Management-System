@@ -47,7 +47,6 @@ const POS = () => {
   const [paidAmount, setPaidAmount] = useState(0);
   const [paymentMode, setPaymentMode] = useState('cash');
   const [showSettleModal, setShowSettleModal] = useState(false);
-  const [showKOTModal, setShowKOTModal] = useState(false);
   const [showTableModal, setShowTableModal] = useState(false);
   const [showQuickTableModal, setShowQuickTableModal] = useState(false);
   const [keepTableOccupiedAfterPay, setKeepTableOccupiedAfterPay] = useState(false);
@@ -144,14 +143,14 @@ const POS = () => {
 
   // Update enableTax when user context or outlet settings change
   useEffect(() => {
-    const isGstEnabled = outletInfo.settings.isGstEnabled || user?.isGstEnabled || user?.enableGST || false;
+    const isGstEnabled = outletInfo?.settings?.isGstEnabled || user?.isGstEnabled || user?.enableGST || false;
     if (currentOrder) {
       const orderTaxApplied = (currentOrder.taxAmount || 0) > 0;
       setEnableTax(orderTaxApplied);
       return;
     }
     setEnableTax(isGstEnabled);
-  }, [user, outletInfo.settings.isGstEnabled, currentOrder]);
+  }, [user, outletInfo?.settings?.isGstEnabled, currentOrder]);
 
   useEffect(() => {
     if (!currentOrder) return;
@@ -273,7 +272,13 @@ const POS = () => {
   const fetchOutletSettings = async () => {
     try {
       const response = await axios.get(`${config.ENDPOINTS.OUTLET}/current`);
-      setOutletInfo(response.data);
+      if (response.data) {
+        setOutletInfo(prev => ({
+          ...prev,
+          ...response.data,
+          settings: { ...prev.settings, ...(response.data.settings || {}) }
+        }));
+      }
     } catch (error) {
       console.error('Error fetching outlet settings:', error);
     }
@@ -493,7 +498,7 @@ const POS = () => {
     }
   };
 
-  const handleCheckout = async () => {
+  const handleCheckout = async ({ openSettle = false } = {}) => {
     if (orderType === 'dine-in' && selectedTables.length === 0) {
       toast.error('You need to select at least one table for dine-in');
       return;
@@ -512,7 +517,9 @@ const POS = () => {
       const orderData = {
         items: cart.map(item => ({
           _id: item.orderItemId,
-          menuItem: item._id,
+          // For existing order items, item._id is the order-item's DB id, not the menu item id.
+          // item.menuItem holds the actual menu item reference (populated object or ObjectId).
+          menuItem: item.menuItem?._id || item.menuItem || item._id,
           quantity: item.quantity,
           price: item.price,
           variant: item.variant || null,
@@ -550,18 +557,22 @@ const POS = () => {
       
       setCurrentOrder(response.data);
       setCart(mapOrderItemsToCart(response.data));
-      setPaidAmount(effectiveTotal); // Default to full payment
-      setShowKOTModal(true);
+      setPaidAmount(calculateGrandTotal());
+      handlePrint(response.data);
+      if (openSettle) {
+        setShowSettleModal(true);
+      }
     } catch (error) {
       console.error('Checkout failed:', error);
       toast.error('Checkout failed');
     }
   };
 
-  const getPrintableKOTItems = useCallback(() => (
-    (currentOrder?.items || [])
+  const getPrintableKOTItems = useCallback((orderOverride) => {
+    const order = orderOverride || currentOrder;
+    return (order?.items || [])
       .map((item) => {
-        const storedPrintedMap = getStoredKOTPrintMap(currentOrder?._id);
+        const storedPrintedMap = getStoredKOTPrintMap(order?._id);
         const storedPrintedQuantity = Number(storedPrintedMap[getKOTItemSignature(item)] || 0);
         const effectivePrintedQuantity = Math.max(item.kotPrintedQuantity || 0, storedPrintedQuantity);
         const printableQuantity = Math.max((item.quantity || 0) - effectivePrintedQuantity, 0);
@@ -575,12 +586,13 @@ const POS = () => {
           printableQuantity
         };
       })
-      .filter(Boolean)
-  ), [currentOrder, getKOTItemSignature, getStoredKOTPrintMap]);
+      .filter(Boolean);
+  }, [currentOrder, getKOTItemSignature, getStoredKOTPrintMap]);
 
   // Print functionality
-  const handlePrint = () => {
-    const newItems = getPrintableKOTItems();
+  const handlePrint = (orderOverride) => {
+    const order = orderOverride || currentOrder;
+    const newItems = getPrintableKOTItems(order);
 
     if (newItems.length === 0) {
       toast('No new items to print KOT', { icon: 'ℹ️' });
@@ -591,20 +603,20 @@ const POS = () => {
       <style>
         @media print {
           @page { margin: 0; }
-          body { 
+          body {
             font-family: 'Courier New', Courier, monospace;
             font-size: 14px;
             line-height: 1.2;
-            width: 80mm; 
+            width: 80mm;
             margin: 0;
             padding: 5mm;
             color: #000;
           }
           .header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 5px; margin-bottom: 10px; }
-          .section-header { 
-            font-weight: bold; 
+          .section-header {
+            font-weight: bold;
             text-align: center;
-            margin-top: 10px; 
+            margin-top: 10px;
             margin-bottom: 5px;
             font-size: 18px;
             background: #000;
@@ -621,20 +633,20 @@ const POS = () => {
           .print-only { display: none; }
         }
       </style>
-      
+
       <div class="print-only">
         <div class="header">
           <h2 style="margin:0;">KOT (NEW)</h2>
           <div style="font-size: 18px; font-weight: bold;">
-            ${orderType === 'dine-in' 
-              ? `DINE-IN: ${currentOrder?.tableLabels?.join(' + ') || selectedTables.map(t => t.label).join(' + ') || 'N/A'}`
+            ${orderType === 'dine-in'
+              ? `DINE-IN: ${order?.tableLabels?.join(' + ') || selectedTables.map(t => t.label).join(' + ') || 'N/A'}`
               : orderType === 'takeaway'
               ? 'TAKEAWAY'
               : orderType === 'packing'
               ? 'PACKING'
-              : `TABLE: ${currentOrder?.tableLabels?.join(' + ') || selectedTables.map(t => t.label).join(' + ') || 'TAKEAWAY'}`}
+              : `TABLE: ${order?.tableLabels?.join(' + ') || selectedTables.map(t => t.label).join(' + ') || 'TAKEAWAY'}`}
           </div>
-          <div>Order: #${currentOrder?.orderNumber || currentOrder?._id?.slice(-6) || 'N/A'}</div>
+          <div>Order: #${order?.orderNumber || order?._id?.slice(-6) || 'N/A'}</div>
           <div>Time: ${new Date().toLocaleTimeString()}</div>
         </div>
 
@@ -656,7 +668,7 @@ const POS = () => {
         </div>
       </div>
     `;
-    
+
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
       toast.error('Popup blocked! Please allow popups for printing.');
@@ -677,24 +689,24 @@ const POS = () => {
       }
     }, 250);
 
-    if (currentOrder?._id) {
-      const existingPrintedMap = getStoredKOTPrintMap(currentOrder._id);
+    if (order?._id) {
+      const existingPrintedMap = getStoredKOTPrintMap(order._id);
       const nextPrintedMap = { ...existingPrintedMap };
 
-      (currentOrder.items || []).forEach((item) => {
+      (order.items || []).forEach((item) => {
         if (item.status === 'cancelled') return;
         nextPrintedMap[getKOTItemSignature(item)] = item.quantity || 0;
       });
 
-      setStoredKOTPrintMap(currentOrder._id, nextPrintedMap);
+      setStoredKOTPrintMap(order._id, nextPrintedMap);
     }
 
-    const locallyPrintedOrder = markKOTPrintedLocally(currentOrder);
+    const locallyPrintedOrder = markKOTPrintedLocally(order);
     setCurrentOrder(locallyPrintedOrder);
     setCart(mapOrderItemsToCart(locallyPrintedOrder));
 
-    if (currentOrder?._id) {
-      axios.patch(`${config.ENDPOINTS.ORDERS}/${currentOrder._id}/kot/printed`)
+    if (order?._id) {
+      axios.patch(`${config.ENDPOINTS.ORDERS}/${order._id}/kot/printed`)
         .then((response) => {
           setCurrentOrder(response.data);
           setCart(mapOrderItemsToCart(response.data));
@@ -1056,12 +1068,16 @@ const POS = () => {
       return;
     }
 
-    setShowKOTModal(true);
+    handlePrint();
   };
 
   const handleQuickSettle = () => {
     if (!currentOrder) {
-      toast.error('Place the order first');
+      if (cart.length === 0) {
+        toast.error('Add items before settling');
+        return;
+      }
+      handleCheckout({ openSettle: true });
       return;
     }
 
@@ -1234,7 +1250,7 @@ const POS = () => {
                   variant="light"
                   className="pos-quick-action-btn pos-quick-action-btn-primary"
                   onClick={handleQuickSettle}
-                  disabled={!currentOrder}
+                  disabled={cart.length === 0}
                 >
                   Settle
                 </Button>
@@ -1269,7 +1285,7 @@ const POS = () => {
                     <div className="w-100 d-flex justify-content-between align-items-start gap-3">
                       <div className="pos-menu-copy">
                        
-                        <Card.Title className={`h6 mb-0 ${item.isAvailable === false ? 'text-muted' : 'text-dark'} fw-semibold pos-menu-title`}>{item.name}</Card.Title>
+                        <Card.Title className={`h6 mb-0 ${item.isAvailable === false ? 'text-muted' : ''} fw-semibold pos-menu-title`}>{item.name}</Card.Title>
                        {activeCategory === 'All' && (
                           <Badge className="pos-menu-category mb-2 ">
                             {item.category.replace(/_/g, ' ' )}
@@ -1675,30 +1691,24 @@ const POS = () => {
             <div className="d-grid gap-2">
               <Row className="g-2">
                 <Col xs={6}>
-                  <Button 
-                    variant="outline-primary" 
+                  <Button
+                    variant="outline-primary"
                     className="w-100 py-2 fw-bold pos-footer-btn"
                     disabled={cart.length === 0}
-                    onClick={() => {
-                      if (orderType === 'dine-in' && selectedTables.length === 0) {
-                        toast.error('You need to select at least one table for dine-in');
-                        return;
-                      }
-                      setShowCartPopup(true);
-                    }}
+                    onClick={handleQuickSettle}
                   >
-                    📄 Bill
+                    💰 Settle
                   </Button>
                 </Col>
                 <Col xs={6}>
                   {['superadmin', 'owner', 'manager', 'cashier', 'receptionist', 'waiter'].includes(user?.role) && (
-                    <Button 
-                      variant="primary" 
+                    <Button
+                      variant="primary"
                       className="w-100 py-2 fw-bold shadow-sm pos-footer-btn"
                       disabled={cart.length === 0}
-                      onClick={handleCheckout}
+                      onClick={() => handleCheckout()}
                     >
-                      🔥 {currentOrder ? 'Update' : 'Place'}
+                      🔥 KOT
                     </Button>
                   )}
                 </Col>
@@ -1837,20 +1847,20 @@ const POS = () => {
           <div className="d-flex gap-2">
             <Button variant="light" className="flex-grow-1" onClick={handlePrintBill}>Print Bill</Button>
             {['superadmin', 'owner', 'manager', 'cashier', 'receptionist'].includes(user?.role) && (
-              <Button 
-                variant="primary" 
-                className="flex-grow-1"
+              <Button
+                variant="primary"
+                className="flex-grow-1 fw-bold"
                 onClick={() => {
                   if (currentOrder) {
+                    setShowBillModal(false);
                     setPaidAmount(effectiveTotal);
                     setShowSettleModal(true);
-                  }
-                  else {
+                  } else {
                     toast.error('Please place order first');
                   }
-                }} 
+                }}
               >
-                Settle Bill
+                Proceed to Checkout →
               </Button>
             )}
           </div>
@@ -1859,10 +1869,10 @@ const POS = () => {
 
       {/* Settlement Modal */}
       <Modal show={showSettleModal} onHide={() => setShowSettleModal(false)} centered size="lg">
-        <Modal.Body className="p-0 bg-dark rounded overflow-hidden">
+        <Modal.Body className="p-0 rounded overflow-hidden" style={{ background: 'var(--bg-tertiary)' }}>
           <div className="d-flex flex-column flex-md-row">
             {/* Left Side: The "Physical" Invoice */}
-            <div className="p-4 d-flex align-items-center justify-content-center bg-secondary" style={{ minWidth: "400px" }}>
+            <div className="p-4 d-flex align-items-center justify-content-center" style={{ minWidth: "400px", background: 'var(--bg-secondary)' }}>
               <div className="invoice-paper bg-white shadow-lg p-4" style={{ 
                 width: "320px",
                 fontFamily: "'Courier New', Courier, monospace",
@@ -1993,9 +2003,9 @@ const POS = () => {
             </div>
 
             {/* Right Side: Payment Actions */}
-            <div className="p-4 flex-grow-1 bg-white d-flex flex-column">
+            <div className="p-4 flex-grow-1 d-flex flex-column" style={{ background: 'var(--bg-surface)' }}>
               <div className="mb-4 text-center text-md-start border-bottom">
-                <h4 className="fw-bold text-dark mb-1">Settle Payment</h4>
+                <h4 className="fw-bold mb-1" style={{ color: 'var(--text-main)' }}>Settle Payment</h4>
                 <p className="text-muted small">Choose payment method and confirm amount</p>
               </div>
               
@@ -2010,7 +2020,7 @@ const POS = () => {
                   ].map(mode => (
                     <div className="col-6" key={mode.id}>
                       <button 
-                        className={`btn w-100 py-3 d-flex flex-column align-items-center justify-content-center border-2 ${paymentMode === mode.id ? 'btn-primary border-primary' : 'btn-outline-light text-dark border-light'}`}
+                        className={`btn w-100 py-3 d-flex flex-column align-items-center justify-content-center border-2 ${paymentMode === mode.id ? 'btn-primary border-primary' : 'btn-outline-secondary'}`}
                         onClick={() => {
                           setPaymentMode(mode.id);
                           if (mode.id === 'due') {
@@ -2112,80 +2122,6 @@ const POS = () => {
         </Modal.Body>
       </Modal>
 
-      {/* KOT Modal */}
-      <Modal show={showKOTModal} onHide={() => setShowKOTModal(false)} centered size="sm">
-        <Modal.Body className="p-0">
-          <div className="kot-preview p-4 bg-white text-dark shadow-sm mx-auto" style={{ 
-            fontFamily: "'Courier New', Courier, monospace",
-            width: "100%",
-            maxWidth: "350px",
-            border: "1px solid #eee"
-          }}>
-            <div className="text-center border-bottom border-dark border-2 pb-2 mb-3">
-              <h4 className="fw-bold mb-0">KOT (NEW)</h4>
-              <div className="small">{new Date().toLocaleDateString('en-GB')} {new Date().toLocaleTimeString()}</div>
-            </div>
-
-            <div className="mb-3">
-              <div className="d-flex justify-content-between align-items-center mb-1">
-                <span className="small">TYPE:</span>
-                <span className="fw-bold fs-5 text-uppercase">
-                  {orderType === 'dine-in' 
-                    ? `DINE-IN (${currentOrder?.tableLabels?.join(' + ') || selectedTables.map(t => t.label).join(' + ') || 'N/A'})`
-                    : orderType === 'takeaway'
-                    ? 'TAKEAWAY'
-                    : orderType === 'packing'
-                    ? 'PACKING'
-                    : (currentOrder?.tableLabels?.join(' + ') || selectedTables.map(t => t.label).join(' + ') || 'TAKEAWAY')}
-                </span>
-              </div>
-              <div className="d-flex justify-content-between small">
-                <span>ORDER:</span>
-                <span className="fw-bold">#{currentOrder?._id?.slice(-6).toUpperCase() || 'N/A'}</span>
-              </div>
-            </div>
-
-            <div className="border-top border-bottom border-dark py-2 mb-3">
-              <div className="d-flex fw-bold small border-bottom border-dark pb-1 mb-2">
-                <span style={{ width: "40px" }}>QTY</span>
-                <span className="flex-grow-1">ITEM</span>
-              </div>
-              
-              {Object.values(getPrintableKOTItems().reduce((acc, item) => {
-                const name = item.name || item.menuItem?.name;
-                if (!acc[name]) {
-                  acc[name] = { name, quantity: 0, notes: item.notes };
-                }
-                acc[name].quantity += item.printableQuantity;
-                return acc;
-              }, {}) || {}).map((item, idx) => (
-                <div key={idx} className="mb-2">
-                  <div className="d-flex align-items-start">
-                    <span className="fw-bold fs-5" style={{ width: "40px" }}>{item.quantity}</span>
-                    <span className="fw-bold fs-5 text-uppercase flex-grow-1">{item.name}</span>
-                  </div>
-                  {item.notes && (
-                    <div className="ms-4 small italic text-muted">* {item.notes}</div>
-                  )}
-                </div>
-              ))}
-
-              {getPrintableKOTItems().length === 0 && (
-                <div className="text-center py-3 text-muted">--- NO NEW ITEMS ---</div>
-              )}
-            </div>
-
-            <div className="text-center small mb-4">
-              *** END OF TICKET ***
-            </div>
-
-            <div className="d-flex gap-2 no-print">
-              <Button variant="outline-dark" className="flex-grow-1" onClick={() => setShowKOTModal(false)}>CLOSE</Button>
-              <Button variant="dark" className="flex-grow-1 fw-bold" onClick={handlePrint}>PRINT KOT</Button>
-            </div>
-          </div>
-        </Modal.Body>
-      </Modal>
 
       {/* Cart Popup Modal */}
       <CartPopup

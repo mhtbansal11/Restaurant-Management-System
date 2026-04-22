@@ -146,8 +146,14 @@
   border-radius: var(--radius-full);
 }
 
-.stat-change-up { background: #dcfce7; color: #166534; }
-.stat-change-down { background: #fee2e2; color: #991b1b; }
+.stat-change-up {
+  background: color-mix(in srgb, var(--success-color) 16%, var(--bg-surface) 84%);
+  color: var(--success-color);
+}
+.stat-change-down {
+  background: color-mix(in srgb, var(--danger-color) 16%, var(--bg-surface) 84%);
+  color: var(--danger-color);
+}
 
 .ai-glow {
   border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border-subtle)) !important;

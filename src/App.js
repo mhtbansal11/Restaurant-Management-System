@@ -36,18 +36,31 @@ import LandingPricing from './landing/pages/Pricing';
 import LandingAbout from './landing/pages/About';
 import LandingContact from './landing/pages/Contact';
 
+// Super Admin imports
+import { SuperAdminProvider } from './superadmin/SuperAdminContext';
+import SuperAdminRoute from './superadmin/SuperAdminRoute';
+import SuperAdminLayout from './superadmin/SuperAdminLayout';
+import SALogin from './superadmin/pages/Login';
+import SADashboard from './superadmin/pages/Dashboard';
+import SARestaurants from './superadmin/pages/Restaurants';
+import SANotifications from './superadmin/pages/Notifications';
+
 function App() {
   return (
+    <SuperAdminProvider>
     <AuthProvider>
       <ThemeProvider>
         <Toaster
           position="top-right"
+          containerStyle={{ top: 16, right: 16, left: 16 }}
           toastOptions={{
             duration: 4000,
             style: {
               background: '#333',
               color: '#fff',
               borderRadius: '10px',
+              maxWidth: '90vw',
+              wordBreak: 'break-word',
             },
           }}
         />
@@ -60,6 +73,13 @@ function App() {
             <Route path="/pricing" element={<LandingLayout><LandingPricing /></LandingLayout>} />
             <Route path="/about" element={<LandingLayout><LandingAbout /></LandingLayout>} />
             <Route path="/contact" element={<LandingLayout><LandingContact /></LandingLayout>} />
+
+            {/* Super Admin routes */}
+            <Route path="/superadmin/login" element={<SALogin />} />
+            <Route path="/superadmin/dashboard" element={<SuperAdminRoute><SuperAdminLayout><SADashboard /></SuperAdminLayout></SuperAdminRoute>} />
+            <Route path="/superadmin/restaurants" element={<SuperAdminRoute><SuperAdminLayout><SARestaurants /></SuperAdminLayout></SuperAdminRoute>} />
+            <Route path="/superadmin/notifications" element={<SuperAdminRoute><SuperAdminLayout><SANotifications /></SuperAdminLayout></SuperAdminRoute>} />
+            <Route path="/superadmin" element={<Navigate to="/superadmin/login" replace />} />
 
             {/* Auth pages */}
             <Route path="/login" element={<Login />} />
@@ -176,6 +196,7 @@ function App() {
         </Router>
       </ThemeProvider>
     </AuthProvider>
+    </SuperAdminProvider>
   );
 }
 

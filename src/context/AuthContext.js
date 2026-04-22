@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data.user);
     } catch (error) {
       const status = error?.response?.status;
-      if (status === 401 || status === 403) {
+      if (status === 401) {
         handleInvalidToken('Your session has expired. Please log in again.');
       } else {
         localStorage.removeItem('token');
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
       (error) => {
         const status = error?.response?.status;
         const hasToken = !!localStorage.getItem('token');
-        if (hasToken && (status === 401 || status === 403)) {
+        if (hasToken && status === 401) {
           handleInvalidToken('Your session has expired. Please log in again.');
         }
         return Promise.reject(error);

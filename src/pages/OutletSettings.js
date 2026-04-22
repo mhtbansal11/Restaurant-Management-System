@@ -31,7 +31,13 @@ const OutletSettings = () => {
   const fetchSettings = async () => {
     try {
       const response = await axios.get(`${config.ENDPOINTS.OUTLET}/current`);
-      setSettings(response.data);
+      if (response.data) {
+        setSettings(prev => ({
+          ...prev,
+          ...response.data,
+          settings: { ...prev.settings, ...(response.data.settings || {}) }
+        }));
+      }
     } catch (error) {
       console.error('Error fetching settings:', error);
       setMessage({ type: 'danger', text: 'Failed to load settings' });
