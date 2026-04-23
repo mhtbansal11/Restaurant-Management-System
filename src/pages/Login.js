@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Container, Button, Form, Spinner, InputGroup } from 'react-bootstrap';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
+import BrandLogo from '../components/BrandLogo';
 import './Auth.css';
 
 const Login = () => {
@@ -73,7 +74,9 @@ const Login = () => {
       <Container className="d-flex align-items-center justify-content-center min-vh-100">
         <div className="auth-card-bs border-0 shadow-lg overflow-hidden">
           <div className="auth-header-bs text-white">
-            <div className="auth-logo-bs mb-3 fs-1">🍽️</div>
+            <div className="auth-logo-bs mb-3 d-flex justify-content-center">
+              <BrandLogo theme="dark" size={56} style={{ }} />
+            </div>
             <h1 className="h3 fw-bold mb-1">Masala Matrix</h1>
             <p className="mb-0 opacity-75">Restaurant Management Platform</p>
           </div>

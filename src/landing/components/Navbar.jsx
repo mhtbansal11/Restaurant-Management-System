@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Utensils, Menu, X, LogIn } from 'lucide-react';
+import { Menu, X, LogIn } from 'lucide-react';
+import BrandLogo from '../../components/BrandLogo';
 import { ease } from '../utils/animations';
 
 const links = [
@@ -35,8 +36,8 @@ export default function LandingNavbar() {
       transition={{ duration: 0.7, ease }}
       style={{
         position: 'fixed', top: 0, width: '100%', zIndex: 100,
-        background: scrolled ? 'rgba(11,15,25,0.97)' : 'rgba(11,15,25,0.6)',
-        backdropFilter: 'blur(20px)',
+        background: scrolled ? 'rgba(11,15,25,0.97)' : 'transparent',
+        backdropFilter: scrolled ? 'blur(20px)' : 'none',
         borderBottom: scrolled ? '1px solid #1f2937' : '1px solid transparent',
         transition: 'all 0.35s ease',
       }}
@@ -44,9 +45,7 @@ export default function LandingNavbar() {
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 24px' }}>
         <motion.div whileHover={{ scale: 1.04 }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <div style={{ width: 38, height: 38, background: 'linear-gradient(135deg,#6366f1,#a855f7)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Utensils size={18} color="white" />
-            </div>
+            <BrandLogo theme="dark" size={38} style={{ boxShadow: '0 0 18px rgba(168,85,247,0.28)' }} />
             <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.03em', color: '#f9fafb' }}>Masala Matrix</span>
           </Link>
         </motion.div>

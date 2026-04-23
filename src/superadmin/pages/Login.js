@@ -26,12 +26,12 @@ export default function SuperAdminLogin() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #0f172a 0%, #000000 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ width: '100%', maxWidth: 420 }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <div style={{ width: 64, height: 64, borderRadius: 18, background: 'linear-gradient(135deg,#6366f1,#a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', fontSize: 28 }}>
-            🛡️
+          <div style={{ width: 64, height: 64, borderRadius: 18, backgroundImage: "url('/assets/brand/masala-matrix-logo-white-elements.png')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', margin: '0 auto 16px', fontSize: 0 }}>
+            
           </div>
           <h1 style={{ color: '#f8fafc', fontWeight: 800, fontSize: '1.6rem', margin: 0 }}>Super Admin</h1>
           <p style={{ color: '#94a3b8', marginTop: 6, fontSize: '0.9rem' }}>Masala Matrix Control Panel</p>

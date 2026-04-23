@@ -4,11 +4,13 @@ import { Nav } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { ROLES } from '../constants/roles';
+import BrandLogo from './BrandLogo';
 import './Sidebar.css';
 
 const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
   const location = useLocation();
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [hoveredLink, setHoveredLink] = useState(null);
 
   const isActive = (path) => location.pathname === path;
@@ -64,7 +66,9 @@ const Sidebar = ({ isOpen, toggleSidebar, isCollapsed, toggleCollapse }) => {
       <aside className={`sidebar-premium ${isOpen ? 'open' : ''} ${isCollapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header-premium p-4">
           <div className="sidebar-brand-premium d-flex gap-3 align-items-center">
-            <div className="brand-icon-premium shadow-sm">🍽️</div>
+            <div className="brand-icon-premium" style={{ padding: 0, background: 'transparent' }}>
+              <BrandLogo theme={theme || 'dark'} size={36} />
+            </div>
             {!isCollapsed && (
               <div className="brand-text-container">
                 <h2 className="brand-name-premium h5 fw-bold text-gradient mb-0 text-truncate">

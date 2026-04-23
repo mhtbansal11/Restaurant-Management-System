@@ -11,10 +11,31 @@ import {
 import SectionHeader from '../components/SectionHeader';
 import { ease, fadeUp, fadeIn, stagger, scaleUp } from '../utils/animations';
 
+const LANDING_HERO_VIDEO = 'https://www.pexels.com/download/video/28561463/';
+
+function HeroVideoBg() {
+  return (
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0, background: '#07080f' }}>
+      <video
+        src={LANDING_HERO_VIDEO}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        aria-hidden="true"
+        style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.62, filter: 'saturate(0.95) contrast(1.04) brightness(0.82)' }}
+      />
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg,rgba(7,8,15,0.78) 0%,rgba(7,8,15,0.44) 45%,rgba(7,8,15,0.7) 100%)' }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,rgba(7,8,15,0.5) 0%,rgba(7,8,15,0.16) 42%,#07080f 100%)' }} />
+    </div>
+  );
+}
+
 // ── Purple glow atmospheric layer ────────────────────────────────────────────
 function HeroBg() {
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
       <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(rgba(99,102,241,0.07) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       <div style={{ position: 'absolute', bottom: -100, left: '50%', transform: 'translateX(-50%)', width: '110%', height: 520, background: 'radial-gradient(ellipse 80% 100% at 50% 100%, rgba(99,102,241,0.22) 0%, rgba(168,85,247,0.1) 45%, transparent 70%)' }} />
       <div style={{ position: 'absolute', top: -80, right: '5%', width: 420, height: 420, background: 'radial-gradient(circle, rgba(168,85,247,0.08), transparent 70%)' }} />
@@ -26,7 +47,7 @@ function HeroBg() {
 // ── Animated restaurant-system graphics overlay ───────────────────────────────
 function HeroGraphics() {
   return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 1 }}>
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 2 }}>
 
       {/* ── SVG: floor-plan silhouette + connection lines ── */}
       <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} preserveAspectRatio="xMidYMid slice">
@@ -406,10 +427,9 @@ export default function Home() {
     <div>
 
       {/* ═══════════════════════════════════════ HERO ══════════════════════════ */}
-      <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', paddingTop: 90, paddingBottom: 60, position: 'relative', overflow: 'hidden', background: '#0a0b14' }}>
-        <HeroBg />
-        <HeroGraphics />
-        <div className="lp-container" style={{ position: 'relative', zIndex: 2 }}>
+      <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', paddingTop: 90, paddingBottom: 60, position: 'relative', overflow: 'hidden', background: '#07080f' }}>
+        <HeroVideoBg />
+        <div className="lp-container" style={{ position: 'relative', zIndex: 3 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 60, alignItems: 'center' }}>
 
             <motion.div style={{ y: heroY }}>

@@ -74,7 +74,7 @@ export default function SuperAdminLayout({ children }) {
       <aside style={sidebarStyle}>
         {/* Brand */}
         <div style={{ padding: '20px 16px', borderBottom: '1px solid #334155', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,#6366f1,#a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>🛡️</div>
+          <div style={{ width: 36, height: 36, borderRadius: 10, backgroundImage: "url('/assets/brand/masala-matrix-logo-white-elements.png')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', fontSize: 0, flexShrink: 0 }}></div>
           {showLabels && (
             <div>
               <div style={{ color: '#f8fafc', fontWeight: 800, fontSize: '0.9rem', lineHeight: 1.2 }}>Masala Matrix</div>
@@ -131,7 +131,7 @@ export default function SuperAdminLayout({ children }) {
             onClick={handleLogout}
             style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 10, width: '100%', background: 'none', border: '1px solid #ef444420', color: '#f87171', cursor: 'pointer', fontSize: '0.875rem' }}
           >
-            <span style={{ fontSize: 18 }}>🚪</span>
+            <span style={{ fontSize: 18 }}>⏻</span>
             {showLabels && 'Logout'}
           </button>
         </div>
@@ -158,7 +158,7 @@ export default function SuperAdminLayout({ children }) {
               ☰
             </button>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg,#6366f1,#a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>🛡️</div>
+              <div style={{ width: 28, height: 28, borderRadius: 8, backgroundImage: "url('/assets/brand/masala-matrix-logo-white-elements.png')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', boxShadow: '0 0 16px rgba(168,85,247,0.16)', fontSize: 0 }}>🛡️</div>
               <span style={{ color: '#f8fafc', fontWeight: 700, fontSize: '0.9rem' }}>Super Admin</span>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Utensils } from 'lucide-react';
+import BrandLogo from '../../components/BrandLogo';
 
 export default function Footer() {
   return (
@@ -10,9 +10,7 @@ export default function Footer() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 40, marginBottom: 56 }}>
           <div style={{ gridColumn: 'span 2' }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, textDecoration: 'none' }}>
-              <div style={{ width: 36, height: 36, background: 'linear-gradient(135deg,#6366f1,#a855f7)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Utensils size={16} color="white" />
-              </div>
+              <BrandLogo theme="dark" size={36} style={{ boxShadow: '0 0 18px rgba(168,85,247,0.22)' }} />
               <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.03em', color: '#f9fafb' }}>Masala Matrix</span>
             </Link>
             <p style={{ color: '#b4bac8', fontSize: '0.875rem', lineHeight: 1.7, maxWidth: 260 }}>
