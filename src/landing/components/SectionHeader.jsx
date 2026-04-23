@@ -28,7 +28,7 @@ export default function SectionHeader({ badge, title, subtitle, light = false })
       {subtitle && (
         <motion.p
           variants={fadeUp}
-          style={{ color: '#9ca3af', fontSize: '1.05rem', lineHeight: 1.7 }}
+          style={{ color: '#c3c8d4', fontSize: '1.05rem', lineHeight: 1.7 }}
         >{subtitle}</motion.p>
       )}
     </motion.div>

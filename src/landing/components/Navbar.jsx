@@ -61,7 +61,7 @@ export default function LandingNavbar() {
                   to={l.to}
                   style={{
                     fontSize: '0.9rem', fontWeight: active ? 600 : 500,
-                    color: active ? '#f9fafb' : '#9ca3af',
+                    color: active ? '#f9fafb' : '#c3c8d4',
                     textDecoration: 'none', transition: 'color 0.2s',
                     position: 'relative',
                   }}
@@ -87,7 +87,7 @@ export default function LandingNavbar() {
                 display: 'inline-flex', alignItems: 'center', gap: 6,
                 fontSize: '0.875rem', fontWeight: 600, color: '#a5b4fc',
                 textDecoration: 'none', padding: '10px 16px',
-                border: '1px solid #6366f144', borderRadius: 10,
+                border: '1px solid #6366f144', borderRadius: 999,
                 background: '#6366f110',
               }}
             >
@@ -105,7 +105,7 @@ export default function LandingNavbar() {
                 display: 'inline-flex', alignItems: 'center',
                 fontSize: '0.875rem', padding: '10px 22px', textDecoration: 'none',
                 background: 'linear-gradient(135deg,#6366f1,#a855f7)',
-                color: 'white', borderRadius: 10, fontWeight: 600,
+                color: 'white', borderRadius: 999, fontWeight: 600,
               }}
             >
               Get Started
@@ -116,7 +116,7 @@ export default function LandingNavbar() {
             className="lp-mobile-menu-btn"
             onClick={() => setMobileOpen(!mobileOpen)}
             whileTap={{ scale: 0.9 }}
-            style={{ background: 'none', border: '1px solid #374151', color: 'white', cursor: 'pointer', padding: '8px', borderRadius: 8 }}
+            style={{ background: 'none', border: '1px solid #9fa8ba', color: 'white', cursor: 'pointer', padding: '8px', borderRadius: 999 }}
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </motion.button>
@@ -133,7 +133,7 @@ export default function LandingNavbar() {
           >
             <div style={{ padding: '16px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
               {links.map((l) => (
-                <Link key={l.to} to={l.to} style={{ color: '#9ca3af', fontSize: '1rem', textDecoration: 'none', fontWeight: 500 }}>
+                <Link key={l.to} to={l.to} style={{ color: '#c3c8d4', fontSize: '1rem', textDecoration: 'none', fontWeight: 500 }}>
                   {l.label}
                 </Link>
               ))}

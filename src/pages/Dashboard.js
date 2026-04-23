@@ -474,7 +474,7 @@ console.log("stats",stats)
                   <Badge bg="danger-subtle" className="text-danger border border-danger-subtle px-3 py-2 rounded-pill">Occupied</Badge>
                 </div>
               </Card.Header>
-              <Card.Body className="p-4">
+              <Card.Body className="p-3">
                 {layout ? (
                     <div className="">
                       
@@ -484,9 +484,9 @@ console.log("stats",stats)
                         
                         return (
                           <div key={floor.id} className="mb-4">
-                            <div className="d-flex align-items-center justify-content-between mb-3 p-3 bg-light rounded-4 flex-wrap gap-2 border">
+                            <div className="d-flex align-items-center justify-content-between mb-3 p-3 bg-secondary rounded-4 flex-wrap gap-2 border">
                               <div className="d-flex align-items-center">
-                                <h6 className="mb-0 fw-bold text-dark">📍 {floor.name}</h6>
+                                <h6 className="mb-0 fw-bold text-main">📍 {floor.name}</h6>
                                 <Badge bg="secondary" className="ms-2 rounded-pill">
                                   {floorTables.length} Tables
                                 </Badge>
@@ -518,7 +518,7 @@ console.log("stats",stats)
                                 />
                               </div>
                             ) : (
-                              <div className="row g-2 table-grid-compact">
+                              <div className="row g-3 table-grid-compact">
                                 {floorTables.map(table => {
                                   const status = getTableStatus(table.id);
                                   const tableStatus = tableStatuses.find(t => t.tableId === table.id);
@@ -549,7 +549,7 @@ console.log("stats",stats)
                                         style={{ cursor: 'pointer' }}
                                         onClick={() => onTableTileClick(floor.id, table)}
                                       >
-                                        <Card.Body className="p-2 p-xl-3">
+                                        <Card.Body className="p-3">
                                           <div className="d-flex justify-content-between align-items-start mb-1">
                                             <Badge className="table-capacity-badge">
                                               {table.capacity} Seats
@@ -639,13 +639,13 @@ console.log("stats",stats)
                       })}
                       {ROLES.POS.includes(user?.role) && (
                         <div className="">
-                          <div className="d-flex align-items-center mb-3 p-3 bg-light rounded-4 flex-wrap gap-2 border">
+                          <div className="d-flex align-items-center mb-3 p-3 bg-secondary rounded-4 flex-wrap gap-2 border">
                             <div>
-                              <h6 className="mb-0 fw-bold text-dark">Quick Orders</h6>
+                              <h6 className="mb-0 fw-bold text-main">Quick Orders</h6>
                               <small className="text-muted">Start off-table orders directly from the dashboard</small>
                             </div>
                           </div>
-                          <div className="row g-2 table-grid-compact">
+                          <div className="row g-3 table-grid-compact">
                              {offTableOrders.map((order) => {
                               const dueAmount = Math.max(order.dueAmount ?? ((order.totalAmount || 0) - (order.paidAmount || 0)), 0);
                               const orderTypeLabel = order.orderType === 'packing' ? 'Packing' : 'Takeaway';
@@ -666,7 +666,7 @@ console.log("stats",stats)
                                     style={{ cursor: 'pointer' }}
                                     onClick={() => openOffTableOrder(order)}
                                   >
-                                    <Card.Body className="p-2 p-xl-3">
+                                    <Card.Body className="p-3">
                                       <div className="d-flex justify-content-between align-items-start mb-1">
                                         <Badge className="table-capacity-badge">{orderTypeLabel}</Badge>
                                         <Badge className={`table-status-badge quick-order-status-badge ${statusClass}`}>
@@ -712,7 +712,7 @@ console.log("stats",stats)
                                 style={{ cursor: 'pointer' }}
                                 onClick={() => openDirectOrder('takeaway')}
                               >
-                                <Card.Body className="p-2 p-xl-3">
+                                <Card.Body className="p-3">
                                   <div className="d-flex justify-content-between align-items-start mb-1">
                                     <Badge className="table-capacity-badge">Quick</Badge>
                                     <div className="status-dot bg-info" style={{width: '10px', height: '10px', borderRadius: '50%'}}></div>
@@ -736,7 +736,7 @@ console.log("stats",stats)
                                 style={{ cursor: 'pointer' }}
                                 onClick={() => openDirectOrder('packing')}
                               >
-                                <Card.Body className="p-2 p-xl-3">
+                                <Card.Body className="p-3">
                                   <div className="d-flex justify-content-between align-items-start mb-1">
                                     <Badge className="table-capacity-badge">Quick</Badge>
                                     <div className="status-dot bg-primary" style={{width: '10px', height: '10px', borderRadius: '50%'}}></div>
@@ -780,7 +780,7 @@ console.log("stats",stats)
                 </div>
                 <h5 className="mb-0 fw-bold">AI Operational Briefing</h5>
               </Card.Header>
-              <Card.Body className="p-4">
+              <Card.Body className="p-3">
                 {operationalInsights ? (
                   <Row className="g-4">
                     <Col md={8}>
@@ -838,11 +838,11 @@ console.log("stats",stats)
         {/* Recent Orders - Visible to POS & Kitchen */}
         {(ROLES.POS.includes(user?.role) || ROLES.KITCHEN.includes(user?.role)) && (
           <Col lg={6} className="mb-3">
-            <Card className="data-card">
+            <Card className="glass-card">
               <Card.Header>
                 <h5 className="mb-0">📊 Recent Orders</h5>
               </Card.Header>
-              <Card.Body className='px-4 py-0'>
+              <Card.Body className='p-3'>
                 {recentOrders.length > 0 ? (
                   <div className="order-list">
                     {recentOrders.map(order => (
@@ -872,11 +872,11 @@ console.log("stats",stats)
         {/* Top Menu Items - Management Only */}
         {ROLES.MANAGEMENT.includes(user?.role) && (
           <Col lg={6} className="mb-3">
-            <Card className="data-card">
+            <Card className="glass-card">
               <Card.Header>
                 <h5 className="mb-0">🍽 Top Menu Items</h5>
               </Card.Header>
-              <Card.Body className='px-4 py-0'>
+              <Card.Body className='p-3'>
                 {topMenuItems.length > 0 ? (
                   <div className="menu-items-list">
                     {topMenuItems.map((item) => (
@@ -908,11 +908,11 @@ console.log("stats",stats)
       {ROLES.FINANCE.includes(user?.role) && (
         <Row className="mb-4">
           <Col xs={12}>
-            <Card className="financial-card">
+            <Card className="glass-card">
               <Card.Header>
                 <h5 className="mb-0">💳 Financial Summary</h5>
               </Card.Header>
-              <Card.Body>
+              <Card.Body className="p-3">
                 <Row>
                   <Col lg={3} md={6} sm={6} className="mb-3">
                     <div className="financial-item">

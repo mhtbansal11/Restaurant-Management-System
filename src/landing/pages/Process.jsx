@@ -93,7 +93,7 @@ function StepCard({ step, index }) {
           </div>
         </div>
         <p style={{ fontSize:'1.1rem',fontWeight:600,color:'#d1d5db',marginBottom:12,fontStyle:'italic' }}>"{step.tagline}"</p>
-        <p style={{ color:'#9ca3af',fontSize:'0.975rem',lineHeight:1.75,marginBottom:24 }}>{step.description}</p>
+        <p style={{ color:'#c3c8d4',fontSize:'0.975rem',lineHeight:1.75,marginBottom:24 }}>{step.description}</p>
         <div style={{ display:'inline-flex',alignItems:'center',gap:8,padding:'6px 14px',borderRadius:20,background:`${step.color}15`,border:`1px solid ${step.color}33` }}>
           <Clock size={12} color={step.color} />
           <span style={{ fontSize:'0.78rem',fontWeight:700,color:step.color }}>Timeline: {step.duration}</span>
@@ -103,7 +103,7 @@ function StepCard({ step, index }) {
       {/* Right: deliverables + outcome */}
       <motion.div initial={{ opacity:0,x:40 }} animate={inView?{ opacity:1,x:0 }:{}} transition={{ duration:0.7,ease,delay:index*0.05+0.15 }}>
         <div style={{ background:'#111827',border:`1px solid ${step.color}22`,borderRadius:16,padding:28,marginBottom:16 }}>
-          <div style={{ fontSize:'0.72rem',fontWeight:700,color:'#6b7280',letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:14 }}>Deliverables</div>
+          <div style={{ fontSize:'0.72rem',fontWeight:700,color:'#b4bac8',letterSpacing:'0.08em',textTransform:'uppercase',marginBottom:14 }}>Deliverables</div>
           <div style={{ display:'flex',flexDirection:'column',gap:10 }}>
             {step.deliverables.map((d,i) => (
               <motion.div key={i} initial={{ opacity:0,x:16 }} animate={inView?{ opacity:1,x:0 }:{}} transition={{ delay:0.3+i*0.08 }} style={{ display:'flex',alignItems:'flex-start',gap:10 }}>
@@ -128,16 +128,16 @@ function FaqItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
     <motion.div
-      style={{ border:'1px solid #1f2937',borderRadius:12,overflow:'hidden' }}
-      whileHover={{ borderColor:'#374151' }}
+      style={{ border:'1px solid #1f2937',borderRadius:28,overflow:'hidden' }}
+      whileHover={{ borderColor:'#9fa8ba' }}
     >
       <button
         onClick={() => setOpen(!open)}
-        style={{ width:'100%',background:'#111827',border:'none',color:'#f9fafb',padding:'20px 24px',display:'flex',justifyContent:'space-between',alignItems:'center',cursor:'pointer',textAlign:'left',gap:16 }}
+        style={{ width:'100%',background:'#111827',border:'none',color:'#f9fafb',padding:'20px 24px',display:'flex',justifyContent:'space-between',alignItems:'center',cursor:'pointer',textAlign:'left',gap:16,borderRadius:28 }}
       >
         <span style={{ fontWeight:600,fontSize:'0.975rem' }}>{q}</span>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration:0.3 }}>
-          <ChevronDown size={18} color="#6b7280" />
+          <ChevronDown size={18} color="#b4bac8" />
         </motion.div>
       </button>
       <AnimatePresence>
@@ -149,7 +149,7 @@ function FaqItem({ q, a }) {
             transition={{ duration:0.3 }}
             style={{ overflow:'hidden' }}
           >
-            <div style={{ padding:'0 24px 20px',color:'#9ca3af',fontSize:'0.9rem',lineHeight:1.75,background:'#111827',borderTop:'1px solid #1f2937' }}>
+            <div style={{ padding:'0 24px 20px',color:'#c3c8d4',fontSize:'0.9rem',lineHeight:1.75,background:'#111827',borderTop:'1px solid #1f2937' }}>
               {a}
             </div>
           </motion.div>
@@ -164,7 +164,34 @@ export default function Process() {
     <div>
       {/* Hero */}
       <section style={{ paddingTop:130,paddingBottom:80,position:'relative',overflow:'hidden',borderBottom:'1px solid #1f2937',background:'#0d1117' }}>
-        <motion.div animate={{ scale:[1,1.2,1],opacity:[0.2,0.35,0.2] }} transition={{ duration:8,repeat:Infinity }} style={{ position:'absolute',top:'-10%',right:'10%',width:500,height:500,background:'radial-gradient(circle,#a855f712,transparent 70%)',borderRadius:'50%',filter:'blur(60px)',pointerEvents:'none' }} />
+        {/* Atmospheric background */}
+        <div style={{ position:'absolute',inset:0,pointerEvents:'none',zIndex:0 }}>
+          <div style={{ position:'absolute',inset:0,backgroundImage:'radial-gradient(rgba(168,85,247,0.05) 1px,transparent 1px)',backgroundSize:'40px 40px' }} />
+          <div style={{ position:'absolute',top:'-15%',right:'5%',width:500,height:500,background:'radial-gradient(circle,rgba(168,85,247,0.1),transparent 70%)' }} />
+          <div style={{ position:'absolute',bottom:0,left:'20%',right:'20%',height:1,background:'linear-gradient(90deg,transparent,rgba(99,102,241,0.25),transparent)' }} />
+          <svg style={{ position:'absolute',inset:0,width:'100%',height:'100%' }} preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="pc1" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="#a855f7" stopOpacity="0.1"/><stop offset="100%" stopColor="#6366f1" stopOpacity="0.02"/></linearGradient>
+              <linearGradient id="pc2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#6366f1" stopOpacity="0.08"/><stop offset="100%" stopColor="#a855f7" stopOpacity="0.01"/></linearGradient>
+            </defs>
+            <line x1="100%" y1="35%" x2="72%" y2="100%" stroke="url(#pc1)" strokeWidth="1"/>
+            <line x1="95%" y1="0" x2="77%" y2="45%" stroke="url(#pc1)" strokeWidth="0.5"/>
+            <line x1="0" y1="55%" x2="23%" y2="0" stroke="url(#pc2)" strokeWidth="0.8"/>
+          </svg>
+          {/* Floating timeline chips */}
+          <motion.div initial={{ opacity:0,x:-16 }} animate={{ opacity:0.65,x:0 }} transition={{ delay:1,duration:0.8 }}>
+            <motion.div animate={{ y:[0,-6,0] }} transition={{ duration:5,repeat:Infinity,ease:'easeInOut' }} style={{ position:'absolute',left:32,top:'28%',background:'rgba(9,10,18,0.9)',backdropFilter:'blur(12px)',border:'1px solid rgba(99,102,241,0.22)',borderRadius:10,padding:'10px 16px' }}>
+              <div style={{ fontSize:8,color:'#818cf8',fontWeight:700,letterSpacing:'0.07em',marginBottom:3 }}>TYPICAL TIMELINE</div>
+              <div style={{ fontSize:13,fontWeight:800,color:'#f9fafb' }}>7–12 days to go live</div>
+            </motion.div>
+          </motion.div>
+          <motion.div initial={{ opacity:0,x:16 }} animate={{ opacity:0.6,x:0 }} transition={{ delay:1.6,duration:0.8 }}>
+            <motion.div animate={{ y:[0,-7,0] }} transition={{ duration:5.5,repeat:Infinity,ease:'easeInOut',delay:1.2 }} style={{ position:'absolute',right:32,top:'30%',background:'rgba(9,10,18,0.9)',backdropFilter:'blur(12px)',border:'1px solid rgba(16,185,129,0.22)',borderRadius:10,padding:'10px 16px',display:'flex',alignItems:'center',gap:8 }}>
+              <motion.div animate={{ scale:[1,1.3,1] }} transition={{ duration:2,repeat:Infinity }} style={{ width:7,height:7,borderRadius:'50%',background:'#10b981',boxShadow:'0 0 7px #10b981' }} />
+              <div><div style={{ fontSize:10,fontWeight:700,color:'#f9fafb' }}>Zero downtime deployment</div><div style={{ fontSize:8,color:'#10b981' }}>Go live during quiet hours</div></div>
+            </motion.div>
+          </motion.div>
+        </div>
         <div className="lp-container" style={{ textAlign:'center' }}>
           <motion.div initial={{ opacity:0,scale:0.8 }} animate={{ opacity:1,scale:1 }} transition={{ duration:0.5 }} style={{ display:'inline-flex',alignItems:'center',gap:8,padding:'7px 14px',borderRadius:20,background:'#312e8122',border:'1px solid #6366f144',marginBottom:24 }}>
             <Zap size={12} color="#a5b4fc" fill="#a5b4fc" />
@@ -173,7 +200,7 @@ export default function Process() {
           <motion.h1 initial={{ opacity:0,y:40 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.8,ease,delay:0.1 }} style={{ fontSize:'clamp(2.5rem,5vw,4rem)',fontWeight:900,lineHeight:1.08,letterSpacing:'-0.04em',marginBottom:20,maxWidth:720,margin:'0 auto 20px' }}>
             How we build software that actually fits.
           </motion.h1>
-          <motion.p initial={{ opacity:0,y:30 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.7,ease,delay:0.25 }} style={{ color:'#9ca3af',fontSize:'1.15rem',lineHeight:1.7,maxWidth:520,margin:'0 auto 48px' }}>
+          <motion.p initial={{ opacity:0,y:30 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.7,ease,delay:0.25 }} style={{ color:'#c3c8d4',fontSize:'1.15rem',lineHeight:1.7,maxWidth:520,margin:'0 auto 48px' }}>
             A 5-step process designed to eliminate the risk of buying software that doesn't work for your restaurant.
           </motion.p>
 
@@ -185,9 +212,9 @@ export default function Process() {
                   <div style={{ width:44,height:44,borderRadius:'50%',background:`${s.color}18`,border:`1px solid ${s.color}44`,display:'flex',alignItems:'center',justifyContent:'center' }}>
                     <s.icon size={18} color={s.color} />
                   </div>
-                  <span style={{ fontSize:'0.72rem',fontWeight:700,color:'#6b7280' }}>{s.title}</span>
+                  <span style={{ fontSize:'0.72rem',fontWeight:700,color:'#b4bac8' }}>{s.title}</span>
                 </motion.div>
-                {i < steps.length - 1 && <div style={{ width:32,height:1,background:'linear-gradient(90deg,#1f2937,#374151)',flexShrink:0 }} />}
+                {i < steps.length - 1 && <div style={{ width:32,height:1,background:'linear-gradient(90deg,#1f2937,#9fa8ba)',flexShrink:0 }} />}
               </React.Fragment>
             ))}
           </motion.div>
@@ -217,7 +244,7 @@ export default function Process() {
                   <s.icon size={20} color={s.color} />
                 </div>
                 <h4 style={{ fontWeight:700,marginBottom:8,fontSize:'0.975rem' }}>{s.title}</h4>
-                <p style={{ color:'#9ca3af',fontSize:'0.85rem',lineHeight:1.65 }}>{s.desc}</p>
+                <p style={{ color:'#c3c8d4',fontSize:'0.85rem',lineHeight:1.65 }}>{s.desc}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -234,17 +261,25 @@ export default function Process() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section style={{ padding:'80px 0' }}>
+      {/* CTA — Crypton panel */}
+      <section style={{ padding:'80px 0',background:'#07080f',borderTop:'1px solid rgba(255,255,255,0.04)' }}>
         <div className="lp-container">
-          <motion.div initial={{ opacity:0,y:40 }} whileInView={{ opacity:1,y:0 }} viewport={{ once:true }} transition={{ duration:0.7 }} style={{ background:'linear-gradient(135deg,#312e8122,#a855f718)',border:'1px solid #6366f133',borderRadius:20,padding:'56px 40px',textAlign:'center' }}>
-            <h2 style={{ fontSize:'clamp(1.6rem,3.5vw,2.4rem)',fontWeight:800,marginBottom:12,letterSpacing:'-0.03em' }}>Ready to start your process?</h2>
-            <p style={{ color:'#9ca3af',fontSize:'1rem',marginBottom:32,maxWidth:480,margin:'12px auto 32px' }}>The first step is a free 30-minute consultation. No commitment, no sales pitch — just a conversation about your restaurant.</p>
-            <motion.div whileHover={{ scale:1.05 }} whileTap={{ scale:0.97 }}>
-              <Link to="/contact" className="lp-btn lp-btn-primary" style={{ fontSize:'1rem',padding:'14px 28px',gap:8,textDecoration:'none',display:'inline-flex',alignItems:'center' }}>
-                Book Free Consultation <ArrowRight size={18} />
-              </Link>
-            </motion.div>
+          <motion.div
+            initial={{ opacity:0,y:40 }} whileInView={{ opacity:1,y:0 }} viewport={{ once:true }} transition={{ duration:0.7 }}
+            style={{ background:'#0a0b14',border:'1px solid rgba(99,102,241,0.12)',borderRadius:24,padding:'72px 40px',textAlign:'center',position:'relative',overflow:'hidden' }}
+          >
+            <div style={{ position:'absolute',bottom:-100,left:'50%',transform:'translateX(-50%)',width:700,height:320,background:'radial-gradient(ellipse at center,rgba(99,102,241,0.28) 0%,rgba(168,85,247,0.12) 40%,transparent 70%)',pointerEvents:'none',zIndex:0 }} />
+            <div style={{ position:'absolute',bottom:0,left:'10%',right:'10%',height:1,background:'linear-gradient(90deg,transparent,rgba(99,102,241,0.65) 30%,rgba(168,85,247,0.65) 70%,transparent)',pointerEvents:'none',zIndex:0 }} />
+            <div style={{ position:'absolute',top:0,left:'30%',right:'30%',height:1,background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent)',pointerEvents:'none',zIndex:0 }} />
+            <div style={{ position:'relative',zIndex:1 }}>
+              <h2 style={{ fontSize:'clamp(1.6rem,3.5vw,2.4rem)',fontWeight:900,marginBottom:12,letterSpacing:'-0.04em' }}>Ready to start your process?</h2>
+              <p style={{ color:'#c3c8d4',fontSize:'1rem',marginBottom:36,maxWidth:480,margin:'12px auto 36px',lineHeight:1.7 }}>The first step is a free 30-minute consultation. No commitment, no sales pitch — just a conversation about your restaurant.</p>
+              <motion.div style={{ display:'inline-flex' }} whileHover={{ scale:1.04 }} whileTap={{ scale:0.97 }}>
+                <Link to="/contact" className="lp-btn lp-btn-primary" style={{ fontSize:'1rem',padding:'14px 28px',gap:8,textDecoration:'none',display:'inline-flex',alignItems:'center' }}>
+                  Book Free Demo <ArrowRight size={18} />
+                </Link>
+              </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>

@@ -43,15 +43,15 @@ export default function Contact() {
 
   const field = (key, label, type = 'text', placeholder = '') => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-      <label style={{ fontSize: '0.825rem', fontWeight: 600, color: '#9ca3af', letterSpacing: '0.02em' }}>{label}</label>
+      <label style={{ fontSize: '0.825rem', fontWeight: 600, color: '#c3c8d4', letterSpacing: '0.02em' }}>{label}</label>
       <input
         type={type}
         value={form[key]}
         onChange={e => { setForm(f => ({ ...f, [key]: e.target.value })); if (errors[key]) setErrors(er => ({ ...er, [key]: null })); }}
         placeholder={placeholder}
-        style={{ background: '#0b0f19', border: `1px solid ${errors[key] ? '#ef4444' : '#374151'}`, borderRadius: 8, padding: '12px 14px', color: '#f9fafb', fontSize: '0.925rem', outline: 'none', transition: 'border-color 0.2s', fontFamily: 'inherit' }}
+        style={{ background: '#0b0f19', border: `1px solid ${errors[key] ? '#ef4444' : '#9fa8ba'}`, borderRadius: 8, padding: '12px 14px', color: '#f9fafb', fontSize: '0.925rem', outline: 'none', transition: 'border-color 0.2s', fontFamily: 'inherit' }}
         onFocus={e => e.target.style.borderColor = '#6366f1'}
-        onBlur={e => e.target.style.borderColor = errors[key] ? '#ef4444' : '#374151'}
+        onBlur={e => e.target.style.borderColor = errors[key] ? '#ef4444' : '#9fa8ba'}
       />
       {errors[key] && <span style={{ color: '#ef4444', fontSize: '0.78rem' }}>{errors[key]}</span>}
     </div>
@@ -61,7 +61,33 @@ export default function Contact() {
     <div>
       {/* Hero */}
       <section style={{ paddingTop:130,paddingBottom:80,position:'relative',overflow:'hidden',borderBottom:'1px solid #1f2937' }}>
-        <motion.div animate={{ scale:[1,1.2,1],opacity:[0.2,0.35,0.2] }} transition={{ duration:7,repeat:Infinity }} style={{ position:'absolute',top:'10%',left:'50%',transform:'translateX(-50%)',width:600,height:400,background:'radial-gradient(ellipse,#6366f10a,transparent 70%)',pointerEvents:'none' }} />
+        {/* Atmospheric background */}
+        <div style={{ position:'absolute',inset:0,pointerEvents:'none',zIndex:0 }}>
+          <div style={{ position:'absolute',inset:0,backgroundImage:'radial-gradient(rgba(99,102,241,0.055) 1px,transparent 1px)',backgroundSize:'40px 40px' }} />
+          <div style={{ position:'absolute',top:'-10%',left:'50%',transform:'translateX(-50%)',width:'80%',height:360,background:'radial-gradient(ellipse at center,rgba(99,102,241,0.13) 0%,rgba(168,85,247,0.05) 50%,transparent 70%)' }} />
+          <div style={{ position:'absolute',bottom:0,left:'15%',right:'15%',height:1,background:'linear-gradient(90deg,transparent,rgba(99,102,241,0.28),transparent)' }} />
+          <svg style={{ position:'absolute',inset:0,width:'100%',height:'100%' }} preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="co1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#6366f1" stopOpacity="0.1"/><stop offset="100%" stopColor="#a855f7" stopOpacity="0.02"/></linearGradient>
+              <linearGradient id="co2" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="#a855f7" stopOpacity="0.08"/><stop offset="100%" stopColor="#6366f1" stopOpacity="0.01"/></linearGradient>
+            </defs>
+            <line x1="0" y1="65%" x2="20%" y2="0" stroke="url(#co1)" strokeWidth="1"/>
+            <line x1="100%" y1="45%" x2="80%" y2="100%" stroke="url(#co2)" strokeWidth="1"/>
+          </svg>
+          {/* Floating response time chip */}
+          <motion.div initial={{ opacity:0,x:-16 }} animate={{ opacity:0.7,x:0 }} transition={{ delay:1,duration:0.8 }}>
+            <motion.div animate={{ y:[0,-6,0] }} transition={{ duration:5,repeat:Infinity,ease:'easeInOut' }} style={{ position:'absolute',left:32,top:'32%',background:'rgba(9,10,18,0.9)',backdropFilter:'blur(12px)',border:'1px solid rgba(16,185,129,0.22)',borderRadius:10,padding:'10px 14px',display:'flex',alignItems:'center',gap:10 }}>
+              <motion.div animate={{ scale:[1,1.3,1] }} transition={{ duration:2,repeat:Infinity }} style={{ width:7,height:7,borderRadius:'50%',background:'#10b981',boxShadow:'0 0 7px #10b981' }} />
+              <div><div style={{ fontSize:10,fontWeight:700,color:'#f9fafb' }}>Avg. response time</div><div style={{ fontSize:9,color:'#10b981',fontWeight:700 }}>&lt; 1 hour on WhatsApp</div></div>
+            </motion.div>
+          </motion.div>
+          <motion.div initial={{ opacity:0,x:16 }} animate={{ opacity:0.6,x:0 }} transition={{ delay:1.6,duration:0.8 }}>
+            <motion.div animate={{ y:[0,-7,0] }} transition={{ duration:5.5,repeat:Infinity,ease:'easeInOut',delay:1 }} style={{ position:'absolute',right:32,top:'28%',background:'rgba(9,10,18,0.9)',backdropFilter:'blur(12px)',border:'1px solid rgba(99,102,241,0.22)',borderRadius:10,padding:'10px 14px' }}>
+              <div style={{ fontSize:8,color:'#b4bac8',fontWeight:700,letterSpacing:'0.06em',marginBottom:3 }}>FREE CONSULTATION</div>
+              <div style={{ fontSize:11,fontWeight:700,color:'#f9fafb' }}>No commitment required</div>
+            </motion.div>
+          </motion.div>
+        </div>
         <div className="lp-container" style={{ textAlign:'center' }}>
           <motion.div initial={{ opacity:0,scale:0.8 }} animate={{ opacity:1,scale:1 }} transition={{ duration:0.5 }} style={{ display:'inline-flex',alignItems:'center',gap:8,padding:'7px 14px',borderRadius:20,background:'#312e8122',border:'1px solid #6366f144',marginBottom:24 }}>
             <Zap size={12} color="#a5b4fc" fill="#a5b4fc" />
@@ -70,7 +96,7 @@ export default function Contact() {
           <motion.h1 initial={{ opacity:0,y:40 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.8,ease,delay:0.1 }} style={{ fontSize:'clamp(2.5rem,5vw,4rem)',fontWeight:900,lineHeight:1.08,letterSpacing:'-0.04em',marginBottom:20,maxWidth:700,margin:'0 auto 20px' }}>
             Let's talk about your restaurant.
           </motion.h1>
-          <motion.p initial={{ opacity:0,y:30 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.7,ease,delay:0.25 }} style={{ color:'#9ca3af',fontSize:'1.15rem',lineHeight:1.7,maxWidth:500,margin:'0 auto 16px' }}>
+          <motion.p initial={{ opacity:0,y:30 }} animate={{ opacity:1,y:0 }} transition={{ duration:0.7,ease,delay:0.25 }} style={{ color:'#c3c8d4',fontSize:'1.15rem',lineHeight:1.7,maxWidth:500,margin:'0 auto 16px' }}>
             Tell us how you run things. We'll show you exactly how Masala Matrix can be configured for your restaurant.
           </motion.p>
         </div>
@@ -87,7 +113,7 @@ export default function Contact() {
                 {!submitted ? (
                   <motion.form key="form" initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} onSubmit={handleSubmit}>
                     <h2 style={{ fontSize:'1.5rem',fontWeight:800,marginBottom:8,letterSpacing:'-0.02em' }}>Request a Consultation</h2>
-                    <p style={{ color:'#9ca3af',fontSize:'0.9rem',marginBottom:32,lineHeight:1.6 }}>Fill in your details and we'll reach out via WhatsApp within the hour.</p>
+                    <p style={{ color:'#c3c8d4',fontSize:'0.9rem',marginBottom:32,lineHeight:1.6 }}>Fill in your details and we'll reach out via WhatsApp within the hour.</p>
 
                     <div style={{ display:'flex',flexDirection:'column',gap:20 }}>
                       <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:16 }}>
@@ -98,11 +124,11 @@ export default function Contact() {
                       {field('restaurant', 'Restaurant Name *', 'text', 'The Tandoor House')}
 
                       <div style={{ display:'flex',flexDirection:'column',gap:6 }}>
-                        <label style={{ fontSize:'0.825rem',fontWeight:600,color:'#9ca3af' }}>Restaurant Type *</label>
+                        <label style={{ fontSize:'0.825rem',fontWeight:600,color:'#c3c8d4' }}>Restaurant Type *</label>
                         <select
                           value={form.type}
                           onChange={e => { setForm(f => ({ ...f, type: e.target.value })); if (errors.type) setErrors(er => ({ ...er, type: null })); }}
-                          style={{ background:'#0b0f19',border:`1px solid ${errors.type?'#ef4444':'#374151'}`,borderRadius:8,padding:'12px 14px',color:form.type?'#f9fafb':'#6b7280',fontSize:'0.925rem',outline:'none',fontFamily:'inherit' }}
+                          style={{ background:'#0b0f19',border:`1px solid ${errors.type?'#ef4444':'#9fa8ba'}`,borderRadius:8,padding:'12px 14px',color:form.type?'#f9fafb':'#b4bac8',fontSize:'0.925rem',outline:'none',fontFamily:'inherit' }}
                         >
                           <option value="">Select restaurant type</option>
                           {restaurantTypes.map(t => <option key={t} value={t}>{t}</option>)}
@@ -111,10 +137,10 @@ export default function Contact() {
                       </div>
 
                       <div style={{ display:'flex',flexDirection:'column',gap:6 }}>
-                        <label style={{ fontSize:'0.825rem',fontWeight:600,color:'#9ca3af' }}>Number of Outlets</label>
+                        <label style={{ fontSize:'0.825rem',fontWeight:600,color:'#c3c8d4' }}>Number of Outlets</label>
                         <div style={{ display:'flex',gap:10,flexWrap:'wrap' }}>
                           {['1','2–3','4–5','6–10','10+'].map(o => (
-                            <motion.button key={o} type="button" onClick={() => setForm(f => ({ ...f, outlets: o }))} whileTap={{ scale:0.95 }} style={{ padding:'8px 18px',borderRadius:8,border:`1px solid ${form.outlets===o?'#6366f1':'#374151'}`,background:form.outlets===o?'#6366f118':'transparent',color:form.outlets===o?'#a5b4fc':'#9ca3af',fontSize:'0.85rem',fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s' }}>
+                            <motion.button key={o} type="button" onClick={() => setForm(f => ({ ...f, outlets: o }))} whileTap={{ scale:0.95 }} style={{ padding:'8px 18px',borderRadius:999,border:`1px solid ${form.outlets===o?'#6366f1':'#9fa8ba'}`,background:form.outlets===o?'#6366f118':'transparent',color:form.outlets===o?'#a5b4fc':'#c3c8d4',fontSize:'0.85rem',fontWeight:600,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s' }}>
                               {o}
                             </motion.button>
                           ))}
@@ -122,23 +148,23 @@ export default function Contact() {
                       </div>
 
                       <div style={{ display:'flex',flexDirection:'column',gap:6 }}>
-                        <label style={{ fontSize:'0.825rem',fontWeight:600,color:'#9ca3af' }}>Anything specific you'd like us to know?</label>
+                        <label style={{ fontSize:'0.825rem',fontWeight:600,color:'#c3c8d4' }}>Anything specific you'd like us to know?</label>
                         <textarea
                           value={form.message}
                           onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
                           placeholder="e.g. We have 3 kitchens, serve 200+ covers on weekends, and currently use a manual billing system..."
                           rows={4}
-                          style={{ background:'#0b0f19',border:'1px solid #374151',borderRadius:8,padding:'12px 14px',color:'#f9fafb',fontSize:'0.925rem',outline:'none',resize:'vertical',fontFamily:'inherit',lineHeight:1.6 }}
+                          style={{ background:'#0b0f19',border:'1px solid #9fa8ba',borderRadius:8,padding:'12px 14px',color:'#f9fafb',fontSize:'0.925rem',outline:'none',resize:'vertical',fontFamily:'inherit',lineHeight:1.6 }}
                           onFocus={e => e.target.style.borderColor='#6366f1'}
-                          onBlur={e => e.target.style.borderColor='#374151'}
+                          onBlur={e => e.target.style.borderColor='#9fa8ba'}
                         />
                       </div>
 
-                      <motion.button type="submit" whileHover={{ scale:1.03,boxShadow:'0 0 30px rgba(37,99,235,0.4)' }} whileTap={{ scale:0.97 }} className="lp-btn lp-btn-primary" style={{ width:'100%',justifyContent:'center',fontSize:'1rem',padding:'14px',fontWeight:700,gap:10,border:'none',cursor:'pointer',fontFamily:'inherit' }}>
+                      <motion.button type="submit" whileHover={{ scale:1.02 }} whileTap={{ scale:0.97 }} className="lp-btn lp-btn-primary" style={{ width:'100%',justifyContent:'center',fontSize:'1rem',padding:'14px',fontWeight:700,gap:10,border:'none',cursor:'pointer',fontFamily:'inherit',borderRadius:50 }}>
                         Send via WhatsApp <Send size={18} />
                       </motion.button>
 
-                      <p style={{ color:'#6b7280',fontSize:'0.78rem',textAlign:'center',lineHeight:1.5 }}>
+                      <p style={{ color:'#b4bac8',fontSize:'0.78rem',textAlign:'center',lineHeight:1.5 }}>
                         Submitting will open WhatsApp with your details pre-filled. We typically respond within 1 hour.
                       </p>
                     </div>
@@ -149,7 +175,7 @@ export default function Contact() {
                       <CheckCircle2 size={32} color="white" />
                     </motion.div>
                     <h3 style={{ fontSize:'1.6rem',fontWeight:800,marginBottom:12,letterSpacing:'-0.02em' }}>WhatsApp opened!</h3>
-                    <p style={{ color:'#9ca3af',lineHeight:1.7,marginBottom:28 }}>Your details have been pre-filled in the message. Just hit send and we'll get back to you within the hour.</p>
+                    <p style={{ color:'#c3c8d4',lineHeight:1.7,marginBottom:28 }}>Your details have been pre-filled in the message. Just hit send and we'll get back to you within the hour.</p>
                     <motion.button onClick={() => setSubmitted(false)} whileHover={{ scale:1.03 }} className="lp-btn lp-btn-secondary" style={{ border:'none',cursor:'pointer',fontFamily:'inherit' }}>
                       Submit another enquiry
                     </motion.button>
@@ -171,20 +197,20 @@ export default function Contact() {
                 </div>
                 <div>
                   <div style={{ fontWeight:700,marginBottom:4,fontSize:'1rem',color:'#f9fafb' }}>Chat on WhatsApp</div>
-                  <div style={{ color:'#9ca3af',fontSize:'0.875rem',lineHeight:1.6,marginBottom:12 }}>Fastest way to reach us. Typical response time: under 1 hour.</div>
+                  <div style={{ color:'#c3c8d4',fontSize:'0.875rem',lineHeight:1.6,marginBottom:12 }}>Fastest way to reach us. Typical response time: under 1 hour.</div>
                   <div style={{ color:'#a5b4fc',fontSize:'0.85rem',fontWeight:600,display:'flex',alignItems:'center',gap:6 }}>
                     +91 77910 73995 <ArrowRight size={14} />
                   </div>
                 </div>
               </motion.a>
 
-              <motion.a href="mailto:hello@masalamatrix.com" whileHover={{ y:-4 }} style={{ background:'#111827',border:'1px solid #1f2937',borderRadius:16,padding:24,display:'flex',gap:14,alignItems:'center',textDecoration:'none' }}>
+              <motion.a href="mailto:support@masalamatrix.com" whileHover={{ y:-4 }} style={{ background:'#111827',border:'1px solid #1f2937',borderRadius:16,padding:24,display:'flex',gap:14,alignItems:'center',textDecoration:'none' }}>
                 <div style={{ width:44,height:44,borderRadius:10,background:'#10b98118',border:'1px solid #10b98133',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}>
                   <Mail size={20} color="#10b981" />
                 </div>
                 <div>
                   <div style={{ fontWeight:600,fontSize:'0.9rem',color:'#f9fafb',marginBottom:2 }}>Email Us</div>
-                  <div style={{ color:'#9ca3af',fontSize:'0.85rem' }}>hello@masalamatrix.com</div>
+                  <div style={{ color:'#c3c8d4',fontSize:'0.85rem' }}>support@masalamatrix.com</div>
                 </div>
               </motion.a>
 
@@ -199,7 +225,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <div style={{ fontWeight:600,fontSize:'0.875rem',color:'#f9fafb',marginBottom:3 }}>{info.title}</div>
-                    <div style={{ color:'#9ca3af',fontSize:'0.825rem',lineHeight:1.6 }}>{info.desc}</div>
+                    <div style={{ color:'#c3c8d4',fontSize:'0.825rem',lineHeight:1.6 }}>{info.desc}</div>
                   </div>
                 </motion.div>
               ))}
@@ -212,7 +238,7 @@ export default function Contact() {
                 <p style={{ color:'#d1d5db',fontSize:'0.875rem',lineHeight:1.75,fontStyle:'italic',marginBottom:16 }}>
                   "The first call with Masala Matrix felt different. They asked about our kitchen layout before even mentioning pricing."
                 </p>
-                <div style={{ fontSize:'0.78rem',color:'#6b7280',fontWeight:600 }}>— Restaurant owner, Pune</div>
+                <div style={{ fontSize:'0.78rem',color:'#b4bac8',fontWeight:600 }}>— Restaurant owner, Pune</div>
               </motion.div>
             </motion.div>
           </div>

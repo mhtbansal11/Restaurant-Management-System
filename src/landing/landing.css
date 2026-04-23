@@ -3,7 +3,7 @@
 
 .landing-root {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #0b0f19;
+  background-color: #07080f;
   color: #f9fafb;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -31,6 +31,12 @@
 
 .landing-root p {
   margin: 0;
+  color: #b4bac8;
+}
+
+/* Secondary / muted text helper */
+.landing-root .text-muted {
+  color: #aeb6c7 !important;
 }
 
 .landing-root ul {
@@ -57,7 +63,7 @@
   justify-content: center;
   gap: 8px;
   padding: 12px 24px;
-  border-radius: 10px;
+  border-radius: 50px;
   font-weight: 600;
   font-size: 0.95rem;
   transition: all 0.2s ease;
@@ -70,29 +76,33 @@
 .lp-btn-primary {
   background: linear-gradient(135deg, #6366f1, #a855f7);
   color: white !important;
+  box-shadow: 0 0 0 rgba(99,102,241,0);
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
 }
 
 .lp-btn-primary:hover {
   background: linear-gradient(135deg, #818cf8, #c084fc);
   color: white !important;
   text-decoration: none;
+  box-shadow: 0 0 28px rgba(99,102,241,0.45);
 }
 
 .lp-btn-secondary {
-  background: transparent;
-  border: 1px solid #374151;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
   color: #f9fafb !important;
+  border-radius: 50px;
 }
 
 .lp-btn-secondary:hover {
-  background: #1f2937;
-  border-color: #4b5563;
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.18);
   color: #f9fafb !important;
   text-decoration: none;
 }
 
 .lp-nav-link {
-  color: #9ca3af;
+  color: #c3c8d4;
   font-size: 0.9rem;
   font-weight: 500;
   transition: color 0.2s, transform 0.2s;
@@ -101,6 +111,19 @@
 
 .lp-nav-link:hover {
   color: #f9fafb;
+}
+
+/* Lp card — Crypton-style dark card */
+.lp-card {
+  background: #0c0d18;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 14px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.lp-card:hover {
+  border-color: rgba(99,102,241,0.25);
+  box-shadow: 0 20px 60px rgba(99,102,241,0.1);
 }
 
 /* Responsive Nav */
@@ -121,19 +144,19 @@
   }
 }
 
-/* Scrollbar within landing */
+/* Scrollbar */
 .landing-root ::-webkit-scrollbar {
   width: 6px;
 }
 .landing-root ::-webkit-scrollbar-track {
-  background: #0b0f19;
+  background: #07080f;
 }
 .landing-root ::-webkit-scrollbar-thumb {
-  background: #374151;
+  background: #1f2937;
   border-radius: 3px;
 }
 .landing-root ::-webkit-scrollbar-thumb:hover {
-  background: #4b5563;
+  background: #9fa8ba;
 }
 
 /* Selection */

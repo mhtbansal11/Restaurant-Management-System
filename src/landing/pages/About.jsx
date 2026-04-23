@@ -14,8 +14,8 @@ const values = [
 
 const team = [
   { name: 'Mohit', role: 'Founder & Product Lead', initial: 'M', color: '#6366f1', bio: 'Restaurant operations obsessive. Built Masala Matrix after seeing 50+ restaurants struggle with software that didn\'t fit.' },
-  { name: 'Aryan', role: 'Lead Engineer', initial: 'A', color: '#a855f7', bio: 'Full-stack engineer who believes great software should be invisible — it just works, without the user noticing.' },
-  { name: 'Priya', role: 'Implementation Manager', initial: 'P', color: '#10b981', bio: 'Former restaurant manager. Bridges the gap between what the system does and what your team actually needs.' },
+  { name: 'Nikhil', role: 'Sales Manager', initial: 'N', color: '#a855f7', bio: 'Helps restaurants find the right fit. Turns demos into long-term partnerships by understanding what each restaurant actually needs before selling anything.' },
+  { name: 'Sharath', role: 'Implementation Manager', initial: 'S', color: '#10b981', bio: 'Former restaurant manager. Bridges the gap between what the system does and what your team actually needs.' },
 ];
 
 const milestones = [
@@ -30,7 +30,34 @@ export default function About() {
     <div>
       {/* Hero */}
       <section style={{ paddingTop:130,paddingBottom:80,position:'relative',overflow:'hidden',borderBottom:'1px solid #1f2937' }}>
-        <motion.div animate={{ scale:[1,1.2,1],opacity:[0.15,0.3,0.15] }} transition={{ duration:8,repeat:Infinity }} style={{ position:'absolute',top:'-20%',right:'0%',width:600,height:600,background:'radial-gradient(circle,#a855f710,transparent 70%)',borderRadius:'50%',filter:'blur(60px)',pointerEvents:'none' }} />
+        {/* Atmospheric background */}
+        <div style={{ position:'absolute',inset:0,pointerEvents:'none',zIndex:0 }}>
+          <div style={{ position:'absolute',inset:0,backgroundImage:'radial-gradient(rgba(168,85,247,0.055) 1px,transparent 1px)',backgroundSize:'40px 40px' }} />
+          <div style={{ position:'absolute',top:-60,right:0,width:500,height:500,background:'radial-gradient(circle,rgba(168,85,247,0.1),transparent 70%)' }} />
+          <div style={{ position:'absolute',bottom:-60,left:'50%',transform:'translateX(-50%)',width:'90%',height:300,background:'radial-gradient(ellipse at center,rgba(99,102,241,0.12) 0%,transparent 70%)' }} />
+          <svg style={{ position:'absolute',inset:0,width:'100%',height:'100%' }} preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <linearGradient id="ab1" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="#a855f7" stopOpacity="0.1"/><stop offset="100%" stopColor="#6366f1" stopOpacity="0.02"/></linearGradient>
+            </defs>
+            <line x1="100%" y1="30%" x2="70%" y2="100%" stroke="url(#ab1)" strokeWidth="1"/>
+            <line x1="95%" y1="0" x2="78%" y2="50%" stroke="url(#ab1)" strokeWidth="0.5"/>
+          </svg>
+          {/* Floating stat chips */}
+          <motion.div initial={{ opacity:0,x:-16 }} animate={{ opacity:0.7,x:0 }} transition={{ delay:1.2,duration:0.8 }}>
+            <motion.div animate={{ y:[0,-7,0] }} transition={{ duration:5.5,repeat:Infinity,ease:'easeInOut' }} style={{ position:'absolute',right:40,top:'28%',background:'rgba(9,10,18,0.9)',backdropFilter:'blur(12px)',border:'1px solid rgba(99,102,241,0.22)',borderRadius:10,padding:'10px 16px' }}>
+              <div style={{ fontSize:8,color:'#b4bac8',fontWeight:700,letterSpacing:'0.06em',marginBottom:4 }}>RESTAURANTS SERVED</div>
+              <div style={{ fontSize:20,fontWeight:900,color:'#818cf8',letterSpacing:'-0.04em' }}>200+</div>
+              <div style={{ fontSize:8,color:'#10b981',marginTop:2 }}>↑ Growing every month</div>
+            </motion.div>
+          </motion.div>
+          <motion.div initial={{ opacity:0,x:-16 }} animate={{ opacity:0.65,x:0 }} transition={{ delay:1.8,duration:0.8 }}>
+            <motion.div animate={{ y:[0,-6,0] }} transition={{ duration:6,repeat:Infinity,ease:'easeInOut',delay:1.2 }} style={{ position:'absolute',right:40,top:'56%',background:'rgba(9,10,18,0.9)',backdropFilter:'blur(12px)',border:'1px solid rgba(16,185,129,0.22)',borderRadius:10,padding:'10px 16px' }}>
+              <div style={{ fontSize:8,color:'#b4bac8',fontWeight:700,letterSpacing:'0.06em',marginBottom:4 }}>ORDERS PROCESSED</div>
+              <div style={{ fontSize:20,fontWeight:900,color:'#10b981',letterSpacing:'-0.04em' }}>1M+</div>
+              <div style={{ fontSize:8,color:'#c3c8d4',marginTop:2 }}>Across all restaurants</div>
+            </motion.div>
+          </motion.div>
+        </div>
         <div className="lp-container">
           <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(280px,1fr))',gap:60,alignItems:'center' }}>
             <motion.div initial="hidden" animate="show" variants={stagger(0.12)}>
@@ -41,19 +68,19 @@ export default function About() {
               <motion.h1 variants={fadeUp} style={{ fontSize:'clamp(2.2rem,4.5vw,3.6rem)',fontWeight:900,lineHeight:1.1,letterSpacing:'-0.04em',marginBottom:20 }}>
                 We built Masala Matrix because <span style={{ color:'#818cf8' }}>we were frustrated</span> too.
               </motion.h1>
-              <motion.p variants={fadeUp} style={{ color:'#9ca3af',fontSize:'1.1rem',lineHeight:1.75,marginBottom:16 }}>
+              <motion.p variants={fadeUp} style={{ color:'#c3c8d4',fontSize:'1.1rem',lineHeight:1.75,marginBottom:16 }}>
                 We spent years watching restaurants struggle with software that forced them to work differently. POS systems with confusing interfaces. Inventory tools built for retail. KDS screens that didn't match the kitchen layout.
               </motion.p>
-              <motion.p variants={fadeUp} style={{ color:'#9ca3af',fontSize:'1.1rem',lineHeight:1.75,marginBottom:32 }}>
+              <motion.p variants={fadeUp} style={{ color:'#c3c8d4',fontSize:'1.1rem',lineHeight:1.75,marginBottom:32 }}>
                 So we built something different. Software that we configure <em style={{ color:'#d1d5db' }}>around</em> the restaurant — not the other way around.
               </motion.p>
               <motion.div variants={fadeUp} style={{ display:'flex',flexWrap:'wrap',gap:14 }}>
-                <motion.div whileHover={{ scale:1.05 }} whileTap={{ scale:0.97 }}>
+                <motion.div style={{ display:'inline-flex' }} whileHover={{ scale:1.04 }} whileTap={{ scale:0.97 }}>
                   <Link to="/contact" className="lp-btn lp-btn-primary" style={{ fontSize:'1rem',padding:'14px 28px',gap:8,textDecoration:'none',display:'inline-flex',alignItems:'center' }}>
                     Work With Us <ArrowRight size={18} />
                   </Link>
                 </motion.div>
-                <motion.div whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }}>
+                <motion.div style={{ display:'inline-flex' }} whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }}>
                   <Link to="/features" className="lp-btn lp-btn-secondary" style={{ fontSize:'1rem',padding:'14px 28px',textDecoration:'none',display:'inline-flex',alignItems:'center' }}>
                     See the Product
                   </Link>
@@ -71,7 +98,7 @@ export default function About() {
               ].map((s,i) => (
                 <motion.div key={i} whileHover={{ y:-4 }} style={{ background:'#111827',border:'1px solid #1f2937',borderRadius:14,padding:24,textAlign:'center' }}>
                   <div style={{ fontSize:'2rem',fontWeight:900,color:s.color,letterSpacing:'-0.04em',marginBottom:4 }}>{s.value}</div>
-                  <div style={{ color:'#6b7280',fontSize:'0.8rem',fontWeight:500 }}>{s.label}</div>
+                  <div style={{ color:'#b4bac8',fontSize:'0.8rem',fontWeight:500 }}>{s.label}</div>
                 </motion.div>
               ))}
             </motion.div>
@@ -87,7 +114,7 @@ export default function About() {
             <p style={{ fontSize:'clamp(1.2rem,2.5vw,1.7rem)',fontWeight:600,lineHeight:1.6,color:'#f9fafb',marginBottom:20,letterSpacing:'-0.02em' }}>
               "Our mission is to make restaurant technology that disappears into the background — so owners and staff can focus on what they actually love: serving great food."
             </p>
-            <div style={{ color:'#6b7280',fontSize:'0.875rem',fontWeight:600 }}>— Mohit, Founder of Masala Matrix</div>
+            <div style={{ color:'#b4bac8',fontSize:'0.875rem',fontWeight:600 }}>— Mohit, Founder of Masala Matrix</div>
           </motion.div>
         </div>
       </section>
@@ -103,7 +130,7 @@ export default function About() {
                   <v.icon size={22} color={v.color} />
                 </div>
                 <h4 style={{ fontSize:'1.1rem',fontWeight:700,marginBottom:10,color:'#f9fafb' }}>{v.title}</h4>
-                <p style={{ color:'#9ca3af',fontSize:'0.875rem',lineHeight:1.7 }}>{v.description}</p>
+                <p style={{ color:'#c3c8d4',fontSize:'0.875rem',lineHeight:1.7 }}>{v.description}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -127,7 +154,7 @@ export default function About() {
                   </div>
                   <div style={{ paddingBottom:i<milestones.length-1?0:0 }}>
                     <div style={{ fontWeight:800,fontSize:'1rem',color:'#f9fafb',marginBottom:4 }}>{m.label}</div>
-                    <p style={{ color:'#9ca3af',fontSize:'0.875rem',lineHeight:1.65 }}>{m.desc}</p>
+                    <p style={{ color:'#c3c8d4',fontSize:'0.875rem',lineHeight:1.65 }}>{m.desc}</p>
                   </div>
                 </motion.div>
               );
@@ -148,30 +175,38 @@ export default function About() {
                 </div>
                 <h4 style={{ fontWeight:700,fontSize:'1.05rem',marginBottom:4 }}>{member.name}</h4>
                 <div style={{ color:member.color,fontSize:'0.8rem',fontWeight:600,marginBottom:14 }}>{member.role}</div>
-                <p style={{ color:'#9ca3af',fontSize:'0.85rem',lineHeight:1.7 }}>{member.bio}</p>
+                <p style={{ color:'#c3c8d4',fontSize:'0.85rem',lineHeight:1.7 }}>{member.bio}</p>
               </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section style={{ padding:'80px 0' }}>
+      {/* CTA — Crypton panel */}
+      <section style={{ padding:'80px 0',background:'#07080f',borderTop:'1px solid rgba(255,255,255,0.04)' }}>
         <div className="lp-container">
-          <motion.div initial={{ opacity:0,y:40 }} whileInView={{ opacity:1,y:0 }} viewport={{ once:true }} transition={{ duration:0.7 }} style={{ background:'linear-gradient(135deg,#312e8122,#a855f718)',border:'1px solid #6366f133',borderRadius:20,padding:'56px 40px',textAlign:'center' }}>
-            <h2 style={{ fontSize:'clamp(1.6rem,3.5vw,2.4rem)',fontWeight:800,marginBottom:12,letterSpacing:'-0.03em' }}>Want to work with us?</h2>
-            <p style={{ color:'#9ca3af',fontSize:'1rem',marginBottom:32,maxWidth:480,margin:'12px auto 32px' }}>Whether you're a restaurant owner or want to join the team, we'd love to talk.</p>
-            <div style={{ display:'flex',justifyContent:'center',flexWrap:'wrap',gap:14 }}>
-              <motion.div whileHover={{ scale:1.05 }} whileTap={{ scale:0.97 }}>
-                <Link to="/contact" className="lp-btn lp-btn-primary" style={{ fontSize:'1rem',padding:'14px 28px',gap:8,textDecoration:'none',display:'inline-flex',alignItems:'center' }}>
-                  Get in Touch <ArrowRight size={18} />
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }}>
-                <a href="https://wa.me/917791073995" className="lp-btn lp-btn-secondary" style={{ fontSize:'1rem',padding:'14px 28px',textDecoration:'none',display:'inline-flex',alignItems:'center' }}>
-                  WhatsApp Us
-                </a>
-              </motion.div>
+          <motion.div
+            initial={{ opacity:0,y:40 }} whileInView={{ opacity:1,y:0 }} viewport={{ once:true }} transition={{ duration:0.7 }}
+            style={{ background:'#0a0b14',border:'1px solid rgba(99,102,241,0.12)',borderRadius:24,padding:'72px 40px',textAlign:'center',position:'relative',overflow:'hidden' }}
+          >
+            <div style={{ position:'absolute',bottom:-100,left:'50%',transform:'translateX(-50%)',width:700,height:320,background:'radial-gradient(ellipse at center,rgba(99,102,241,0.28) 0%,rgba(168,85,247,0.12) 40%,transparent 70%)',pointerEvents:'none',zIndex:0 }} />
+            <div style={{ position:'absolute',bottom:0,left:'10%',right:'10%',height:1,background:'linear-gradient(90deg,transparent,rgba(99,102,241,0.65) 30%,rgba(168,85,247,0.65) 70%,transparent)',pointerEvents:'none',zIndex:0 }} />
+            <div style={{ position:'absolute',top:0,left:'30%',right:'30%',height:1,background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent)',pointerEvents:'none',zIndex:0 }} />
+            <div style={{ position:'relative',zIndex:1 }}>
+              <h2 style={{ fontSize:'clamp(1.6rem,3.5vw,2.4rem)',fontWeight:900,marginBottom:12,letterSpacing:'-0.04em' }}>Want to work with us?</h2>
+              <p style={{ color:'#c3c8d4',fontSize:'1rem',marginBottom:36,maxWidth:480,margin:'12px auto 36px',lineHeight:1.7 }}>Whether you're a restaurant owner or want to join the team, we'd love to talk.</p>
+              <div style={{ display:'flex',justifyContent:'center',flexWrap:'wrap',gap:14 }}>
+                <motion.div style={{ display:'inline-flex' }} whileHover={{ scale:1.04 }} whileTap={{ scale:0.97 }}>
+                  <Link to="/contact" className="lp-btn lp-btn-primary" style={{ fontSize:'1rem',padding:'14px 28px',gap:8,textDecoration:'none',display:'inline-flex',alignItems:'center' }}>
+                    Get in Touch <ArrowRight size={18} />
+                  </Link>
+                </motion.div>
+                <motion.div style={{ display:'inline-flex' }} whileHover={{ scale:1.03 }} whileTap={{ scale:0.97 }}>
+                  <a href="https://wa.me/917791073995" className="lp-btn lp-btn-secondary" style={{ fontSize:'1rem',padding:'14px 28px',textDecoration:'none',display:'inline-flex',alignItems:'center' }}>
+                    WhatsApp Us
+                  </a>
+                </motion.div>
+              </div>
             </div>
           </motion.div>
         </div>

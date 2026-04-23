@@ -11,7 +11,7 @@
 }
 
 .stat-card-premium {
-  padding: 0.5rem 1.1rem;
+  padding: 1rem;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -27,6 +27,20 @@
   margin-bottom: 0.7rem;
 }
 
+/* Glass Card Header Refinement */
+.glass-card .card-header {
+  background: transparent !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  padding: 1.25rem 1.5rem !important;
+}
+
+.glass-card .card-header h5 {
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
 .stat-icon-premium {
   width: 58px;
   height: 58px;
@@ -35,7 +49,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.35rem;
-  background: var(--bg-app);
+  background: var(--bg-secondary);
   color: var(--primary);
   border: 1px solid var(--border-subtle);
 }
@@ -73,15 +87,15 @@
 }
 
 .stat-inline-chip-primary {
-  background: color-mix(in srgb, var(--primary-soft) 65%, #fff 35%);
+  background: var(--primary-soft);
   color: var(--primary);
-  border-color: color-mix(in srgb, var(--primary) 18%, var(--border-subtle) 82%);
+  border-color: color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 .stat-inline-chip-warning {
-  background: rgba(245, 158, 11, 0.12);
-  color: #b45309;
-  border-color: rgba(245, 158, 11, 0.22);
+  background: color-mix(in srgb, var(--warning-color) 12%, transparent);
+  color: var(--warning-color);
+  border-color: color-mix(in srgb, var(--warning-color) 25%, transparent);
 }
 
 .stat-inline-meta {
@@ -119,9 +133,7 @@
 }
 
 .stat-progress-bar {
-  background: 
-   
-    green  !important;
+  background: var(--success-color) !important;
 }
 
 .stat-value-premium {
@@ -156,8 +168,8 @@
 }
 
 .ai-glow {
-  border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border-subtle)) !important;
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+  border: 1px solid color-mix(in srgb, var(--primary) 25%, transparent) !important;
+  box-shadow: 0 14px 28px var(--bg-overlay);
 }
 
 .bg-glass-inner {
@@ -171,9 +183,9 @@
   font-weight: 700 !important;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #4338ca !important;
-  border: 1px solid rgba(99, 102, 241, 0.28) !important;
-  background: rgba(99, 102, 241, 0.14) !important;
+  color: var(--primary) !important;
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, transparent) !important;
+  background: var(--primary-soft) !important;
 }
 
 .text-gradient-indigo {
@@ -198,7 +210,7 @@
 }
 
 [data-theme='dark'] .text-gradient-indigo {
-  color: #a5b4fc;
+  color: var(--primary);
 }
 
 .ai-insight-panel-premium {
@@ -387,23 +399,23 @@
 }
 
 .table-card--occupied {
-  background: linear-gradient(180deg, rgba(16, 185, 129, 0.14) 0%, rgba(16, 185, 129, 0.05) 100%) !important;
-  border-color: rgba(16, 185, 129, 0.3) !important;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--success-color) 14%, transparent) 0%, color-mix(in srgb, var(--success-color) 5%, transparent) 100%) !important;
+  border-color: color-mix(in srgb, var(--success-color) 30%, transparent) !important;
 }
 
 .table-card--reserved {
-  background: linear-gradient(180deg, rgba(245, 158, 11, 0.14) 0%, rgba(245, 158, 11, 0.05) 100%) !important;
-  border-color: rgba(245, 158, 11, 0.32) !important;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--warning-color) 14%, transparent) 0%, color-mix(in srgb, var(--warning-color) 5%, transparent) 100%) !important;
+  border-color: color-mix(in srgb, var(--warning-color) 32%, transparent) !important;
 }
 
 .table-card--maintenance {
-  background: linear-gradient(180deg, rgba(100, 116, 139, 0.16) 0%, rgba(100, 116, 139, 0.05) 100%) !important;
-  border-color: rgba(100, 116, 139, 0.32) !important;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--secondary) 16%, transparent) 0%, color-mix(in srgb, var(--secondary) 5%, transparent) 100%) !important;
+  border-color: color-mix(in srgb, var(--secondary) 32%, transparent) !important;
 }
 
 .table-card--blocked {
-  background: linear-gradient(180deg, rgba(31, 41, 55, 0.16) 0%, rgba(31, 41, 55, 0.06) 100%) !important;
-  border-color: rgba(31, 41, 55, 0.35) !important;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--text-main) 16%, transparent) 0%, color-mix(in srgb, var(--text-main) 6%, transparent) 100%) !important;
+  border-color: color-mix(in srgb, var(--text-main) 35%, transparent) !important;
 }
 
 .quick-order-card--takeaway {
@@ -450,27 +462,27 @@
 }
 
 .table-status-badge--occupied {
-  background: rgba(16, 185, 129, 0.16) !important;
-  color: #047857 !important;
-  border-color: rgba(16, 185, 129, 0.26) !important;
+  background: color-mix(in srgb, var(--success-color) 16%, transparent) !important;
+  color: var(--success-color) !important;
+  border-color: color-mix(in srgb, var(--success-color) 26%, transparent) !important;
 }
 
 .table-status-badge--reserved {
-  background: rgba(245, 158, 11, 0.16) !important;
-  color: #b45309 !important;
-  border-color: rgba(245, 158, 11, 0.26) !important;
+  background: color-mix(in srgb, var(--warning-color) 16%, transparent) !important;
+  color: var(--warning-color) !important;
+  border-color: color-mix(in srgb, var(--warning-color) 26%, transparent) !important;
 }
 
 .table-status-badge--maintenance {
-  background: rgba(100, 116, 139, 0.16) !important;
-  color: #475569 !important;
-  border-color: rgba(100, 116, 139, 0.25) !important;
+  background: color-mix(in srgb, var(--secondary) 16%, transparent) !important;
+  color: var(--secondary) !important;
+  border-color: color-mix(in srgb, var(--secondary) 25%, transparent) !important;
 }
 
 .table-status-badge--unavailable {
-  background: rgba(31, 41, 55, 0.16) !important;
-  color: #111827 !important;
-  border-color: rgba(31, 41, 55, 0.28) !important;
+  background: color-mix(in srgb, var(--text-main) 16%, transparent) !important;
+  color: var(--text-main) !important;
+  border-color: color-mix(in srgb, var(--text-main) 28%, transparent) !important;
 }
 
 .quick-order-badge {
