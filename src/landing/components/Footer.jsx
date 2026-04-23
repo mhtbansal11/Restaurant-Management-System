@@ -10,7 +10,7 @@ export default function Footer() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 40, marginBottom: 56 }}>
           <div style={{ gridColumn: 'span 2' }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, textDecoration: 'none' }}>
-              <BrandLogo theme="dark" size={36} style={{ boxShadow: '0 0 18px rgba(168,85,247,0.22)' }} />
+              <BrandLogo theme="dark" size={36} style={{ }} />
               <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.03em', color: '#f9fafb' }}>Masala Matrix</span>
             </Link>
             <p style={{ color: '#b4bac8', fontSize: '0.875rem', lineHeight: 1.7, maxWidth: 260 }}>

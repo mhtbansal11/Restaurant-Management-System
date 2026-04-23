@@ -45,7 +45,7 @@ export default function LandingNavbar() {
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '18px 24px' }}>
         <motion.div whileHover={{ scale: 1.04 }}>
           <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-            <BrandLogo theme="dark" size={38} style={{ boxShadow: '0 0 18px rgba(168,85,247,0.28)' }} />
+            <BrandLogo theme="dark" size={38} style={{ }} />
             <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.03em', color: '#f9fafb' }}>Masala Matrix</span>
           </Link>
         </motion.div>
